@@ -76,6 +76,21 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    // ── Réseaux sociaux & contact ────────────────────
+    siteWeb: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    reseauxSociaux: {
+      facebook:  { type: String, trim: true, default: null },
+      instagram: { type: String, trim: true, default: null },
+      twitter:   { type: String, trim: true, default: null },
+      tiktok:    { type: String, trim: true, default: null },
+      linkedin:  { type: String, trim: true, default: null },
+      youtube:   { type: String, trim: true, default: null },
+    },
+
     // ── Géolocalisation ──────────────────────────────
     location: {
       type: {

@@ -33,15 +33,17 @@ const authUser = asyncHandler(async (req, res) => {
   generateToken(res, user._id);
 
   res.json({
-    _id: user._id,
-    email: user.email,
-    nom: user.nom,
-    prenom: user.prenom,
-    role: user.role,
-    metier: user.metier,
-    note: user.note,
-    nbAvis: user.nbAvis,
-    isActive: user.isActive,
+    _id:            user._id,
+    email:          user.email,
+    nom:            user.nom,
+    prenom:         user.prenom,
+    role:           user.role,
+    metier:         user.metier         || null,
+    note:           user.note           || null,
+    nbAvis:         user.nbAvis         || 0,
+    siteWeb:        user.siteWeb        || null,
+    reseauxSociaux: user.reseauxSociaux || {},
+    isActive:       user.isActive,
   });
 });
 
@@ -69,15 +71,20 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 
   res.json({
-    _id: user._id,
-    email: user.email,
-    nom: user.nom,
-    prenom: user.prenom,
-    role: user.role,
-    isActive: user.isActive,
-    lastLogin: user.lastLogin,
-    location: user.location,
-    isTracked: user.isTracked,
+    _id:            user._id,
+    email:          user.email,
+    nom:            user.nom,
+    prenom:         user.prenom,
+    role:           user.role,
+    metier:         user.metier         || null,
+    note:           user.note           || null,
+    nbAvis:         user.nbAvis         || 0,
+    siteWeb:        user.siteWeb        || null,
+    reseauxSociaux: user.reseauxSociaux || {},
+    isActive:       user.isActive,
+    lastLogin:      user.lastLogin,
+    location:       user.location,
+    isTracked:      user.isTracked,
   });
 });
 
@@ -92,9 +99,21 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     throw new Error("Utilisateur non trouvé");
   }
 
-  user.nom = req.body.nom || user.nom;
+  user.nom    = req.body.nom    || user.nom;
   user.prenom = req.body.prenom || user.prenom;
-  user.email = req.body.email || user.email;
+  user.email  = req.body.email  || user.email;
+
+  // Champs prestataire
+  if (req.body.metier  !== undefined) user.metier  = req.body.metier;
+  if (req.body.siteWeb !== undefined) user.siteWeb = req.body.siteWeb;
+
+  // Réseaux sociaux — merge avec l'existant
+  if (req.body.reseauxSociaux) {
+    user.reseauxSociaux = {
+      ...user.reseauxSociaux?.toObject?.() || user.reseauxSociaux || {},
+      ...req.body.reseauxSociaux,
+    };
+  }
 
   if (req.body.password) {
     user.password = req.body.password;
@@ -103,11 +122,17 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   const updatedUser = await user.save();
 
   res.json({
-    _id: updatedUser._id,
-    email: updatedUser.email,
-    nom: updatedUser.nom,
-    prenom: updatedUser.prenom,
-    role: updatedUser.role,
+    _id:            updatedUser._id,
+    email:          updatedUser.email,
+    nom:            updatedUser.nom,
+    prenom:         updatedUser.prenom,
+    role:           updatedUser.role,
+    metier:         updatedUser.metier,
+    note:           updatedUser.note,
+    nbAvis:         updatedUser.nbAvis,
+    siteWeb:        updatedUser.siteWeb,
+    reseauxSociaux: updatedUser.reseauxSociaux,
+    isActive:       updatedUser.isActive,
   });
 });
 
@@ -281,15 +306,17 @@ const registerUser = asyncHandler(async (req, res) => {
   generateToken(res, user._id);
 
   res.status(201).json({
-    _id:      user._id,
-    email:    user.email,
-    nom:      user.nom,
-    prenom:   user.prenom,
-    role:     user.role,
-    metier:   user.metier   || null,
-    note:     user.note     || null,
-    nbAvis:   user.nbAvis   || 0,
-    isActive: user.isActive,
+    _id:            user._id,
+    email:          user.email,
+    nom:            user.nom,
+    prenom:         user.prenom,
+    role:           user.role,
+    metier:         user.metier         || null,
+    note:           user.note           || null,
+    nbAvis:         user.nbAvis         || 0,
+    siteWeb:        user.siteWeb        || null,
+    reseauxSociaux: user.reseauxSociaux || {},
+    isActive:       user.isActive,
   });
 });
 

@@ -43,6 +43,26 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// ── Thunk updateProfile ──────────────────────────────────────────────────────
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (profileData, thunkAPI) => {
+    try {
+      const res = await fetch(`${API_URL}/api/users/profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(profileData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Erreur lors de la mise à jour");
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 // ── Thunk logout ─────────────────────────────────────────────────────────────
 export const logoutUser = createAsyncThunk(
   "auth/logout",
@@ -64,14 +84,16 @@ const initialState = {
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null,
   loading: false,
+  updateLoading: false,
   error: null,
+  updateError: null,
+  updateSuccess: false,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // Permet de mettre à jour manuellement (ex: après update profil)
     setCredentials: (state, action) => {
       state.userInfo = action.payload;
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
@@ -83,14 +105,17 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+      state.updateError = null;
+    },
+    clearUpdateSuccess: (state) => {
+      state.updateSuccess = false;
     },
   },
   extraReducers: (builder) => {
     // ── Login ──
     builder
       .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading = true; state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -98,15 +123,13 @@ const authSlice = createSlice({
         localStorage.setItem("userInfo", JSON.stringify(action.payload));
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+        state.loading = false; state.error = action.payload;
       });
 
     // ── Register ──
     builder
       .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading = true; state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -114,8 +137,26 @@ const authSlice = createSlice({
         localStorage.setItem("userInfo", JSON.stringify(action.payload));
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+        state.loading = false; state.error = action.payload;
+      });
+
+    // ── Update Profile ──
+    builder
+      .addCase(updateProfile.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateSuccess = false;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateSuccess = true;
+        // Merge les données mises à jour dans userInfo
+        state.userInfo = { ...state.userInfo, ...action.payload };
+        localStorage.setItem("userInfo", JSON.stringify(state.userInfo));
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError = action.payload;
       });
 
     // ── Logout ──
@@ -128,6 +169,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, clearError } = authSlice.actions;
+export const { setCredentials, logout, clearError, clearUpdateSuccess } = authSlice.actions;
 
 export default authSlice.reducer;
