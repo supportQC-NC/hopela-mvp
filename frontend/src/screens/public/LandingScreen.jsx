@@ -26,7 +26,7 @@ const STATS = [
   { value: "500+", label: "Prestataires actifs" },
   { value: "4.8★", label: "Note moyenne" },
   { value: "< 5min", label: "Temps de réponse" },
-  { value: "NC", label: "Toute la Calédonie" },
+  { value: "World", label: "Partout dans le monde" },
 ];
 
 const TEMOIGNAGES = [
