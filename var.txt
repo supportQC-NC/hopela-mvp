@@ -1,0 +1,6 @@
+MONGO DB
+
+project_name : hopela_v1
+username : hopela_db_user 
+password :  DUf5aOXpKveTOpJE 
+srv : mongodb+srv://hopela_db_user:DUf5aOXpKveTOpJE@cluster0.sccawwv.mongodb.net/?appName=Cluster0
