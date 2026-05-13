@@ -1,0 +1,65 @@
+/* src/components/admin/AdminTopbar.css */
+
+.at-topbar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  background: rgba(11, 8, 5, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.at-left { display: flex; align-items: center; gap: 12px; }
+
+.at-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f5f0e8;
+}
+
+.at-subtitle {
+  font-size: 12px;
+  color: rgba(245, 240, 232, 0.3);
+  margin-top: 1px;
+}
+
+.at-right { display: flex; align-items: center; gap: 10px; }
+
+.at-admin-badge {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fca5a5;
+}
+
+.at-refresh-btn {
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(245,240,232,0.4);
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.at-refresh-btn:hover {
+  color: #c9a84c;
+  border-color: rgba(201,168,76,0.35);
+}

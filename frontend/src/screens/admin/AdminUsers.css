@@ -1,0 +1,167 @@
+/* src/screens/admin/AdminUsers.css */
+
+/* ── Toolbar ── */
+.au-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.au-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+}
+.au-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+.au-search {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: 10px;
+  padding: 9px 14px 9px 36px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #f5f0e8;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.au-search:focus { border-color: rgba(201,168,76,0.4); }
+.au-search::placeholder { color: rgba(245,240,232,0.2); }
+
+.au-filters { display: flex; gap: 8px; align-items: center; }
+
+.au-filter-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: 1px solid rgba(201,168,76,0.12);
+  background: rgba(255,255,255,0.03);
+  color: rgba(245,240,232,0.4);
+}
+.au-filter-btn:hover { color: #f5f0e8; border-color: rgba(201,168,76,0.3); }
+.au-filter-btn.active {
+  background: rgba(201,168,76,0.12);
+  color: #c9a84c;
+  border-color: rgba(201,168,76,0.3);
+}
+
+.au-add-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 9px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #c9a84c, #e8c97a);
+  color: #0a0804;
+  border: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(201,168,76,0.22);
+}
+.au-add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(201,168,76,0.38); }
+
+/* ── Table ── */
+.au-table-wrap {
+  background: #120e07;
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.au-table { width: 100%; border-collapse: collapse; }
+
+.au-table th {
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: rgba(245,240,232,0.25);
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+  background: rgba(255,255,255,0.015);
+  white-space: nowrap;
+}
+
+.au-table td {
+  padding: 13px 18px; font-size: 13px;
+  color: rgba(245,240,232,0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+  vertical-align: middle;
+}
+.au-table tr:last-child td { border-bottom: none; }
+.au-table tr:hover td { background: rgba(201,168,76,0.025); }
+
+/* ── Role badge ── */
+.au-role {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: 5px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.au-role.admin       { background: rgba(239,68,68,0.1);    color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+.au-role.user        { background: rgba(99,102,241,0.1);   color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+.au-role.prestataire { background: rgba(201,168,76,0.1);   color: #c9a84c; border: 1px solid rgba(201,168,76,0.2); }
+
+/* ── Status toggle ── */
+.au-status-toggle {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; cursor: pointer; border: none;
+  font-family: 'DM Sans', sans-serif; font-weight: 500;
+  transition: all 0.18s;
+}
+.au-status-toggle.active {
+  background: rgba(74,222,128,0.08);
+  color: #4ade80; border: 1px solid rgba(74,222,128,0.2);
+}
+.au-status-toggle.inactive {
+  background: rgba(239,68,68,0.08);
+  color: #fca5a5; border: 1px solid rgba(239,68,68,0.18);
+}
+.au-status-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.au-status-toggle.active   .au-status-dot { background: #4ade80; box-shadow: 0 0 5px #4ade8088; }
+.au-status-toggle.inactive .au-status-dot { background: #ef4444; }
+
+/* ── Actions ── */
+.au-actions { display: flex; gap: 6px; }
+.au-action-btn {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s;
+}
+.au-action-btn:hover { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.2); }
+.au-action-btn.danger:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); }
+
+/* ── Empty ── */
+.au-empty {
+  text-align: center; padding: 48px 20px;
+  color: rgba(245,240,232,0.22); font-size: 14px;
+}
+
+/* ── Métiers chips ── */
+.au-metier-chip {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.14);
+  color: rgba(201,168,76,0.7);
+  margin-right: 3px;
+}

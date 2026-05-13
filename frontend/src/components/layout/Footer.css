@@ -1,0 +1,146 @@
+/* src/components/layout/Footer.css */
+
+.lp-footer {
+  border-top: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 56px 48px 36px;
+  background: #0a0804;
+}
+
+/* ── Top ── */
+.lp-footer-top {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+/* Brand */
+.lp-footer-brand {}
+
+.lp-footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.lp-footer-logo-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a84c, #8a6c28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #0a0804;
+  flex-shrink: 0;
+}
+
+.lp-footer-logo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: rgba(245, 240, 232, 0.7);
+}
+
+.lp-footer-tagline {
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.3);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 220px;
+}
+
+/* Colonnes liens */
+.lp-footer-col-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(201, 168, 76, 0.7);
+  margin-bottom: 20px;
+}
+
+.lp-footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lp-footer-links a {
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 300;
+}
+
+.lp-footer-links a:hover {
+  color: rgba(201, 168, 76, 0.8);
+}
+
+/* ── Bottom ── */
+.lp-footer-bottom {
+  border-top: 1px solid rgba(201, 168, 76, 0.08);
+  padding-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lp-footer-copy {
+  font-size: 12px;
+  color: rgba(245, 240, 232, 0.18);
+  letter-spacing: 0.3px;
+}
+
+.lp-footer-legal {
+  display: flex;
+  gap: 24px;
+}
+
+.lp-footer-legal a {
+  font-size: 12px;
+  color: rgba(245, 240, 232, 0.2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.lp-footer-legal a:hover {
+  color: rgba(201, 168, 76, 0.6);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .lp-footer {
+    padding: 48px 20px 28px;
+  }
+
+  .lp-footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+
+  .lp-footer-brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .lp-footer-top {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

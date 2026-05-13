@@ -5,11 +5,8 @@ import { BASE_URL } from "../constants";
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    credentials: "include", // Important pour les cookies JWT
+    credentials: "include", // cookies JWT
   }),
-  tagTypes: [
-    "User",
-    
-  ],
-  endpoints: (builder) => ({}),
+  tagTypes: ["User", "Metier", "Service"],
+  endpoints: () => ({}),
 });

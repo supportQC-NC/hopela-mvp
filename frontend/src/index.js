@@ -12,23 +12,31 @@ import store from "./store";
 import "./index.css";
 import App from "./App";
 
-// ── Guards ───────────────────────────────────────────────────────────────────
+// ── Guards ────────────────────────────────────────────
 import PrivateRoute     from "./components/Utils/PrivateRoute";
 import AdminRoute       from "./components/Utils/AdminRoute";
 import PrestataireRoute from "./components/Utils/PrestataireRoute";
 
-// ── Screens publics ──────────────────────────────────────────────────────────
-import LandingScreen  from "./screens/public/LandingScreen";
-import LoginScreen    from "./screens/public/LoginScreen";
-import NotFoundScreen from "./screens/NotFoundScreen";
+// ── Screens publics ───────────────────────────────────
+import LandingScreen        from "./screens/public/LandingScreen";
+import LoginScreen          from "./screens/public/LoginScreen";
+import NotFoundScreen       from "./screens/NotFoundScreen";
 
-// ── Dashboards ───────────────────────────────────────────────────────────────
+// import RegisterScreen       from "./screens/public/RegisterScreen";
+// import ForgotPasswordScreen from "./screens/public/ForgotPasswordScreen";
+// import ResetPasswordScreen  from "./screens/public/ResetPasswordScreen";
+
+// ── Pages légales ─────────────────────────────────────
+import MentionLegalesScreen from "./screens/public/legal/MentionLegalesScreen";
+import CguScreen from "./screens/public/legal/CguScreen";
+import CgvScreen from "./screens/public/legal/CgvScreen";
+import ConfidentialiteScreen from "./screens/public/legal/ConfidentialiteScreen";
+import CookiesScreen from "./screens/public/legal/CookiesScreen";
+
+// ── Dashboards ────────────────────────────────────────
 import UserDashboard        from "./screens/user/UserDashboard";
 import PrestataireDashboard from "./screens/prestataire/PrestataireDashboard";
 import AdminDashboard       from "./screens/admin/AdminDashboard";
-
-// import ForgotPasswordScreen from "./screens/public/ForgotPasswordScreen";
-// import ResetPasswordScreen  from "./screens/public/ResetPasswordScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,9 +44,17 @@ const router = createBrowserRouter(
 
       {/* ── Public ── */}
       <Route index element={<LandingScreen />} />
-      <Route path="login" element={<LoginScreen />} />
+      <Route path="login"    element={<LoginScreen />} />
+      {/* <Route path="register" element={<RegisterScreen />} /> */}
       {/* <Route path="forgot-password" element={<ForgotPasswordScreen />} /> */}
       {/* <Route path="reset-password/:token" element={<ResetPasswordScreen />} /> */}
+
+      {/* ── Pages légales ── */}
+      <Route path="mentions-legales"  element={<MentionLegalesScreen/>} />
+      <Route path="cgu"               element={<CguScreen />} />
+      <Route path="cgv"               element={<CgvScreen />} />
+      <Route path="confidentialite"   element={<ConfidentialiteScreen />} />
+      <Route path="cookies"           element={<CookiesScreen />} />
 
       {/* ── Utilisateur connecté (tous rôles) ── */}
       <Route element={<PrivateRoute />}>
@@ -70,8 +86,7 @@ const app = (
   </Provider>
 );
 
-// StrictMode uniquement en production
-// En dev : désactivé pour éviter les doubles montages Socket.io
+// StrictMode uniquement en prod — évite les doubles montages Socket.io en dev
 root.render(
   process.env.NODE_ENV === "production"
     ? <React.StrictMode>{app}</React.StrictMode>

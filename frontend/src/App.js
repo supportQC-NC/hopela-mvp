@@ -1,36 +1,76 @@
-// src/App.jsx
-import { Outlet, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+// // src/App.jsx
+// import { Outlet, useLocation, Navigate } from "react-router-dom";
+// import { useSelector } from "react-redux";
+// import "./index.css";
 
-import Login from "./screens/public/LoginScreen";
+// // Routes accessibles sans être connecté
+// const PUBLIC_ROUTES = [
+//   "/",
+//   "/login",
+//   "/register",
+//   "/forgot-password",
+//   "/mentions-legales",
+//   "/cgu",
+//   "/confidentialite",
+//   "/cookies",
+// ];
+
+// const App = () => {
+//   const { userInfo } = useSelector((state) => state.auth);
+//   const { pathname }  = useLocation();
+
+//   const isPublicRoute =
+//     PUBLIC_ROUTES.includes(pathname) ||
+//     pathname.startsWith("/reset-password/");
+
+//   // Non connecté sur une route protégée → login
+//   if (!userInfo && !isPublicRoute) {
+//     return <Navigate to="/login" replace />;
+//   }
+
+//   // Dans tous les cas on rend l'Outlet
+//   // Header/Footer sont gérés par chaque screen (LandingScreen les inclut déjà)
+//   return <Outlet />;
+// };
+
+// export default App;
+// src/App.jsx
+import { Outlet, useLocation, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./index.css";
 
-const PUBLIC_ROUTES = ["/", "/login", "/forgot-password"];
+// Utils
+import ScrollToTop from "./components/Utils/ScrollToTop";
+
+// Routes accessibles sans être connecté
+const PUBLIC_ROUTES = [
+  "/",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/mentions-legales",
+  "/cgu",
+  "/confidentialite",
+  "/cookies",
+];
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { pathname } = useLocation();
 
   const isPublicRoute =
-    PUBLIC_ROUTES.includes(pathname) || pathname.startsWith("/reset-password/");
+    PUBLIC_ROUTES.includes(pathname) ||
+    pathname.startsWith("/reset-password/");
 
+  // Non connecté sur une route protégée → login
   if (!userInfo && !isPublicRoute) {
-    return <Login />;
-  }
-
-  if (!userInfo && isPublicRoute) {
-    return <Outlet />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
     <>
-      <div className="app">
-        <div className="app-body">
-          <main className="main-content">
-            <Outlet />
-          </main>
-        </div>
-      </div>
+      <ScrollToTop />
+      <Outlet />
     </>
   );
 };

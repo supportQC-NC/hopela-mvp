@@ -13,22 +13,24 @@ import connectDB from "./config/db.js";
 import User from "./models/UserModel.js";
 
 // Import des routes
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes    from "./routes/userRoutes.js";
+import metierRoutes  from "./routes/metierRoutes.js";
+import serviceRoutes from "./routes/serviceRoutes.js";
+import uploadRoutes  from "./routes/uploadRoutes.js";
+import photoRoutes   from "./routes/photoRoutes.js";
 
-// =======================================
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 const PORT = process.env.PORT || 5000;
 
-// Connexion à la base de données
 connectDB();
 
 const app = express();
-
-// Créer le serveur HTTP à partir d'Express
 const httpServer = createServer(app);
 
-// Initialiser Socket.io sur le serveur HTTP
+// ==========================================
+// SOCKET.IO
+// ==========================================
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
@@ -36,13 +38,10 @@ const io = new Server(httpServer, {
   },
 });
 
-// ==========================================
-// SOCKET.IO — Gestion des événements
-// ==========================================
 io.on("connection", (socket) => {
   console.log(`🔌 Socket connecté : ${socket.id}`);
 
-  // Le prestataire envoie sa position
+  // Mise à jour position — tous rôles (user, admin, prestataire)
   socket.on("update_location", async ({ userId, longitude, latitude }) => {
     try {
       await User.findByIdAndUpdate(userId, {
@@ -54,9 +53,7 @@ io.on("connection", (socket) => {
         isTracked: true,
       });
 
-      // Broadcast à tous les clients connectés (landing page incluse)
       io.emit("location_updated", { userId, longitude, latitude });
-
       console.log(`📍 Position mise à jour — user: ${userId} [${longitude}, ${latitude}]`);
     } catch (error) {
       console.error("Erreur update_location:", error.message);
@@ -64,14 +61,10 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Le prestataire coupe son tracking
   socket.on("stop_tracking", async ({ userId }) => {
     try {
       await User.findByIdAndUpdate(userId, { isTracked: false });
-
-      // Broadcast pour retirer le marqueur de la carte
       io.emit("tracking_stopped", { userId });
-
       console.log(`🔴 Tracking arrêté — user: ${userId}`);
     } catch (error) {
       console.error("Erreur stop_tracking:", error.message);
@@ -86,28 +79,28 @@ io.on("connection", (socket) => {
 // ==========================================
 // MIDDLEWARES EXPRESS
 // ==========================================
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  credentials: true,
+}));
 
-// CORS
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true,
-  }),
-);
-
-// Cookie parser
 app.use(cookieParser());
-
-// Parser JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Fichiers statiques
+// ==========================================
+// FICHIERS STATIQUES & DOSSIERS UPLOADS
+// ==========================================
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Créer les dossiers uploads si nécessaire
-const uploadDirs = ["./uploads"];
+// Création automatique des dossiers nécessaires au démarrage
+const uploadDirs = [
+  "./uploads",
+  "./uploads/logos",    // logos des prestataires
+  "./uploads/services", // images des services
+];
+
 uploadDirs.forEach((dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -115,7 +108,9 @@ uploadDirs.forEach((dir) => {
   }
 });
 
-// Route de base
+// ==========================================
+// ROUTE DE BASE
+// ==========================================
 app.get("/", (req, res) => {
   res.send("API HOPELA is running...");
 });
@@ -123,7 +118,11 @@ app.get("/", (req, res) => {
 // ==========================================
 // ROUTES API
 // ==========================================
-app.use("/api/users", userRoutes);
+app.use("/api/users",    userRoutes);
+app.use("/api/metiers",  metierRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/upload",   uploadRoutes);
+app.use("/api/photos",   photoRoutes);
 
 // ==========================================
 // ERROR MIDDLEWARES
@@ -132,7 +131,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ==========================================
-// DÉMARRAGE — httpServer et non app.listen
+// DÉMARRAGE
 // ==========================================
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

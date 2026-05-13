@@ -5,6 +5,7 @@ import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
+    // ── Authentification ─────────────────────────────
     email: {
       type: String,
       required: [true, "Email requis"],
@@ -18,6 +19,8 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+
+    // ── Identité ─────────────────────────────────────
     nom: {
       type: String,
       required: [true, "Nom requis"],
@@ -33,6 +36,8 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user", "prestataire"],
       default: "user",
     },
+
+    // ── Gestion du compte ────────────────────────────
     isActive: {
       type: Boolean,
       default: true,
@@ -56,27 +61,31 @@ const userSchema = new mongoose.Schema(
     },
 
     // ── Profil prestataire ───────────────────────────
-    metier: {
-      type: String,
-      trim: true,
-      default: null,
-    },
-    note: {
-      type: Number,
-      min: 0,
-      max: 5,
-      default: null,
-    },
-    nbAvis: {
-      type: Number,
-      default: 0,
-    },
     avatar: {
       type: String,
       default: null,
     },
+    // Métiers : références vers le modèle Metier (géré par l'admin)
+    metiers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Metier",
+      },
+    ],
+    // Contact public du prestataire (distinct de l'email de connexion)
+    telephoneContact: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    emailContact: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: null,
+    },
 
-    // ── Réseaux sociaux & contact ────────────────────
+    // ── Réseaux sociaux & site web ───────────────────
     siteWeb: {
       type: String,
       trim: true,
@@ -91,7 +100,8 @@ const userSchema = new mongoose.Schema(
       youtube:   { type: String, trim: true, default: null },
     },
 
-    // ── Géolocalisation ──────────────────────────────
+    // ── Géolocalisation ─────────────────────────────
+    // Disponible pour tous les rôles (user, admin, prestataire)
     location: {
       type: {
         type: String,
@@ -107,30 +117,44 @@ const userSchema = new mongoose.Schema(
         default: null,
       },
     },
+    // true = l'utilisateur partage sa position en temps réel
     isTracked: {
       type: Boolean,
       default: false,
+    },
+    // Rayon de recherche en km (user/admin uniquement, pour filtrer les prestataires proches)
+    rayonRecherche: {
+      type: Number,
+      min: [1,    "Le rayon minimum est de 1 km"],
+      max: [500,  "Le rayon maximum est de 500 km"],
+      default: 50, // 50 km par défaut
     },
   },
   { timestamps: true },
 );
 
+// Index géospatial
 userSchema.index({ location: "2dsphere" });
 
+// ── Hooks ────────────────────────────────────────────
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
+// ── Méthodes ─────────────────────────────────────────
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 userSchema.methods.getResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
-  this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 min
   return resetToken;
 };
 

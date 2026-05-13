@@ -1,0 +1,119 @@
+/* src/screens/admin/AdminMetiers.css */
+
+.am2-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.am2-add-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 700;
+  padding: 9px 18px; border-radius: 9px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #c9a84c, #e8c97a);
+  color: #0a0804; border: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 12px rgba(201,168,76,0.22);
+}
+.am2-add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(201,168,76,0.38); }
+
+.am2-info {
+  font-size: 12px;
+  color: rgba(245,240,232,0.25);
+}
+
+/* ── Grid de cards ── */
+.am2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.am2-card {
+  background: #120e07;
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: 14px;
+  padding: 16px 18px;
+  transition: all 0.2s;
+  position: relative;
+}
+.am2-card:hover { border-color: rgba(201,168,76,0.25); }
+.am2-card.inactive {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.am2-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.am2-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.14);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+
+.am2-nom {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 700; color: #f5f0e8;
+}
+
+.am2-desc {
+  font-size: 12px;
+  color: rgba(245,240,232,0.32);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  min-height: 36px;
+}
+
+.am2-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.am2-status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600;
+  padding: 3px 9px; border-radius: 5px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.am2-status-badge.active   { background: rgba(74,222,128,0.08); color: #4ade80; border: 1px solid rgba(74,222,128,0.18); }
+.am2-status-badge.inactive { background: rgba(239,68,68,0.08);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.18); }
+
+.am2-actions { display: flex; gap: 5px; }
+.am2-btn {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s;
+}
+.am2-btn:hover { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.2); }
+.am2-btn.toggle:hover { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.2); }
+.am2-btn.danger:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); }
+
+.am2-count {
+  font-size: 11px; color: rgba(245,240,232,0.25);
+}
+
+/* ── Info delete bloquée ── */
+.am2-blocked {
+  font-size: 11px;
+  color: rgba(239,68,68,0.5);
+  font-style: italic;
+}

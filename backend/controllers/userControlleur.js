@@ -7,6 +7,10 @@ import crypto from "crypto";
 import generateWelcomeEmail from "../emails/templates/welcomeEmail.js";
 import generateResetEmail from "../emails/templates/resetEmail.js";
 
+// =============================================
+// AUTH
+// =============================================
+
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
@@ -33,17 +37,17 @@ const authUser = asyncHandler(async (req, res) => {
   generateToken(res, user._id);
 
   res.json({
-    _id:            user._id,
-    email:          user.email,
-    nom:            user.nom,
-    prenom:         user.prenom,
-    role:           user.role,
-    metier:         user.metier         || null,
-    note:           user.note           || null,
-    nbAvis:         user.nbAvis         || 0,
-    siteWeb:        user.siteWeb        || null,
-    reseauxSociaux: user.reseauxSociaux || {},
-    isActive:       user.isActive,
+    _id:              user._id,
+    email:            user.email,
+    nom:              user.nom,
+    prenom:           user.prenom,
+    role:             user.role,
+    metiers:          user.metiers          || [],
+    telephoneContact: user.telephoneContact || null,
+    emailContact:     user.emailContact     || null,
+    siteWeb:          user.siteWeb          || null,
+    reseauxSociaux:   user.reseauxSociaux   || {},
+    isActive:         user.isActive,
   });
 });
 
@@ -59,11 +63,15 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Déconnexion réussie" });
 });
 
+// =============================================
+// PROFIL
+// =============================================
+
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).populate("metiers", "nom description icone");
 
   if (!user) {
     res.status(404);
@@ -71,20 +79,22 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 
   res.json({
-    _id:            user._id,
-    email:          user.email,
-    nom:            user.nom,
-    prenom:         user.prenom,
-    role:           user.role,
-    metier:         user.metier         || null,
-    note:           user.note           || null,
-    nbAvis:         user.nbAvis         || 0,
-    siteWeb:        user.siteWeb        || null,
-    reseauxSociaux: user.reseauxSociaux || {},
-    isActive:       user.isActive,
-    lastLogin:      user.lastLogin,
-    location:       user.location,
-    isTracked:      user.isTracked,
+    _id:              user._id,
+    email:            user.email,
+    nom:              user.nom,
+    prenom:           user.prenom,
+    role:             user.role,
+    metiers:          user.metiers          || [],
+    telephoneContact: user.telephoneContact || null,
+    emailContact:     user.emailContact     || null,
+    siteWeb:          user.siteWeb          || null,
+    reseauxSociaux:   user.reseauxSociaux   || {},
+    avatar:           user.avatar           || null,
+    isActive:         user.isActive,
+    lastLogin:        user.lastLogin,
+    location:         user.location,
+    isTracked:        user.isTracked,
+    rayonRecherche:   user.rayonRecherche,
   });
 });
 
@@ -104,8 +114,12 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   user.email  = req.body.email  || user.email;
 
   // Champs prestataire
-  if (req.body.metier  !== undefined) user.metier  = req.body.metier;
-  if (req.body.siteWeb !== undefined) user.siteWeb = req.body.siteWeb;
+  if (req.body.telephoneContact !== undefined) user.telephoneContact = req.body.telephoneContact;
+  if (req.body.emailContact     !== undefined) user.emailContact     = req.body.emailContact;
+  if (req.body.siteWeb          !== undefined) user.siteWeb          = req.body.siteWeb;
+
+  // Métiers : tableau d'IDs Metier
+  if (req.body.metiers !== undefined) user.metiers = req.body.metiers;
 
   // Réseaux sociaux — merge avec l'existant
   if (req.body.reseauxSociaux) {
@@ -120,21 +134,27 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 
   const updatedUser = await user.save();
+  await updatedUser.populate("metiers", "nom description icone");
 
   res.json({
-    _id:            updatedUser._id,
-    email:          updatedUser.email,
-    nom:            updatedUser.nom,
-    prenom:         updatedUser.prenom,
-    role:           updatedUser.role,
-    metier:         updatedUser.metier,
-    note:           updatedUser.note,
-    nbAvis:         updatedUser.nbAvis,
-    siteWeb:        updatedUser.siteWeb,
-    reseauxSociaux: updatedUser.reseauxSociaux,
-    isActive:       updatedUser.isActive,
+    _id:              updatedUser._id,
+    email:            updatedUser.email,
+    nom:              updatedUser.nom,
+    prenom:           updatedUser.prenom,
+    role:             updatedUser.role,
+    metiers:          updatedUser.metiers          || [],
+    telephoneContact: updatedUser.telephoneContact || null,
+    emailContact:     updatedUser.emailContact     || null,
+    siteWeb:          updatedUser.siteWeb          || null,
+    reseauxSociaux:   updatedUser.reseauxSociaux   || {},
+    avatar:           updatedUser.avatar           || null,
+    isActive:         updatedUser.isActive,
   });
 });
+
+// =============================================
+// MOT DE PASSE
+// =============================================
 
 // @desc    Forgot password
 // @route   POST /api/users/forgot-password
@@ -161,7 +181,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
       subject: "🔐 Réinitialisation de votre mot de passe",
       html: generateResetEmail({
         prenom: user.prenom,
-        nom: user.nom,
+        nom:    user.nom,
         resetUrl,
       }),
     });
@@ -170,7 +190,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
       message: "Si cet email existe, un lien de réinitialisation a été envoyé.",
     });
   } catch (error) {
-    user.resetPasswordToken = null;
+    user.resetPasswordToken  = null;
     user.resetPasswordExpire = null;
     await user.save({ validateBeforeSave: false });
 
@@ -189,7 +209,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     .digest("hex");
 
   const user = await User.findOne({
-    resetPasswordToken: hashedToken,
+    resetPasswordToken:  hashedToken,
     resetPasswordExpire: { $gt: Date.now() },
   });
 
@@ -198,8 +218,8 @@ const resetPassword = asyncHandler(async (req, res) => {
     throw new Error("Token invalide ou expiré");
   }
 
-  user.password = req.body.password;
-  user.resetPasswordToken = null;
+  user.password            = req.body.password;
+  user.resetPasswordToken  = null;
   user.resetPasswordExpire = null;
   await user.save();
 
@@ -210,22 +230,60 @@ const resetPassword = asyncHandler(async (req, res) => {
 // GÉOLOCALISATION
 // =============================================
 
-// @desc    Get all active prestataires positions
-// @route   GET /api/users/prestataires/positions
+// @desc    Tous les prestataires trackés (public — pour la landing)
+// @route   GET /api/users/prestataires/positions/public
 // @access  Public
-const getPrestatairesPositions = asyncHandler(async (req, res) => {
+const getPrestatairesPositionsPublic = asyncHandler(async (req, res) => {
   const prestataires = await User.find({
-    role: "prestataire",
-    isActive: true,
+    role:      "prestataire",
+    isActive:  true,
     isTracked: true,
-  }).select("prenom nom location isTracked metier note nbAvis avatar");
+  })
+    .select("prenom nom location metiers telephoneContact avatar")
+    .populate("metiers", "nom icone");
 
   res.json(prestataires);
 });
 
-// @desc    Update own location
+// @desc    Prestataires dans le rayon de l'user connecté
+// @route   GET /api/users/prestataires/positions
+// @access  Private
+const getPrestatairesPositions = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("Utilisateur non trouvé");
+  }
+
+  // Si l'user n'a pas encore partagé sa position on retourne tableau vide
+  const [lng, lat] = user.location?.coordinates || [0, 0];
+  if (lng === 0 && lat === 0) {
+    return res.json([]);
+  }
+
+  const rayonKm = user.rayonRecherche || 50;
+
+  const prestataires = await User.find({
+    role:      "prestataire",
+    isActive:  true,
+    isTracked: true,
+    location: {
+      $nearSphere: {
+        $geometry: { type: "Point", coordinates: [lng, lat] },
+        $maxDistance: rayonKm * 1000, // MongoDB attend des mètres
+      },
+    },
+  })
+    .select("prenom nom location isTracked metiers telephoneContact emailContact avatar")
+    .populate("metiers", "nom icone");
+
+  res.json(prestataires);
+});
+
+// @desc    Mettre à jour sa position (tous rôles)
 // @route   PUT /api/users/location
-// @access  Private/Prestataire
+// @access  Private
 const updateLocation = asyncHandler(async (req, res) => {
   const { longitude, latitude } = req.body;
 
@@ -238,24 +296,44 @@ const updateLocation = asyncHandler(async (req, res) => {
     req.user._id,
     {
       location: {
-        type: "Point",
+        type:        "Point",
         coordinates: [longitude, latitude],
-        updatedAt: new Date(),
+        updatedAt:   new Date(),
       },
       isTracked: true,
     },
     { new: true },
-  ).select("prenom nom location isTracked");
+  ).select("prenom nom location isTracked rayonRecherche");
 
   res.json(user);
 });
 
-// @desc    Stop sharing location
+// @desc    Arrêter le partage de position (tous rôles)
 // @route   PUT /api/users/location/stop
-// @access  Private/Prestataire
+// @access  Private
 const stopTracking = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(req.user._id, { isTracked: false });
   res.json({ message: "Partage de position désactivé" });
+});
+
+// @desc    Mettre à jour le rayon de recherche (user/admin)
+// @route   PUT /api/users/rayon
+// @access  Private
+const updateRayon = asyncHandler(async (req, res) => {
+  const { rayon } = req.body;
+
+  if (!rayon || rayon < 1 || rayon > 500) {
+    res.status(400);
+    throw new Error("Le rayon doit être compris entre 1 et 500 km");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { rayonRecherche: rayon },
+    { new: true },
+  ).select("rayonRecherche");
+
+  res.json({ rayonRecherche: user.rayonRecherche });
 });
 
 // =============================================
@@ -268,7 +346,6 @@ const stopTracking = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { email, password, nom, prenom, role } = req.body;
 
-  // Seuls user et prestataire peuvent s'inscrire librement
   const allowedRoles = ["user", "prestataire"];
   const userRole = allowedRoles.includes(role) ? role : "user";
 
@@ -286,12 +363,11 @@ const registerUser = asyncHandler(async (req, res) => {
     role: userRole,
   });
 
-  // Email de bienvenue
   try {
     await sendEmail({
-      email: user.email,
+      email:   user.email,
       subject: "✦ Bienvenue sur Hopela !",
-      html: generateWelcomeEmail({
+      html:    generateWelcomeEmail({
         nom:      user.nom,
         prenom:   user.prenom,
         email:    user.email,
@@ -306,17 +382,17 @@ const registerUser = asyncHandler(async (req, res) => {
   generateToken(res, user._id);
 
   res.status(201).json({
-    _id:            user._id,
-    email:          user.email,
-    nom:            user.nom,
-    prenom:         user.prenom,
-    role:           user.role,
-    metier:         user.metier         || null,
-    note:           user.note           || null,
-    nbAvis:         user.nbAvis         || 0,
-    siteWeb:        user.siteWeb        || null,
-    reseauxSociaux: user.reseauxSociaux || {},
-    isActive:       user.isActive,
+    _id:              user._id,
+    email:            user.email,
+    nom:              user.nom,
+    prenom:           user.prenom,
+    role:             user.role,
+    metiers:          user.metiers          || [],
+    telephoneContact: user.telephoneContact || null,
+    emailContact:     user.emailContact     || null,
+    siteWeb:          user.siteWeb          || null,
+    reseauxSociaux:   user.reseauxSociaux   || {},
+    isActive:         user.isActive,
   });
 });
 
@@ -331,7 +407,6 @@ const createUser = asyncHandler(async (req, res) => {
   const { email, password, nom, prenom, role } = req.body;
 
   const userExists = await User.findOne({ email });
-
   if (userExists) {
     res.status(400);
     throw new Error("Cet email est déjà utilisé");
@@ -342,20 +417,20 @@ const createUser = asyncHandler(async (req, res) => {
     password,
     nom,
     prenom,
-    role: role || "user",
+    role:      role || "user",
     createdBy: req.user._id,
   });
 
   try {
     await sendEmail({
-      email: user.email,
+      email:   user.email,
       subject: "✦ Votre compte a été créé",
-      html: generateWelcomeEmail({
-        nom: user.nom,
-        prenom: user.prenom,
-        email: user.email,
+      html:    generateWelcomeEmail({
+        nom:      user.nom,
+        prenom:   user.prenom,
+        email:    user.email,
         password,
-        role: user.role,
+        role:     user.role,
       }),
     });
   } catch (error) {
@@ -363,11 +438,11 @@ const createUser = asyncHandler(async (req, res) => {
   }
 
   res.status(201).json({
-    _id: user._id,
-    email: user.email,
-    nom: user.nom,
-    prenom: user.prenom,
-    role: user.role,
+    _id:      user._id,
+    email:    user.email,
+    nom:      user.nom,
+    prenom:   user.prenom,
+    role:     user.role,
     isActive: user.isActive,
   });
 });
@@ -379,6 +454,7 @@ const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({})
     .select("-password")
     .populate("createdBy", "nom prenom email")
+    .populate("metiers", "nom description icone")
     .sort({ createdAt: -1 });
 
   res.json(users);
@@ -390,7 +466,8 @@ const getUsers = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id)
     .select("-password")
-    .populate("createdBy", "nom prenom email");
+    .populate("createdBy", "nom prenom email")
+    .populate("metiers", "nom description icone");
 
   if (!user) {
     res.status(404);
@@ -400,7 +477,7 @@ const getUserById = asyncHandler(async (req, res) => {
   res.json(user);
 });
 
-// @desc    Update user
+// @desc    Update user (Admin)
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUser = asyncHandler(async (req, res) => {
@@ -411,10 +488,10 @@ const updateUser = asyncHandler(async (req, res) => {
     throw new Error("Utilisateur non trouvé");
   }
 
-  user.nom = req.body.nom || user.nom;
-  user.prenom = req.body.prenom || user.prenom;
-  user.email = req.body.email || user.email;
-  user.role = req.body.role || user.role;
+  user.nom      = req.body.nom      || user.nom;
+  user.prenom   = req.body.prenom   || user.prenom;
+  user.email    = req.body.email    || user.email;
+  user.role     = req.body.role     || user.role;
   user.isActive = req.body.isActive ?? user.isActive;
 
   if (req.body.password) {
@@ -424,11 +501,11 @@ const updateUser = asyncHandler(async (req, res) => {
   const updatedUser = await user.save();
 
   res.json({
-    _id: updatedUser._id,
-    email: updatedUser.email,
-    nom: updatedUser.nom,
-    prenom: updatedUser.prenom,
-    role: updatedUser.role,
+    _id:      updatedUser._id,
+    email:    updatedUser.email,
+    nom:      updatedUser.nom,
+    prenom:   updatedUser.prenom,
+    role:     updatedUser.role,
     isActive: updatedUser.isActive,
   });
 });
@@ -472,9 +549,9 @@ const toggleUserActive = asyncHandler(async (req, res) => {
   await user.save();
 
   res.json({
-    _id: user._id,
+    _id:      user._id,
     isActive: user.isActive,
-    message: user.isActive ? "Utilisateur activé" : "Utilisateur désactivé",
+    message:  user.isActive ? "Utilisateur activé" : "Utilisateur désactivé",
   });
 });
 
@@ -486,9 +563,11 @@ export {
   updateUserProfile,
   forgotPassword,
   resetPassword,
+  getPrestatairesPositionsPublic,
   getPrestatairesPositions,
   updateLocation,
   stopTracking,
+  updateRayon,
   createUser,
   getUsers,
   getUserById,
