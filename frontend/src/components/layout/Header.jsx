@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./Header.css";
-
+import logo from "../../logo.jpg";
 const NAV_LINKS = [
   { label: "Services",          to: "/services" },
   { label: "Comment ça marche", to: "/comment-ca-marche" },
@@ -31,10 +31,16 @@ const Header = () => {
   return (
     <header className={"lp-header" + (scrolled ? " scrolled" : "")}>
       {/* Logo */}
-      <Link to="/" className="lp-logo">
+      {/* <Link to="/" className="lp-logo">
         <div className="lp-logo-mark">H</div>
         <span className="lp-logo-name">Hopela</span>
-      </Link>
+      </Link> */}
+      <Link to="/" className="lp-logo">
+  <div className="lp-logo-mark">
+    <img src={logo} alt="Hopela Logo" className="lp-logo-img" />
+  </div>
+  <span className="lp-logo-name">Hopela</span>
+</Link>
 
       {/* Nav desktop */}
       <nav className="lp-nav">

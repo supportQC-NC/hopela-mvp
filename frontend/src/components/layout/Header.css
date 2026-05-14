@@ -9,8 +9,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 48px;
-  background: rgba(10, 8, 4, 0.75);
+  background: rgba(46, 43, 36, 0.75);
   backdrop-filter: blur(24px);
+  
   -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(201, 168, 76, 0.12);
   transition: background 0.3s, border-color 0.3s;
@@ -18,7 +19,7 @@
 
 .lp-header.scrolled {
   background: rgba(10, 8, 4, 0.97);
-  border-bottom-color: rgba(201, 168, 76, 0.28);
+  border-bottom-color: rgba(104, 97, 78, 0.28);
 }
 
 /* ── Logo ── */
@@ -40,11 +41,12 @@
   font-family: 'Cormorant Garamond', serif;
   font-weight: 700;
   font-size: 19px;
-  color: #0a0804;
+  color: #c7c3bd;
   flex-shrink: 0;
   box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.35),
               0 4px 16px rgba(201, 168, 76, 0.18);
   transition: box-shadow 0.25s;
+
 }
 
 .lp-logo:hover .lp-logo-mark {
@@ -56,8 +58,24 @@
   font-family: 'Cormorant Garamond', serif;
   font-weight: 700;
   font-size: 24px;
-  color: #f5f0e8;
+ 
+  color: #c7c3bd;
   letter-spacing: 0.5px;
+}
+.lp-logo-mark {
+  width: 50px;
+  height: 50px;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ── Nav ── */
@@ -69,12 +87,15 @@
 
 .lp-nav a {
   font-size: 13px;
-  font-weight: 500;
-  color: rgba(245, 240, 232, 0.5);
+  font-weight: 900;
+  color: #c7c3bd;
   text-decoration: none;
   letter-spacing: 0.3px;
   transition: color 0.2s;
   position: relative;
+
+    text-transform: uppercase;
+    
 }
 
 .lp-nav a::after {
@@ -88,10 +109,11 @@
   transform: scaleX(0);
   transition: transform 0.25s;
   transform-origin: left;
+
 }
 
 .lp-nav a:hover {
-  color: #c9a84c;
+ color: #c9a84c;
 }
 
 .lp-nav a:hover::after {
