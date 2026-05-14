@@ -12,19 +12,19 @@ import "./AdminDashboard.css";
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const AdminDashboard = () => {
-  const [activeNav,      setActiveNav]      = useState("overview");
-  const [users,          setUsers]          = useState([]);
-  const [metiers,        setMetiers]        = useState([]);
+  const [activeNav,        setActiveNav]        = useState("overview");
+  const [users,            setUsers]            = useState([]);
+  const [metiers,          setMetiers]          = useState([]);
   const [messagesNouveaux, setMessagesNouveaux] = useState(0);
-  const [loading,        setLoading]        = useState(false);
+  const [loading,          setLoading]          = useState(false);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [usersRes, metiersRes, contactRes] = await Promise.all([
-        fetch(`${API_URL}/api/users`,             { credentials: "include" }),
-        fetch(`${API_URL}/api/metiers/admin/all`, { credentials: "include" }),
-        fetch(`${API_URL}/api/contact?statut=nouveau`, { credentials: "include" }),
+        fetch(`${API_URL}/api/users`,                    { credentials: "include" }),
+        fetch(`${API_URL}/api/metiers/admin/all`,        { credentials: "include" }),
+        fetch(`${API_URL}/api/contact?statut=nouveau`,   { credentials: "include" }),
       ]);
       const [usersData, metiersData, contactData] = await Promise.all([
         usersRes.json(), metiersRes.json(), contactRes.json(),
@@ -38,13 +38,11 @@ const AdminDashboard = () => {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // Prestataires en attente de validation
+  // Badges sidebar
   const prestaEnAttente = users.filter((u) => u.role === "prestataire" && !u.isValidated).length;
-
   const counts = {
-    users:   prestaEnAttente,         // badge rouge = prestataires en attente
-    metiers: metiers.length,
-    contact: messagesNouveaux,        // badge jaune = messages non lus
+    users:   prestaEnAttente,   // badge = prestataires en attente de validation
+    contact: messagesNouveaux,  // badge = messages non lus
   };
 
   return (
@@ -59,7 +57,8 @@ const AdminDashboard = () => {
 
         <div className="ad-content">
           {loading && activeNav !== "map" && activeNav !== "contact" ? (
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:200, color:"rgba(245,240,232,0.25)", fontSize:14 }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"center",
+              height:200, color:"rgba(245,240,232,0.25)", fontSize:14 }}>
               Chargement…
             </div>
           ) : (

@@ -143,12 +143,26 @@ const locationSlice = createSlice({
   reducers: {
     // Socket temps réel
     updatePrestairePosition: (state, action) => {
-      const { userId, longitude, latitude } = action.payload;
+      const { userId, longitude, latitude, prestaireData } = action.payload;
       const idx = state.prestataires.findIndex((p) => p._id === userId);
       if (idx !== -1) {
+        // Prestataire déjà dans le tableau — mise à jour de la position
         state.prestataires[idx].location.coordinates = [longitude, latitude];
         state.prestataires[idx].location.updatedAt   = new Date().toISOString();
+        state.prestataires[idx].isTracked = true;
+      } else if (prestaireData) {
+        // Prestataire absent (était hors ligne) — on l'ajoute avec ses données
+        state.prestataires.push({
+          ...prestaireData,
+          location: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+            updatedAt: new Date().toISOString(),
+          },
+          isTracked: true,
+        });
       }
+      // Si pas de prestaireData et absent : le UseSocket va faire un fetch pour récupérer les infos
     },
     removePrestataire: (state, action) => {
       state.prestataires = state.prestataires.filter((p) => p._id !== action.payload.userId);

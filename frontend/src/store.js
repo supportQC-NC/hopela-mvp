@@ -21,4 +21,8 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== "production",
 });
 
+// Exposer le store sur window pour que UseSocket puisse lire l'état
+// sans créer de dépendance circulaire
+window.__hopela_redux_store__ = store;
+
 export default store;

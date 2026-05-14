@@ -7,16 +7,19 @@ import "./AdminSidebar.css";
 const NAV = [
   { section: "Principal" },
   { icon: "📊", label: "Vue d'ensemble", key: "overview" },
-  { icon: "🗺️", label: "Carte live",      key: "map" },
+  { icon: "🗺️", label: "Carte live",     key: "map" },
   { divider: true },
   { section: "Gestion" },
-  { icon: "👥", label: "Utilisateurs",    key: "users" },
-  { icon: "🔨", label: "Métiers",         key: "metiers" },
+  { icon: "👥", label: "Utilisateurs",   key: "users" },
+  { icon: "🔨", label: "Métiers",        key: "metiers" },
+  { divider: true },
+  { section: "Communication" },
+  { icon: "📬", label: "Messages",       key: "contact" },
 ];
 
 const AdminSidebar = ({ activeNav, setActiveNav, counts = {} }) => {
-  const dispatch  = useDispatch();
-  const navigate  = useNavigate();
+  const dispatch     = useDispatch();
+  const navigate     = useNavigate();
   const { userInfo } = useSelector((s) => s.auth);
 
   const handleLogout = async () => {
@@ -33,12 +36,9 @@ const AdminSidebar = ({ activeNav, setActiveNav, counts = {} }) => {
       </Link>
 
       {NAV.map((item, i) => {
-        if (item.section) return (
-          <div key={i} className="as-section-label">{item.section}</div>
-        );
-        if (item.divider) return (
-          <div key={i} className="as-divider" />
-        );
+        if (item.section) return <div key={i} className="as-section-label">{item.section}</div>;
+        if (item.divider) return <div key={i} className="as-divider" />;
+        const count = counts[item.key];
         return (
           <button
             key={item.key}
@@ -47,8 +47,13 @@ const AdminSidebar = ({ activeNav, setActiveNav, counts = {} }) => {
           >
             <span className="as-nav-icon">{item.icon}</span>
             {item.label}
-            {counts[item.key] !== undefined && (
-              <span className="as-nav-badge">{counts[item.key]}</span>
+            {count > 0 && (
+              <span
+                className="as-nav-badge"
+                style={item.key === "contact" ? { background: "rgba(251,191,36,0.2)", color: "#fbbf24" } : {}}
+              >
+                {count}
+              </span>
             )}
           </button>
         );
