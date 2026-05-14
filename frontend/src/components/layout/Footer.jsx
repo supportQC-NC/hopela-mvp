@@ -75,7 +75,6 @@ const Footer = () => (
       <div className="lp-footer-legal">
         <Link to="/mentions-legales">Mentions légales</Link>
         <Link to="/cgu">CGU</Link>
-        <Link to="/cgv">CGV</Link>
         <Link to="/confidentialite">Confidentialité</Link>
         <Link to="/cookies">Cookies</Link>
       </div>

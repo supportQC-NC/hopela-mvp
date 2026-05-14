@@ -1,246 +1,241 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/components/map/PublicMap.jsx
 import { useEffect, useState, useRef, useCallback } from "react";
-import Map, { Marker, Popup, NavigationControl, useMap } from "react-map-gl/mapbox";
+import Map, { Marker, Popup, NavigationControl, Source, Layer, useMap } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
+import getSocket from "../../services/socketManager";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 const API_URL      = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-// ── Styles de carte disponibles ───────────────────────
 const MAP_STYLES = [
-  {
-    id:    "nuit",
-    label: "🌙 Nuit",
-    url:   "mapbox://styles/mapbox/dark-v11",
-    pitch: 45,
-    terrain: false,
-  },
-  {
-    id:    "satellite",
-    label: "🛰️ Satellite",
-    url:   "mapbox://styles/mapbox/satellite-streets-v12",
-    pitch: 60,
-    terrain: true,
-  },
-  {
-    id:    "plan",
-    label: "🗺️ Plan",
-    url:   "mapbox://styles/mapbox/streets-v12",
-    pitch: 0,
-    terrain: false,
-  },
-  {
-    id:    "relief",
-    label: "⛰️ Relief",
-    url:   "mapbox://styles/mapbox/outdoors-v12",
-    pitch: 60,
-    terrain: true,
-  },
+  { id: "nuit",      label: "Nuit",      url: "mapbox://styles/mapbox/dark-v11",             pitch: 45, terrain: false },
+  { id: "satellite", label: "Satellite", url: "mapbox://styles/mapbox/satellite-streets-v12", pitch: 60, terrain: true  },
+  { id: "plan",      label: "Plan",      url: "mapbox://styles/mapbox/streets-v12",           pitch: 0,  terrain: false },
+  { id: "relief",    label: "Relief",    url: "mapbox://styles/mapbox/outdoors-v12",          pitch: 60, terrain: true  },
 ];
 
-// ── Couleurs par métier ───────────────────────────────
 const METIER_COLORS = {
-  "Électricien":    "#f59e0b",
-  "Plombier":       "#3b82f6",
-  "Menuisier":      "#92400e",
-  "Peintre":        "#ec4899",
-  "Jardinier":      "#22c55e",
-  "Climatisation":  "#06b6d4",
-  "Femme de ménage":"#a78bfa",
-  "Maçon":          "#f97316",
-  "Photographe":    "#e11d48",
-  "Carreleur":      "#84cc16",
-  "Garde d'enfants":"#f43f5e",
-  "Informaticien":  "#6366f1",
-  "Coursier":       "#14b8a6",
+  "Electricien": "#f59e0b", "Plombier": "#3b82f6", "Menuisier": "#92400e",
+  "Peintre": "#ec4899", "Jardinier": "#22c55e", "Climatisation": "#06b6d4",
+  "Femme de menage": "#a78bfa", "Macon": "#f97316", "Photographe": "#e11d48",
+  "Carreleur": "#84cc16", "Garde d'enfants": "#f43f5e", "Informaticien": "#6366f1", "Coursier": "#14b8a6",
 };
 const METIER_ICONS = {
-  "Électricien":"⚡","Plombier":"🔧","Menuisier":"🪚","Peintre":"🎨",
-  "Jardinier":"🌿","Climatisation":"❄️","Femme de ménage":"🧹","Maçon":"🧱",
-  "Photographe":"📸","Carreleur":"🔲","Garde d'enfants":"👶","Informaticien":"💻",
-  "Coursier":"🛵",
+  "Electricien": "⚡", "Plombier": "🔧", "Menuisier": "🪚", "Peintre": "🎨",
+  "Jardinier": "🌿", "Climatisation": "❄️", "Femme de menage": "🧹", "Macon": "🧱",
+  "Photographe": "📸", "Carreleur": "🔲", "Garde d'enfants": "👶", "Informaticien": "💻", "Coursier": "🛵",
 };
 const getColor = (nom) => METIER_COLORS[nom] || "#c9a84c";
 const getIcon  = (nom) => METIER_ICONS[nom]  || "📍";
 
-// ── Composant interne pour accéder au contexte Map ────
-const MapEffects = ({ styleId, onLoad }) => {
+const makeCircle = (lng, lat, radiusKm, steps = 64) => {
+  const R = 6371;
+  const coords = [];
+  for (let i = 0; i <= steps; i++) {
+    const angle = (i / steps) * (2 * Math.PI);
+    const dLat  = (radiusKm / R) * (180 / Math.PI);
+    const dLng  = dLat / Math.cos((lat * Math.PI) / 180);
+    coords.push([lng + dLng * Math.sin(angle), lat + dLat * Math.cos(angle)]);
+  }
+  return { type: "Feature", geometry: { type: "Polygon", coordinates: [coords] } };
+};
+
+const MapEffects = ({ styleId }) => {
   const { current: map } = useMap();
 
   const applyEffects = useCallback(() => {
     if (!map) return;
-    const gl = map.getMap(); // instance mapbox-gl native
-
-    // ── Terrain 3D ──
+    const gl = map.getMap();
     const style = MAP_STYLES.find((s) => s.id === styleId);
+
     if (style?.terrain) {
       if (!gl.getSource("mapbox-dem")) {
-        gl.addSource("mapbox-dem", {
-          type: "raster-dem",
-          url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-          tileSize: 512,
-          maxzoom: 14,
-        });
+        gl.addSource("mapbox-dem", { type: "raster-dem", url: "mapbox://mapbox.mapbox-terrain-dem-v1", tileSize: 512, maxzoom: 14 });
       }
       gl.setTerrain({ source: "mapbox-dem", exaggeration: 1.4 });
     } else {
       gl.setTerrain(null);
     }
 
-    // ── Bâtiments 3D (styles vectoriels) ──
     if (styleId !== "satellite" && !gl.getLayer("3d-buildings")) {
       try {
         gl.addLayer({
-          id: "3d-buildings",
-          source: "composite",
-          "source-layer": "building",
-          filter: ["==", "extrude", "true"],
-          type: "fill-extrusion",
-          minzoom: 14,
+          id: "3d-buildings", source: "composite", "source-layer": "building",
+          filter: ["==", "extrude", "true"], type: "fill-extrusion", minzoom: 14,
           paint: {
-            "fill-extrusion-color": styleId === "nuit"
-              ? "#1a1408"
-              : "#d4c5a0",
-            "fill-extrusion-height": [
-              "interpolate", ["linear"], ["zoom"],
-              14, 0, 15, ["get", "height"],
-            ],
-            "fill-extrusion-base": [
-              "interpolate", ["linear"], ["zoom"],
-              14, 0, 15, ["get", "min_height"],
-            ],
+            "fill-extrusion-color": styleId === "nuit" ? "#1a1408" : "#d4c5a0",
+            "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 14, 0, 15, ["get", "height"]],
+            "fill-extrusion-base":   ["interpolate", ["linear"], ["zoom"], 14, 0, 15, ["get", "min_height"]],
             "fill-extrusion-opacity": styleId === "nuit" ? 0.85 : 0.6,
           },
         });
       } catch (_) {}
     }
 
-    // ── Fog atmosphérique ──
     if (styleId === "nuit") {
-      gl.setFog({
-        color:           "rgba(15, 10, 5, 0.8)",
-        "high-color":    "#0a0804",
-        "horizon-blend": 0.08,
-        "space-color":   "#030201",
-        "star-intensity": 0.3,
-        range:           [1, 4],
-      });
+      gl.setFog({ color: "rgba(15,10,5,0.8)", "high-color": "#0a0804", "horizon-blend": 0.08, "space-color": "#030201", "star-intensity": 0.3, range: [1, 4] });
     } else if (styleId === "satellite" || styleId === "relief") {
-      gl.setFog({
-        color:           "rgba(180, 210, 240, 0.6)",
-        "high-color":    "#acd3f0",
-        "horizon-blend": 0.12,
-        "space-color":   "#1a2a4a",
-        "star-intensity": 0.1,
-        range:           [1, 5],
-      });
+      gl.setFog({ color: "rgba(180,210,240,0.6)", "high-color": "#acd3f0", "horizon-blend": 0.12, "space-color": "#1a2a4a", "star-intensity": 0.1, range: [1, 5] });
     } else {
       gl.setFog(null);
     }
-
-    onLoad?.();
-  }, [map, styleId, onLoad]);
+  }, [map, styleId]);
 
   useEffect(() => {
     if (!map) return;
     const gl = map.getMap();
-    if (gl.isStyleLoaded()) {
-      applyEffects();
-    } else {
-      gl.once("style.load", applyEffects);
-    }
-    return () => { try { gl.off("style.load", applyEffects); } catch(_) {} };
+    if (gl.isStyleLoaded()) { applyEffects(); }
+    else { gl.once("style.load", applyEffects); }
+    return () => { try { gl.off("style.load", applyEffects); } catch (_) {} };
   }, [map, styleId, applyEffects]);
 
   return null;
 };
 
-// ── Composant principal ───────────────────────────────
-const PublicMap = () => {
-  const [prestataires, setPrestataires] = useState([]);
-  const [filtreMetier, setFiltreMetier] = useState("Tous");
-  const [selected,     setSelected]     = useState(null);
-  const [styleId,      setStyleId]      = useState("nuit");
-  const [viewState,    setViewState]    = useState({
-    longitude: 166.458,
-    latitude:  -22.272,
-    zoom:      11.5,
-    pitch:     45,
-    bearing:   -10,
+const PublicMap = ({
+  centerPosition   = null,
+  rayon            = null,
+  activeLabel      = null,
+  onRayonChange    = null,
+  onSaveRayon      = null,
+  rayonSaving      = false,
+  savedLocations   = [],
+  activeSource     = "gps",
+  onSelectSource   = null,
+  prestatairesUser = null,
+}) => {
+  // isUserMode capturé une seule fois dans un ref — ne provoque jamais de re-render
+  const isUserModeRef = useRef(prestatairesUser !== null || onSelectSource !== null);
+  const isUserMode    = isUserModeRef.current;
+
+  const [prestatairesLocal, setPrestatairesLocal] = useState([]);
+  const [filtreMetier,  setFiltreMetier]  = useState("Tous");
+  const [selected,      setSelected]      = useState(null);
+  const [styleId,       setStyleId]       = useState("nuit");
+  const [showRayonCtrl, setShowRayonCtrl] = useState(false);
+  const [showSrcPicker, setShowSrcPicker] = useState(false);
+  const [rayonLocal,    setRayonLocal]    = useState(rayon != null ? rayon : 10);
+  const [viewState,     setViewState]     = useState({
+    longitude: 166.458, latitude: -22.272, zoom: 11.5, pitch: 45, bearing: -10,
   });
 
-  const socketRef = useRef(null);
-  const mapRef    = useRef(null);
-
+  const mapRef       = useRef(null);
   const currentStyle = MAP_STYLES.find((s) => s.id === styleId);
+  const prestataires = isUserMode ? (prestatairesUser || []) : prestatairesLocal;
 
-  // ── Fetch public ──────────────────────────────────
+  // Sync rayon prop -> local
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/users/prestataires/positions/public`);
-        if (!res.ok) return;
-        setPrestataires(await res.json());
-      } catch (e) { console.error("PublicMap:", e.message); }
-    })();
+    if (rayon != null) setRayonLocal(rayon);
+  }, [rayon]);
+
+  // Centrer la carte quand la position active change
+  useEffect(() => {
+    if (!centerPosition) return;
+    setViewState((v) => ({
+      ...v,
+      longitude: centerPosition.longitude,
+      latitude:  centerPosition.latitude,
+      zoom: Math.max(v.zoom, 11),
+    }));
+  }, [centerPosition && centerPosition.longitude, centerPosition && centerPosition.latitude]);
+
+  // Fetch public (mode landing, une seule fois)
+  useEffect(() => {
+    if (isUserMode) return;
+    fetch(`${API_URL}/api/users/prestataires/positions/public`)
+      .then((r) => r.ok ? r.json() : [])
+      .then(setPrestatairesLocal)
+      .catch((e) => console.error("PublicMap fetch:", e.message));
   }, []);
 
-  // ── Socket.io ─────────────────────────────────────
+  // Socket — utilise TOUJOURS le singleton, jamais io() direct
   useEffect(() => {
-    import("socket.io-client").then(({ io }) => {
-      const socket = io(API_URL, { withCredentials: false });
-      socketRef.current = socket;
-      socket.on("location_updated", ({ userId, longitude, latitude }) => {
-        setPrestataires((prev) => prev.map((p) =>
-          p._id !== userId ? p
+    if (isUserMode) return;
+    const socket = getSocket();
+
+    const onLocationUpdated = ({ userId, longitude, latitude }) => {
+      setPrestatairesLocal((prev) => prev.map((p) =>
+        p._id !== userId ? p
           : { ...p, location: { ...p.location, coordinates: [longitude, latitude] } }
-        ));
-      });
-      socket.on("tracking_stopped", ({ userId }) => {
-        setPrestataires((prev) => prev.filter((p) => p._id !== userId));
-      });
-    });
-    return () => { socketRef.current?.disconnect(); };
+      ));
+    };
+    const onTrackingStopped = ({ userId }) => {
+      setPrestatairesLocal((prev) => prev.filter((p) => p._id !== userId));
+    };
+
+    socket.on("location_updated", onLocationUpdated);
+    socket.on("tracking_stopped", onTrackingStopped);
+
+    return () => {
+      socket.off("location_updated", onLocationUpdated);
+      socket.off("tracking_stopped", onTrackingStopped);
+    };
   }, []);
 
-  // ── Changement de style ───────────────────────────
-  const handleStyleChange = (newStyleId) => {
-    const s = MAP_STYLES.find((m) => m.id === newStyleId);
-    setStyleId(newStyleId);
+  const handleStyleChange = (newId) => {
+    const s = MAP_STYLES.find((m) => m.id === newId);
+    setStyleId(newId);
     setSelected(null);
-    setViewState((v) => ({
-      ...v,
-      pitch:   s.pitch,
-      bearing: newStyleId === "satellite" ? -15 : -10,
-    }));
+    setViewState((v) => ({ ...v, pitch: s.pitch, bearing: newId === "satellite" ? -15 : -10 }));
   };
 
-  // ── Recentrer ─────────────────────────────────────
   const recenter = () => {
-    setViewState((v) => ({
-      ...v,
-      longitude: 166.458,
-      latitude:  -22.272,
-      zoom:      11.5,
-      pitch:     currentStyle.pitch,
-    }));
+    const pos = centerPosition || { longitude: 166.458, latitude: -22.272 };
+    setViewState((v) => ({ ...v, longitude: pos.longitude, latitude: pos.latitude, zoom: 12, pitch: currentStyle.pitch }));
   };
 
-  // ── Données filtrées ──────────────────────────────
-  const metiersDispos = ["Tous", ...new Set(
-    prestataires.map((p) => p.metiers?.[0]?.nom).filter(Boolean)
-  )];
-
-  const prestatairesFiltres = filtreMetier === "Tous"
+  const metiersDispos = ["Tous", ...new Set(prestataires.map((p) => p.metiers?.[0]?.nom).filter(Boolean))];
+  const filtres = filtreMetier === "Tous"
     ? prestataires
     : prestataires.filter((p) => p.metiers?.[0]?.nom === filtreMetier);
+
+  const circleData = centerPosition && rayonLocal
+    ? makeCircle(centerPosition.longitude, centerPosition.latitude, rayonLocal)
+    : null;
+
+  const rayonPct = Math.round(((rayonLocal - 1) / 99) * 100);
 
   return (
     <div style={s.wrapper}>
 
-      {/* ══ Barre filtres ══ */}
+      {/* Barre top */}
       <div style={s.filterBar}>
 
+        {/* Selecteur source (mode user) */}
+        {isUserMode && (
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <button
+              style={s.sourceBtn}
+              onClick={(e) => { e.stopPropagation(); setShowSrcPicker((x) => !x); setShowRayonCtrl(false); }}
+            >
+              {activeLabel || "Position"} ▾
+            </button>
+            {showSrcPicker && (
+              <div style={s.dropdown}>
+                <div style={s.dropdownTitle}>Source de recherche</div>
+                <button
+                  style={{ ...s.dropdownItem, ...(activeSource === "gps" ? s.dropdownItemActive : {}) }}
+                  onClick={() => { onSelectSource && onSelectSource("gps"); setShowSrcPicker(false); }}
+                >
+                  📍 Ma position GPS
+                </button>
+                {savedLocations.map((loc) => (
+                  <button
+                    key={loc._id}
+                    style={{ ...s.dropdownItem, ...(activeSource === ("saved:" + loc._id) ? s.dropdownItemActive : {}) }}
+                    onClick={() => { onSelectSource && onSelectSource("saved:" + loc._id); setShowSrcPicker(false); }}
+                  >
+                    {loc.isDefault ? "★ " : "📍 "}{loc.label}
+                    {loc.adresse && <span style={{ display: "block", fontSize: 10, opacity: 0.5, marginTop: 2 }}>{loc.adresse}</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Live dot */}
         <div style={s.filterLeft}>
           <span style={s.liveChip}>
             <span style={s.liveDot} />
@@ -248,7 +243,7 @@ const PublicMap = () => {
           </span>
         </div>
 
-        {/* Filtres métiers */}
+        {/* Filtres metiers */}
         <div style={s.filterChips}>
           {metiersDispos.map((m) => {
             const active = filtreMetier === m;
@@ -261,19 +256,34 @@ const PublicMap = () => {
                   ...s.chip,
                   background: active ? color : "rgba(255,255,255,0.04)",
                   color:      active ? "#0a0804" : "rgba(245,240,232,0.55)",
-                  border:     `1px solid ${active ? color : "rgba(201,168,76,0.14)"}`,
+                  border:     "1px solid " + (active ? color : "rgba(201,168,76,0.14)"),
                   fontWeight: active ? 700 : 400,
-                  boxShadow:  active ? `0 2px 10px ${color}55` : "none",
                 }}
               >
-                {m !== "Tous" && <span style={{ marginRight: 4 }}>{getIcon(m)}</span>}
+                {m !== "Tous" && <span style={{ marginRight: 3 }}>{getIcon(m)}</span>}
                 {m}
               </button>
             );
           })}
         </div>
 
-        {/* Sélecteur de style */}
+        {/* Bouton rayon (mode user) */}
+        {isUserMode && (
+          <button
+            style={{
+              ...s.styleBtn,
+              background: showRayonCtrl ? "rgba(201,168,76,0.2)" : "rgba(255,255,255,0.04)",
+              color: "#c9a84c",
+              border: "1px solid rgba(201,168,76,0.25)",
+              flexShrink: 0,
+            }}
+            onClick={(e) => { e.stopPropagation(); setShowRayonCtrl((x) => !x); setShowSrcPicker(false); }}
+          >
+            {rayonLocal} km
+          </button>
+        )}
+
+        {/* Styles carte */}
         <div style={s.styleSelector}>
           {MAP_STYLES.map((ms) => (
             <button
@@ -281,24 +291,52 @@ const PublicMap = () => {
               onClick={() => handleStyleChange(ms.id)}
               style={{
                 ...s.styleBtn,
-                background: styleId === ms.id
-                  ? "rgba(201,168,76,0.2)"
-                  : "rgba(255,255,255,0.04)",
-                color: styleId === ms.id
-                  ? "#c9a84c"
-                  : "rgba(245,240,232,0.45)",
-                border: `1px solid ${styleId === ms.id ? "rgba(201,168,76,0.5)" : "rgba(201,168,76,0.1)"}`,
+                background: styleId === ms.id ? "rgba(201,168,76,0.2)" : "rgba(255,255,255,0.04)",
+                color:      styleId === ms.id ? "#c9a84c" : "rgba(245,240,232,0.45)",
+                border:     "1px solid " + (styleId === ms.id ? "rgba(201,168,76,0.5)" : "rgba(201,168,76,0.1)"),
               }}
             >
               {ms.label}
             </button>
           ))}
         </div>
-
       </div>
 
-      {/* ══ Carte ══ */}
-      <div style={s.mapContainer}>
+      {/* Panneau rayon slide-down (mode user) */}
+      {isUserMode && showRayonCtrl && (
+        <div style={s.rayonPanel}>
+          <div style={s.rayonPanelRow}>
+            <span style={s.rayonPanelLabel}>Rayon de recherche</span>
+            <span style={s.rayonPanelValue}>{rayonLocal} km</span>
+          </div>
+          <input
+            type="range" min={1} max={100} value={rayonLocal}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setRayonLocal(v);
+              if (onRayonChange) onRayonChange(v);
+            }}
+            style={{
+              width: "100%", height: 4, borderRadius: 2, outline: "none", cursor: "pointer",
+              WebkitAppearance: "none", appearance: "none",
+              background: "linear-gradient(to right, #c9a84c " + rayonPct + "%, rgba(201,168,76,0.15) " + rayonPct + "%)",
+            }}
+          />
+          <button
+            style={s.rayonSaveBtn}
+            disabled={rayonSaving}
+            onClick={() => { if (onSaveRayon) onSaveRayon(); setShowRayonCtrl(false); }}
+          >
+            {rayonSaving ? "Enregistrement..." : "Sauvegarder ce rayon"}
+          </button>
+        </div>
+      )}
+
+      {/* Carte */}
+      <div
+        style={s.mapContainer}
+        onClick={() => { setShowSrcPicker(false); setShowRayonCtrl(false); }}
+      >
         <Map
           ref={mapRef}
           id="publicMap"
@@ -310,30 +348,57 @@ const PublicMap = () => {
           onClick={() => setSelected(null)}
           antialias
           maxPitch={85}
-          fog={styleId === "nuit" ? {
-            color:           "rgba(15,10,5,0.8)",
-            "high-color":    "#0a0804",
-            "horizon-blend": 0.08,
-            "space-color":   "#030201",
-            "star-intensity": 0.3,
-            range:           [1, 4],
-          } : undefined}
         >
-          {/* Effets terrain + bâtiments via composant interne */}
           <MapEffects styleId={styleId} />
-
-          {/* Contrôles navigation */}
           <NavigationControl position="bottom-right" visualizePitch />
 
-          {/* Marqueurs */}
-          {prestatairesFiltres.map((p) => {
-            const [lng, lat] = p.location?.coordinates || [];
-            if (!lng || !lat) return null;
+          {/* Cercle rayon */}
+          {circleData && (
+            <>
+              <Source id="rayon-fill" type="geojson" data={circleData}>
+                <Layer id="rayon-fill-layer" type="fill" paint={{ "fill-color": "#c9a84c", "fill-opacity": 0.06 }} />
+              </Source>
+              <Source id="rayon-border" type="geojson" data={circleData}>
+                <Layer id="rayon-border-layer" type="line" paint={{ "line-color": "#c9a84c", "line-width": 1.5, "line-opacity": 0.5, "line-dasharray": [4, 3] }} />
+              </Source>
+            </>
+          )}
 
-            const metierNom = p.metiers?.[0]?.nom || "Prestataire";
+          {/* Marqueur position active (bleu) */}
+          {centerPosition && (
+            <Marker longitude={centerPosition.longitude} latitude={centerPosition.latitude} anchor="center">
+              <div style={s.userMarker}>
+                <div style={s.userMarkerInner} />
+                <div style={s.userMarkerPulse} />
+              </div>
+            </Marker>
+          )}
+
+          {/* Marqueurs adresses enregistrees */}
+          {isUserMode && savedLocations.map((loc) => (
+            <Marker key={loc._id} longitude={loc.longitude} latitude={loc.latitude} anchor="center">
+              <div
+                style={{
+                  ...s.savedLocMarker,
+                  opacity:   activeSource === ("saved:" + loc._id) ? 1 : 0.45,
+                  transform: activeSource === ("saved:" + loc._id) ? "scale(1.15)" : "scale(1)",
+                }}
+                title={loc.label}
+                onClick={(e) => { e.stopPropagation(); if (onSelectSource) onSelectSource("saved:" + loc._id); }}
+              >
+                📍
+              </div>
+            </Marker>
+          ))}
+
+          {/* Marqueurs prestataires */}
+          {filtres.map((p) => {
+            const [lng, lat] = p.location && p.location.coordinates ? p.location.coordinates : [];
+            if (!lng || !lat) return null;
+            const metierNom = (p.metiers && p.metiers[0] && p.metiers[0].nom) ? p.metiers[0].nom : "Prestataire";
             const color     = getColor(metierNom);
             const icon      = getIcon(metierNom);
-            const isActive  = selected?._id === p._id;
+            const isActive  = selected && selected._id === p._id;
 
             return (
               <Marker
@@ -341,21 +406,16 @@ const PublicMap = () => {
                 longitude={lng}
                 latitude={lat}
                 anchor="center"
-                onClick={(e) => {
-                  e.originalEvent.stopPropagation();
-                  setSelected(isActive ? null : p);
-                }}
+                onClick={(e) => { e.originalEvent.stopPropagation(); setSelected(isActive ? null : p); }}
               >
                 <div
                   style={{
                     ...s.marker,
                     background: color,
-                    boxShadow: isActive
-                      ? `0 0 0 3px ${color}88, 0 4px 20px ${color}99`
-                      : `0 2px 14px ${color}66`,
-                    transform: isActive ? "scale(1.25)" : "scale(1)",
+                    boxShadow:  isActive ? "0 0 0 3px " + color + "88, 0 4px 20px " + color + "99" : "0 2px 14px " + color + "66",
+                    transform:  isActive ? "scale(1.25)" : "scale(1)",
                   }}
-                  title={`${p.prenom} ${p.nom} — ${metierNom}`}
+                  title={p.prenom + " " + p.nom + " — " + metierNom}
                 >
                   <span style={{ fontSize: 15 }}>{icon}</span>
                   <div style={{ ...s.pulse, borderColor: color + "55" }} />
@@ -365,32 +425,28 @@ const PublicMap = () => {
           })}
 
           {/* Popup */}
-          {selected && (() => {
-            const metierNom = selected.metiers?.[0]?.nom || "Prestataire";
+          {selected && (function() {
+            const metierNom = (selected.metiers && selected.metiers[0] && selected.metiers[0].nom) ? selected.metiers[0].nom : "Prestataire";
             const color     = getColor(metierNom);
             return (
               <Popup
                 longitude={selected.location.coordinates[0]}
                 latitude={selected.location.coordinates[1]}
-                anchor="bottom"
-                offset={24}
-                closeOnClick={false}
+                anchor="bottom" offset={24} closeOnClick={false}
                 onClose={() => setSelected(null)}
               >
                 <div style={s.popup}>
-                  <div style={{ ...s.popupAvatar, background: color }}>
-                    {getIcon(metierNom)}
-                  </div>
+                  <div style={{ ...s.popupAvatar, background: color }}>{getIcon(metierNom)}</div>
                   <div>
                     <div style={s.popupName}>{selected.prenom} {selected.nom}</div>
                     <div style={{ ...s.popupMetier, color }}>{metierNom}</div>
                     {selected.telephoneContact && (
-                      <a href={`tel:${selected.telephoneContact}`} style={s.popupContact}>
+                      <a href={"tel:" + selected.telephoneContact} style={s.popupContact}>
                         📞 {selected.telephoneContact}
                       </a>
                     )}
                     {selected.emailContact && (
-                      <a href={`mailto:${selected.emailContact}`} style={s.popupContact}>
+                      <a href={"mailto:" + selected.emailContact} style={s.popupContact}>
                         ✉️ {selected.emailContact}
                       </a>
                     )}
@@ -401,152 +457,51 @@ const PublicMap = () => {
           })()}
         </Map>
 
-        {/* Bouton recentrer */}
-        <button onClick={recenter} style={s.recenterBtn} title="Recentrer sur Nouméa">
-          🎯 Recentrer
-        </button>
+        <button onClick={recenter} style={s.recenterBtn}>Recentrer</button>
       </div>
     </div>
   );
 };
 
-// ── Styles ────────────────────────────────────────────
 const s = {
-  wrapper: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-    height: "100%",
-    background: "#0a0804",
-  },
-  filterBar: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "10px 14px",
-    background: "rgba(10,8,4,0.96)",
-    borderBottom: "1px solid rgba(201,168,76,0.1)",
-    flexWrap: "wrap",
-    flexShrink: 0,
-  },
-  filterLeft: { flexShrink: 0 },
-  liveChip: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
-    fontSize: 12,
-    color: "rgba(245,240,232,0.45)",
-    letterSpacing: "0.2px",
-    whiteSpace: "nowrap",
-  },
-  liveDot: {
-    width: 7, height: 7, borderRadius: "50%",
-    background: "#4caf6e",
-    display: "inline-block",
-    animation: "pulse-dot 1.8s ease-in-out infinite",
-  },
-  filterChips: {
-    display: "flex", gap: 5, flexWrap: "wrap", flex: 1,
-  },
-  chip: {
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 11,
-    padding: "4px 11px",
-    borderRadius: 100,
-    cursor: "pointer",
-    transition: "all 0.18s",
-    whiteSpace: "nowrap",
-    lineHeight: 1.5,
-  },
-  styleSelector: {
-    display: "flex", gap: 4, flexShrink: 0,
-  },
-  styleBtn: {
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 11,
-    padding: "4px 11px",
-    borderRadius: 8,
-    cursor: "pointer",
-    transition: "all 0.18s",
-    whiteSpace: "nowrap",
-    lineHeight: 1.5,
-  },
-  mapContainer: {
-    flex: 1,
-    minHeight: 0,
-    position: "relative",
-    width: "100%",
-  },
-  marker: {
-    width: 36, height: 36,
-    borderRadius: "50%",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    cursor: "pointer",
-    position: "relative",
-    transition: "transform 0.2s, box-shadow 0.2s",
-    userSelect: "none",
-    border: "2px solid rgba(255,255,255,0.2)",
-  },
-  pulse: {
-    position: "absolute", inset: -6,
-    borderRadius: "50%",
-    border: "2px solid",
-    animation: "pulse-ring 2.2s ease-out infinite",
-    pointerEvents: "none",
-  },
-  popup: {
-    display: "flex", alignItems: "flex-start",
-    gap: 10, padding: "4px 2px", minWidth: 200,
-  },
-  popupAvatar: {
-    width: 38, height: 38, borderRadius: "50%",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: 18, flexShrink: 0,
-  },
-  popupName: {
-    fontWeight: 700, fontSize: 14, color: "#1a160f", marginBottom: 2,
-  },
-  popupMetier: {
-    fontSize: 12, fontWeight: 600, marginBottom: 5,
-  },
-  popupContact: {
-    display: "block", fontSize: 12, color: "#6b5d4a",
-    marginTop: 3, textDecoration: "none",
-    transition: "color 0.15s",
-  },
-  recenterBtn: {
-    position: "absolute",
-    bottom: 56,
-    right: 10,
-    zIndex: 10,
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 12,
-    fontWeight: 600,
-    color: "#c9a84c",
-    background: "rgba(10,8,4,0.88)",
-    border: "1px solid rgba(201,168,76,0.35)",
-    borderRadius: 8,
-    padding: "7px 14px",
-    cursor: "pointer",
-    backdropFilter: "blur(8px)",
-    transition: "all 0.2s",
-  },
+  wrapper:     { display: "flex", flexDirection: "column", width: "100%", height: "100%", background: "#0a0804" },
+  filterBar:   { display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: "rgba(10,8,4,0.96)", borderBottom: "1px solid rgba(201,168,76,0.1)", flexWrap: "wrap", flexShrink: 0 },
+  filterLeft:  { flexShrink: 0 },
+  liveChip:    { display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: "rgba(245,240,232,0.45)", whiteSpace: "nowrap" },
+  liveDot:     { width: 6, height: 6, borderRadius: "50%", background: "#4caf6e", display: "inline-block", animation: "pulse-dot 1.8s ease-in-out infinite" },
+  filterChips: { display: "flex", gap: 4, flexWrap: "wrap", flex: 1 },
+  chip:        { fontFamily: "'DM Sans',sans-serif", fontSize: 11, padding: "3px 9px", borderRadius: 100, cursor: "pointer", transition: "all 0.18s", whiteSpace: "nowrap", lineHeight: 1.5 },
+  styleSelector: { display: "flex", gap: 3, flexShrink: 0 },
+  styleBtn:    { fontFamily: "'DM Sans',sans-serif", fontSize: 11, padding: "3px 9px", borderRadius: 6, cursor: "pointer", transition: "all 0.18s", whiteSpace: "nowrap", lineHeight: 1.5 },
+  sourceBtn:   { fontFamily: "'DM Sans',sans-serif", fontSize: 11, padding: "4px 10px", borderRadius: 6, background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c", cursor: "pointer", whiteSpace: "nowrap" },
+  dropdown:    { position: "absolute", top: "calc(100% + 6px)", left: 0, zIndex: 500, background: "#120e07", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10, padding: "6px", minWidth: 200, boxShadow: "0 8px 32px rgba(0,0,0,0.6)" },
+  dropdownTitle:      { fontSize: 10, color: "rgba(245,240,232,0.3)", letterSpacing: 1, textTransform: "uppercase", padding: "4px 8px 6px" },
+  dropdownItem:       { display: "block", width: "100%", textAlign: "left", padding: "8px 10px", borderRadius: 6, border: "none", background: "none", fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: "rgba(245,240,232,0.7)", cursor: "pointer", transition: "all 0.15s" },
+  dropdownItemActive: { background: "rgba(201,168,76,0.1)", color: "#c9a84c" },
+  rayonPanel:      { padding: "12px 16px", background: "rgba(10,8,4,0.98)", borderBottom: "1px solid rgba(201,168,76,0.1)", flexShrink: 0 },
+  rayonPanelRow:   { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
+  rayonPanelLabel: { fontSize: 11, color: "rgba(245,240,232,0.4)", textTransform: "uppercase", letterSpacing: 1 },
+  rayonPanelValue: { fontSize: 16, fontWeight: 700, color: "#c9a84c" },
+  rayonSaveBtn:    { marginTop: 10, width: "100%", padding: "8px", borderRadius: 8, border: "none", background: "linear-gradient(135deg,#c9a84c,#e8c97a)", color: "#0a0804", fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+  mapContainer:    { flex: 1, minHeight: 0, position: "relative", width: "100%" },
+  userMarker:      { position: "relative", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" },
+  userMarkerInner: { width: 14, height: 14, borderRadius: "50%", background: "#3b82f6", border: "2px solid #fff", zIndex: 1 },
+  userMarkerPulse: { position: "absolute", inset: -6, borderRadius: "50%", border: "2px solid rgba(59,130,246,0.4)", animation: "pulse-ring 2.2s ease-out infinite" },
+  savedLocMarker:  { fontSize: 20, cursor: "pointer", transition: "all 0.2s", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" },
+  marker:  { width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", position: "relative", transition: "transform 0.2s, box-shadow 0.2s", userSelect: "none", border: "2px solid rgba(255,255,255,0.2)" },
+  pulse:   { position: "absolute", inset: -6, borderRadius: "50%", border: "2px solid", animation: "pulse-ring 2.2s ease-out infinite", pointerEvents: "none" },
+  popup:        { display: "flex", alignItems: "flex-start", gap: 10, padding: "4px 2px", minWidth: 200 },
+  popupAvatar:  { width: 38, height: 38, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 },
+  popupName:    { fontWeight: 700, fontSize: 14, color: "#1a160f", marginBottom: 2 },
+  popupMetier:  { fontSize: 12, fontWeight: 600, marginBottom: 5 },
+  popupContact: { display: "block", fontSize: 12, color: "#6b5d4a", marginTop: 3, textDecoration: "none", transition: "color 0.15s" },
+  recenterBtn:  { position: "absolute", bottom: 56, right: 10, zIndex: 10, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, color: "#c9a84c", background: "rgba(10,8,4,0.88)", border: "1px solid rgba(201,168,76,0.35)", borderRadius: 8, padding: "7px 14px", cursor: "pointer", backdropFilter: "blur(8px)", transition: "all 0.2s" },
 };
 
-// Keyframes
 if (typeof document !== "undefined" && !document.getElementById("map-keyframes")) {
   const el = document.createElement("style");
   el.id = "map-keyframes";
-  el.textContent = `
-    @keyframes pulse-ring {
-      0%   { transform: scale(1);   opacity: 0.7; }
-      100% { transform: scale(2.2); opacity: 0; }
-    }
-    @keyframes pulse-dot {
-      0%, 100% { transform: scale(1);   opacity: 1; }
-      50%       { transform: scale(1.5); opacity: 0.5; }
-    }
-  `;
+  el.textContent = "@keyframes pulse-ring{0%{transform:scale(1);opacity:0.7}100%{transform:scale(2.2);opacity:0}}@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:0.5}}";
   document.head.appendChild(el);
 }
 

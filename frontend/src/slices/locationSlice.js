@@ -1,17 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/slices/locationSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-// ── Charger les prestataires proches (filtrés par rayon en BDD) ───────────────
-export const fetchPrestatairesPositions = createAsyncThunk(
-  "location/fetchPositions",
+// Prestataires publics (landing, sans auth)
+export const fetchPrestatairesPublic = createAsyncThunk(
+  "location/fetchPublic",
   async (_, thunkAPI) => {
     try {
-      const res = await fetch(`${API_URL}/api/users/prestataires/positions`, {
-        credentials: "include", // cookie JWT requis — route protégée
-      });
-      if (!res.ok) throw new Error("Erreur lors du chargement des positions");
+      const res = await fetch(`${API_URL}/api/users/prestataires/positions/public`);
+      if (!res.ok) throw new Error("Erreur fetch public");
       return await res.json();
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
@@ -19,7 +18,27 @@ export const fetchPrestatairesPositions = createAsyncThunk(
   }
 );
 
-// ── Mettre à jour sa propre position (REST) ───────────────────────────────────
+// Prestataires filtrés par rayon (connecté)
+export const fetchPrestatairesPositions = createAsyncThunk(
+  "location/fetchPositions",
+  async ({ lng, lat, rayon } = {}, thunkAPI) => {
+    try {
+      const params = new URLSearchParams();
+      if (lng   != null) params.append("lng",   lng);
+      if (lat   != null) params.append("lat",   lat);
+      if (rayon != null) params.append("rayon", rayon);
+      const res = await fetch(`${API_URL}/api/users/prestataires/positions?${params}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Erreur fetch positions");
+      return await res.json();
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+// Mettre à jour sa position (prestataire, REST backup)
 export const updateMyLocation = createAsyncThunk(
   "location/updateMyLocation",
   async ({ longitude, latitude }, thunkAPI) => {
@@ -30,7 +49,7 @@ export const updateMyLocation = createAsyncThunk(
         credentials: "include",
         body: JSON.stringify({ longitude, latitude }),
       });
-      if (!res.ok) throw new Error("Erreur lors de la mise à jour de la position");
+      if (!res.ok) throw new Error("Erreur update location");
       return await res.json();
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
@@ -38,7 +57,7 @@ export const updateMyLocation = createAsyncThunk(
   }
 );
 
-// ── Arrêter le partage de position (REST) ─────────────────────────────────────
+// Arrêter le partage (prestataire, REST)
 export const stopMyTracking = createAsyncThunk(
   "location/stopMyTracking",
   async (_, thunkAPI) => {
@@ -47,7 +66,7 @@ export const stopMyTracking = createAsyncThunk(
         method: "PUT",
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Erreur lors de l'arrêt du tracking");
+      if (!res.ok) throw new Error("Erreur stop tracking");
       return await res.json();
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
@@ -55,80 +74,156 @@ export const stopMyTracking = createAsyncThunk(
   }
 );
 
-// ── Slice ─────────────────────────────────────────────────────────────────────
+// Mettre à jour le rayon (user)
+export const updateRayon = createAsyncThunk(
+  "location/updateRayon",
+  async (rayon, thunkAPI) => {
+    try {
+      const res = await fetch(`${API_URL}/api/users/rayon`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ rayon }),
+      });
+      if (!res.ok) throw new Error("Erreur update rayon");
+      return await res.json();
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+// CRUD savedLocations
+export const fetchSavedLocations = createAsyncThunk("location/fetchSaved", async (_, thunkAPI) => {
+  const res = await fetch(`${API_URL}/api/users/locations`, { credentials: "include" });
+  if (!res.ok) return thunkAPI.rejectWithValue("Erreur fetch adresses");
+  return res.json();
+});
+export const addSavedLocation = createAsyncThunk("location/addSaved", async (data, thunkAPI) => {
+  const res = await fetch(`${API_URL}/api/users/locations`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(data) });
+  const json = await res.json();
+  if (!res.ok) return thunkAPI.rejectWithValue(json.message || "Erreur ajout");
+  return json;
+});
+export const updateSavedLocation = createAsyncThunk("location/updateSaved", async ({ locationId, ...data }, thunkAPI) => {
+  const res = await fetch(`${API_URL}/api/users/locations/${locationId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(data) });
+  const json = await res.json();
+  if (!res.ok) return thunkAPI.rejectWithValue(json.message || "Erreur modif");
+  return json;
+});
+export const deleteSavedLocation = createAsyncThunk("location/deleteSaved", async (locationId, thunkAPI) => {
+  const res = await fetch(`${API_URL}/api/users/locations/${locationId}`, { method: "DELETE", credentials: "include" });
+  const json = await res.json();
+  if (!res.ok) return thunkAPI.rejectWithValue(json.message || "Erreur suppression");
+  return json;
+});
+export const setDefaultSavedLocation = createAsyncThunk("location/setDefault", async (locationId, thunkAPI) => {
+  const res = await fetch(`${API_URL}/api/users/locations/${locationId}/default`, { method: "PATCH", credentials: "include" });
+  const json = await res.json();
+  if (!res.ok) return thunkAPI.rejectWithValue(json.message || "Erreur");
+  return json;
+});
+
+// ─── Slice ────────────────────────────────────────────────────────────────────
 const locationSlice = createSlice({
   name: "location",
   initialState: {
-    prestataires: [],   // liste des prestataires dans le rayon
-    loading:      false,
-    error:        null,
-    isSharing:    false,  // l'user connecté partage-t-il sa position ?
-    watchId:      null,   // ID navigator.geolocation.watchPosition
+    prestataires:          [],
+    loading:               false,
+    error:                 null,
+    isSharing:             false,
+    watchId:               null,
+    gpsPosition:           null,   // { longitude, latitude }
+    savedLocations:        [],
+    savedLocationsLoading: false,
+    savedLocationsError:   null,
+    activeSource:          "gps", // "gps" | "saved:{id}"
+    rayonActif:            10,
   },
   reducers: {
-
-    // Socket.io — un prestataire met à jour sa position en temps réel
+    // Socket temps réel
     updatePrestairePosition: (state, action) => {
       const { userId, longitude, latitude } = action.payload;
-      const index = state.prestataires.findIndex((p) => p._id === userId);
-      if (index !== -1) {
-        state.prestataires[index].location.coordinates = [longitude, latitude];
-        state.prestataires[index].location.updatedAt   = new Date().toISOString();
-      } else {
-        // Prestataire pas encore dans la liste — pas ajouté automatiquement
-        // (il sera récupéré au prochain fetchPrestatairesPositions)
+      const idx = state.prestataires.findIndex((p) => p._id === userId);
+      if (idx !== -1) {
+        state.prestataires[idx].location.coordinates = [longitude, latitude];
+        state.prestataires[idx].location.updatedAt   = new Date().toISOString();
       }
     },
-
-    // Socket.io — un prestataire a coupé son tracking
     removePrestataire: (state, action) => {
       state.prestataires = state.prestataires.filter((p) => p._id !== action.payload.userId);
     },
 
-    // Activer/désactiver l'indicateur de partage local
-    setSharing: (state, action) => {
-      state.isSharing = action.payload;
-    },
+    // Tracking local
+    setSharing:  (state, action) => { state.isSharing = action.payload; },
+    setWatchId:  (state, action) => { state.watchId   = action.payload; },
 
-    // Stocker l'ID du watchPosition pour pouvoir le clearWatch()
-    setWatchId: (state, action) => {
-      state.watchId = action.payload;
-    },
+    // GPS user
+    setGpsPosition: (state, action) => { state.gpsPosition = action.payload; },
 
-    // Reset complet à la déconnexion
+    // Source active carte
+    setActiveSource: (state, action) => { state.activeSource = action.payload; },
+
+    // Rayon local
+    setRayonLocal: (state, action) => { state.rayonActif = action.payload; },
+
+    // Sync rayon depuis le profil au login
+    syncRayonFromProfile: (state, action) => { state.rayonActif = action.payload; },
+
+    // Reset déconnexion
     resetLocation: (state) => {
-      state.prestataires = [];
-      state.isSharing    = false;
-      state.watchId      = null;
-      state.error        = null;
+      state.prestataires          = [];
+      state.loading               = false;
+      state.error                 = null;
+      state.isSharing             = false;
+      state.watchId               = null;
+      state.gpsPosition           = null;
+      state.savedLocations        = [];
+      state.activeSource          = "gps";
+      state.rayonActif            = 10;
+      state.savedLocationsError   = null;
     },
   },
   extraReducers: (builder) => {
-
-    // ── fetchPrestatairesPositions ──
+    // fetchPrestatairesPublic
     builder
-      .addCase(fetchPrestatairesPositions.pending,   (state) => { state.loading = true;  state.error = null; })
-      .addCase(fetchPrestatairesPositions.fulfilled, (state, action) => {
-        state.loading      = false;
-        state.prestataires = action.payload;
-      })
-      .addCase(fetchPrestatairesPositions.rejected,  (state, action) => {
-        state.loading = false;
-        state.error   = action.payload;
-      });
+      .addCase(fetchPrestatairesPublic.fulfilled, (s, a) => { s.prestataires = a.payload; });
 
-    // ── updateMyLocation ──
+    // fetchPrestatairesPositions
     builder
-      .addCase(updateMyLocation.fulfilled, (state) => { state.isSharing = true; })
-      .addCase(updateMyLocation.rejected,  (state, action) => { state.error = action.payload; });
+      .addCase(fetchPrestatairesPositions.pending,   (s) => { s.loading = true;  s.error = null; })
+      .addCase(fetchPrestatairesPositions.fulfilled, (s, a) => { s.loading = false; s.prestataires = a.payload; })
+      .addCase(fetchPrestatairesPositions.rejected,  (s, a) => { s.loading = false; s.error = a.payload; });
 
-    // ── stopMyTracking ──
+    // updateMyLocation
     builder
-      .addCase(stopMyTracking.fulfilled, (state) => {
-        state.isSharing = false;
-        state.watchId   = null;
-      })
-      .addCase(stopMyTracking.rejected, (state, action) => { state.error = action.payload; });
+      .addCase(updateMyLocation.fulfilled, (s) => { s.isSharing = true; })
+      .addCase(updateMyLocation.rejected,  (s, a) => { s.error = a.payload; });
+
+    // stopMyTracking
+    builder
+      .addCase(stopMyTracking.fulfilled, (s) => { s.isSharing = false; s.watchId = null; })
+      .addCase(stopMyTracking.rejected,  (s, a) => { s.error = a.payload; });
+
+    // updateRayon
+    builder
+      .addCase(updateRayon.fulfilled, (s, a) => { s.rayonActif = a.payload.rayonRecherche; });
+
+    // savedLocations CRUD
+    const saved = (s, a) => { s.savedLocationsLoading = false; s.savedLocations = a.payload; };
+    builder
+      .addCase(fetchSavedLocations.pending,   (s) => { s.savedLocationsLoading = true; })
+      .addCase(fetchSavedLocations.fulfilled, saved)
+      .addCase(fetchSavedLocations.rejected,  (s, a) => { s.savedLocationsLoading = false; s.savedLocationsError = a.payload; })
+      .addCase(addSavedLocation.pending,      (s) => { s.savedLocationsLoading = true; })
+      .addCase(addSavedLocation.fulfilled,    saved)
+      .addCase(addSavedLocation.rejected,     (s, a) => { s.savedLocationsLoading = false; s.savedLocationsError = a.payload; })
+      .addCase(updateSavedLocation.fulfilled, saved)
+      .addCase(updateSavedLocation.rejected,  (s, a) => { s.savedLocationsError = a.payload; })
+      .addCase(deleteSavedLocation.fulfilled, saved)
+      .addCase(deleteSavedLocation.rejected,  (s, a) => { s.savedLocationsError = a.payload; })
+      .addCase(setDefaultSavedLocation.fulfilled, saved)
+      .addCase(setDefaultSavedLocation.rejected,  (s, a) => { s.savedLocationsError = a.payload; });
   },
 });
 
@@ -137,6 +232,10 @@ export const {
   removePrestataire,
   setSharing,
   setWatchId,
+  setGpsPosition,
+  setActiveSource,
+  setRayonLocal,
+  syncRayonFromProfile,
   resetLocation,
 } = locationSlice.actions;
 

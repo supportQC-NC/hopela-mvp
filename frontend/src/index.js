@@ -23,15 +23,15 @@ import LoginScreen          from "./screens/public/LoginScreen";
 import NotFoundScreen       from "./screens/NotFoundScreen";
 
 // import RegisterScreen       from "./screens/public/RegisterScreen";
-// import ForgotPasswordScreen from "./screens/public/ForgotPasswordScreen";
-// import ResetPasswordScreen  from "./screens/public/ResetPasswordScreen";
+import ForgotPasswordScreen from "./screens/public/ForgotPasswordScreen";
+import ResetPasswordScreen  from "./screens/public/ResetPasswordScreen";
 
 // ── Pages légales ─────────────────────────────────────
-import MentionLegalesScreen from "./screens/public/legal/MentionLegalesScreen";
-import CguScreen from "./screens/public/legal/CguScreen";
-import CgvScreen from "./screens/public/legal/CgvScreen";
+import MentionLegalesScreen  from "./screens/public/legal/MentionLegalesScreen";
+import CguScreen             from "./screens/public/legal/CguScreen";
+
 import ConfidentialiteScreen from "./screens/public/legal/ConfidentialiteScreen";
-import CookiesScreen from "./screens/public/legal/CookiesScreen";
+import CookiesScreen         from "./screens/public/legal/CookiesScreen";
 
 // ── Dashboards ────────────────────────────────────────
 import UserDashboard        from "./screens/user/UserDashboard";
@@ -45,14 +45,13 @@ const router = createBrowserRouter(
       {/* ── Public ── */}
       <Route index element={<LandingScreen />} />
       <Route path="login"    element={<LoginScreen />} />
-      {/* <Route path="register" element={<RegisterScreen />} /> */}
-      {/* <Route path="forgot-password" element={<ForgotPasswordScreen />} /> */}
-      {/* <Route path="reset-password/:token" element={<ResetPasswordScreen />} /> */}
+      <Route path="register" element={<LoginScreen />} />
+      <Route path="forgot-password"            element={<ForgotPasswordScreen />} />
+      <Route path="reset-password/:token"      element={<ResetPasswordScreen />} />
 
       {/* ── Pages légales ── */}
-      <Route path="mentions-legales"  element={<MentionLegalesScreen/>} />
+      <Route path="mentions-legales"  element={<MentionLegalesScreen />} />
       <Route path="cgu"               element={<CguScreen />} />
-      <Route path="cgv"               element={<CgvScreen />} />
       <Route path="confidentialite"   element={<ConfidentialiteScreen />} />
       <Route path="cookies"           element={<CookiesScreen />} />
 
@@ -86,9 +85,14 @@ const app = (
   </Provider>
 );
 
-// StrictMode uniquement en prod — évite les doubles montages Socket.io en dev
+/*
+ * StrictMode en DEV uniquement.
+ * En développement, StrictMode double-monte intentionnellement les composants
+ * pour détecter les effets de bord — c'est le comportement voulu.
+ * En production, on le désactive pour éviter les connexions socket dupliquées.
+ */
 root.render(
-  process.env.NODE_ENV === "production"
+  process.env.NODE_ENV !== "production"
     ? <React.StrictMode>{app}</React.StrictMode>
     : app
 );

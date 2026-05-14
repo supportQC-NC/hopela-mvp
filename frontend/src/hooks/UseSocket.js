@@ -1,73 +1,59 @@
-// src/hooks/useSocket.js
+/* eslint-disable react-hooks/exhaustive-deps */
+// src/hooks/UseSocket.js
 import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
 import { useDispatch } from "react-redux";
-import {
-  updatePrestairePosition,
-  removePrestataire,
-} from "../slices/locationSlice";
+import { io } from "socket.io-client";
+import { updatePrestairePosition, removePrestataire } from "../slices/locationSlice";
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const SOCKET_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-let socketInstance = null; // singleton — une seule connexion pour toute l'app
+const getSocket = () => {
+  if (!window.__hopela_socket__ || window.__hopela_socket__.disconnected) {
+    window.__hopela_socket__ = io(SOCKET_URL, {
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+    });
+    window.__hopela_socket__.on("connect",    () => console.log("🔌 Socket connecté :", window.__hopela_socket__.id));
+    window.__hopela_socket__.on("disconnect", (r) => console.log("❌ Socket déconnecté :", r));
+    window.__hopela_socket__.on("connect_error", (e) => console.error("🔴 Socket erreur :", e.message));
+  }
+  return window.__hopela_socket__;
+};
 
 const useSocket = () => {
-  const dispatch = useDispatch();
-  const socketRef = useRef(null);
+  const dispatch    = useDispatch();
+  const dispatchRef = useRef(dispatch);
+  dispatchRef.current = dispatch;
 
   useEffect(() => {
-    // Réutiliser la connexion existante si déjà ouverte
-    if (!socketInstance) {
-      socketInstance = io(SOCKET_URL, {
-        withCredentials: true,
-        transports: ["websocket", "polling"],
-      });
-    }
-
-    socketRef.current = socketInstance;
-
-    // ── Écouter les mises à jour de position ──
-    socketRef.current.on("location_updated", ({ userId, longitude, latitude }) => {
-      dispatch(updatePrestairePosition({ userId, longitude, latitude }));
-    });
-
-    // ── Écouter l'arrêt du tracking ──
-    socketRef.current.on("tracking_stopped", ({ userId }) => {
-      dispatch(removePrestataire({ userId }));
-    });
-
-    socketRef.current.on("connect", () => {
-      console.log("🔌 Socket connecté :", socketRef.current.id);
-    });
-
-    socketRef.current.on("disconnect", () => {
-      console.log("❌ Socket déconnecté");
-    });
-
+    const socket = getSocket();
+    const onLocationUpdated = ({ userId, longitude, latitude }) =>
+      dispatchRef.current(updatePrestairePosition({ userId, longitude, latitude }));
+    const onTrackingStopped = ({ userId }) =>
+      dispatchRef.current(removePrestataire({ userId }));
+    socket.on("location_updated", onLocationUpdated);
+    socket.on("tracking_stopped", onTrackingStopped);
     return () => {
-      // Nettoyer les listeners sans fermer la connexion (singleton)
-      socketRef.current.off("location_updated");
-      socketRef.current.off("tracking_stopped");
-      socketRef.current.off("connect");
-      socketRef.current.off("disconnect");
+      socket.off("location_updated", onLocationUpdated);
+      socket.off("tracking_stopped", onTrackingStopped);
     };
-  }, [dispatch]);
+  }, []);
 
-  // ── Envoyer sa position (prestataire) ──
   const emitLocation = (userId, longitude, latitude) => {
-    if (socketRef.current?.connected) {
-      socketRef.current.emit("update_location", { userId, longitude, latitude });
-    }
+    const s = getSocket();
+    if (s.connected) s.emit("update_location", { userId, longitude, latitude });
+    else console.warn("Socket non connecte");
   };
 
-  // ── Arrêter le partage (prestataire) ──
   const emitStopTracking = (userId) => {
-    if (socketRef.current?.connected) {
-      socketRef.current.emit("stop_tracking", { userId });
-    }
+    const s = getSocket();
+    if (s.connected) s.emit("stop_tracking", { userId });
   };
 
-  return { emitLocation, emitStopTracking, socket: socketRef.current };
+  return { emitLocation, emitStopTracking };
 };
 
 export default useSocket;
