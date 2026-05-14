@@ -6,94 +6,73 @@ import AdminOverview from "./adminOverview";
 import AdminUsers    from "./AdminUsers";
 import AdminMetiers  from "./AdminMetiers";
 import AdminMap      from "./AdminMap";
+import AdminContact  from "./AdminContact";
 import "./AdminDashboard.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const AdminDashboard = () => {
-  const [activeNav, setActiveNav] = useState("overview");
-  const [users,     setUsers]     = useState([]);
-  const [metiers,   setMetiers]   = useState([]);
-  const [loading,   setLoading]   = useState(false);
+  const [activeNav,      setActiveNav]      = useState("overview");
+  const [users,          setUsers]          = useState([]);
+  const [metiers,        setMetiers]        = useState([]);
+  const [messagesNouveaux, setMessagesNouveaux] = useState(0);
+  const [loading,        setLoading]        = useState(false);
 
-  // ── Fetch centralisé ─────────────────────────────
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [usersRes, metiersRes] = await Promise.all([
-        fetch(`${API_URL}/api/users`,          { credentials: "include" }),
+      const [usersRes, metiersRes, contactRes] = await Promise.all([
+        fetch(`${API_URL}/api/users`,             { credentials: "include" }),
         fetch(`${API_URL}/api/metiers/admin/all`, { credentials: "include" }),
+        fetch(`${API_URL}/api/contact?statut=nouveau`, { credentials: "include" }),
       ]);
-      const [usersData, metiersData] = await Promise.all([
-        usersRes.json(),
-        metiersRes.json(),
+      const [usersData, metiersData, contactData] = await Promise.all([
+        usersRes.json(), metiersRes.json(), contactRes.json(),
       ]);
       if (usersRes.ok)   setUsers(usersData);
       if (metiersRes.ok) setMetiers(metiersData);
+      if (contactRes.ok) setMessagesNouveaux(Array.isArray(contactData) ? contactData.length : 0);
     } catch (e) { console.error("AdminDashboard fetch:", e); }
     finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // Compteurs pour les badges sidebar
+  // Prestataires en attente de validation
+  const prestaEnAttente = users.filter((u) => u.role === "prestataire" && !u.isValidated).length;
+
   const counts = {
-    users:   users.length,
+    users:   prestaEnAttente,         // badge rouge = prestataires en attente
     metiers: metiers.length,
+    contact: messagesNouveaux,        // badge jaune = messages non lus
   };
 
   return (
     <div className="ad-root">
-
-      <AdminSidebar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        counts={counts}
-      />
+      <AdminSidebar activeNav={activeNav} setActiveNav={setActiveNav} counts={counts} />
 
       <div className="ad-main">
         <AdminTopbar
           activeNav={activeNav}
-          onRefresh={activeNav !== "map" ? fetchAll : undefined}
+          onRefresh={activeNav !== "map" && activeNav !== "contact" ? fetchAll : undefined}
         />
 
         <div className="ad-content">
-          {loading && activeNav !== "map" ? (
-            <div style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              height: 200, color: "rgba(245,240,232,0.25)", fontSize: 14,
-            }}>
+          {loading && activeNav !== "map" && activeNav !== "contact" ? (
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:200, color:"rgba(245,240,232,0.25)", fontSize:14 }}>
               Chargement…
             </div>
           ) : (
             <>
-              {activeNav === "overview" && (
-                <AdminOverview
-                  users={users}
-                  metiers={metiers}
-                  onNav={setActiveNav}
-                />
-              )}
-              {activeNav === "users" && (
-                <AdminUsers
-                  users={users}
-                  metiers={metiers}
-                  onRefresh={fetchAll}
-                />
-              )}
-              {activeNav === "metiers" && (
-                <AdminMetiers
-                  metiers={metiers}
-                  users={users}
-                  onRefresh={fetchAll}
-                />
-              )}
-              {activeNav === "map" && <AdminMap />}
+              {activeNav === "overview" && <AdminOverview users={users} metiers={metiers} onNav={setActiveNav} />}
+              {activeNav === "users"    && <AdminUsers    users={users} metiers={metiers} onRefresh={fetchAll} />}
+              {activeNav === "metiers"  && <AdminMetiers  metiers={metiers} users={users} onRefresh={fetchAll} />}
+              {activeNav === "map"      && <AdminMap />}
+              {activeNav === "contact"  && <AdminContact />}
             </>
           )}
         </div>
       </div>
-
     </div>
   );
 };

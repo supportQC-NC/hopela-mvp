@@ -1,17 +1,13 @@
 // src/screens/public/LandingScreen.jsx
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { fetchPrestatairesPositions } from "../../slices/locationSlice";
+import { useNavigate, Link } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import PublicMap from "../../components/map/PublicMap";
 import "./LandingScreen.css";
 
-// ── Fonts ─────────────────────────────────────────────
 const FONT_HREF = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap";
 
-// ── Données ───────────────────────────────────────────
 const METIERS = [
   { emoji: "⚡", label: "Électricien" },
   { emoji: "🔧", label: "Plombier" },
@@ -27,17 +23,10 @@ const METIERS = [
   { emoji: "👶", label: "Garde enfants" },
 ];
 
-const STATS = [
-  { value: "500+",   label: "Prestataires actifs" },
-  { value: "4.8★",  label: "Note moyenne" },
-  { value: "< 5min",label: "Temps de réponse" },
-  { value: "NC",     label: "Nouvelle-Calédonie" },
-];
-
 const STEPS = [
-  { num: "01", icon: "🗺️", titre: "Consultez la carte",       desc: "Visualisez en temps réel tous les prestataires disponibles autour de vous grâce à la géolocalisation." },
-  { num: "02", icon: "👆", titre: "Choisissez un profil",     desc: "Consultez le métier et les services de chaque prestataire. Cliquez sur un marqueur pour les détails." },
-  { num: "03", icon: "✅", titre: "Contactez & confirmez",    desc: "Prenez contact directement avec le prestataire et planifiez votre intervention en quelques secondes." },
+  { num: "01", icon: "🗺️", titre: "Consultez la carte",    desc: "Visualisez en temps réel tous les prestataires disponibles autour de vous grâce à la géolocalisation." },
+  { num: "02", icon: "👆", titre: "Choisissez un profil",  desc: "Consultez le métier et les services de chaque prestataire. Cliquez sur un marqueur pour les détails." },
+  { num: "03", icon: "✅", titre: "Contactez & confirmez", desc: "Prenez contact directement avec le prestataire et planifiez votre intervention en quelques secondes." },
 ];
 
 const TEMOIGNAGES = [
@@ -46,58 +35,45 @@ const TEMOIGNAGES = [
   { nom: "Angélique T.",quartier: "Mont-Dore",  texte: "La carte en temps réel c'est génial, on voit exactement où est le prestataire.", note: 5 },
 ];
 
-// ── Composant ─────────────────────────────────────────
 const LandingScreen = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    // Injection des fonts
     if (!document.getElementById("hopela-fonts")) {
       const link = document.createElement("link");
-      link.id = "hopela-fonts";
-      link.rel = "stylesheet";
-      link.href = FONT_HREF;
+      link.id = "hopela-fonts"; link.rel = "stylesheet"; link.href = FONT_HREF;
       document.head.appendChild(link);
     }
   }, []);
 
   return (
     <div style={{ background: "#0a0804", minHeight: "100vh" }}>
-
       <Header />
 
-      {/* ══════ HERO ══════ */}
+      {/* ══ HERO ══ */}
       <section className="lp-hero" id="accueil">
         <div className="lp-hero-bg" />
         <div className="lp-hero-grid" />
-
         <div className="lp-hero-content">
           <div className="lp-eyebrow fade-up">
             <div className="lp-eyebrow-line" />
             <span className="lp-eyebrow-text">Nouvelle-Calédonie</span>
           </div>
-
           <h1 className="fade-up-1">
-            Trouvez un<br />
-            <em>prestataire</em><br />
-            en temps réel
+            Trouvez un<br /><em>prestataire</em><br />en temps réel
           </h1>
-
           <p className="lp-hero-sub fade-up-2">
             Hopela connecte les particuliers aux prestataires de services locaux
             géolocalisés en direct. Disponibilité instantanée, partout en Calédonie.
           </p>
-
           <div className="lp-hero-actions fade-up-3">
             <button className="btn-hero-primary" onClick={() => navigate("/login")}>
               Trouver un prestataire
             </button>
-            <button className="btn-hero-secondary" onClick={() => navigate("/register?role=prestataire")}>
+            <button className="btn-hero-secondary" onClick={() => navigate("/login")}>
               Devenir prestataire →
             </button>
           </div>
-
           <div className="lp-hero-badge fade-up-4">
             <span className="lp-live-dot" />
             <span>Prestataires disponibles en ce moment</span>
@@ -105,7 +81,7 @@ const LandingScreen = () => {
         </div>
       </section>
 
-      {/* ══════ CARTE (visible sans connexion) ══════ */}
+      {/* ══ CARTE ══ */}
       <section className="lp-map-section" id="carte">
         <div className="lp-map-header">
           <div>
@@ -113,32 +89,18 @@ const LandingScreen = () => {
               <div className="lp-eyebrow-line" />
               <span className="lp-eyebrow-text">Géolocalisation temps réel</span>
             </div>
-            <h2 className="lp-map-title">
-              Ils sont <em>près de vous</em>
-            </h2>
+            <h2 className="lp-map-title">Ils sont <em>près de vous</em></h2>
           </div>
           <p className="lp-map-subtitle">
             Chaque point est un prestataire disponible maintenant, visible en direct sur la carte.
           </p>
         </div>
-
         <div className="lp-map-container">
-          {/* PublicMap charge les prestataires sans auth */}
           <PublicMap />
         </div>
       </section>
 
-      {/* ══════ STATS ══════ */}
-      <div className="lp-stats">
-        {STATS.map(({ value, label }) => (
-          <div key={label} className="lp-stat">
-            <div className="lp-stat-value">{value}</div>
-            <div className="lp-stat-label">{label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* ══════ MÉTIERS ══════ */}
+      {/* ══ MÉTIERS ══ */}
       <section className="lp-section" id="services">
         <div className="lp-eyebrow">
           <div className="lp-eyebrow-line" />
@@ -150,15 +112,20 @@ const LandingScreen = () => {
         </p>
         <div className="lp-metiers-grid">
           {METIERS.map(({ emoji, label }) => (
-            <a key={label} href="#carte" className="lp-metier-card">
+            <Link key={label} to="/services" className="lp-metier-card">
               <span className="lp-metier-emoji">{emoji}</span>
               <span className="lp-metier-label">{label}</span>
-            </a>
+            </Link>
           ))}
+        </div>
+        <div style={{ textAlign: "center", marginTop: 32 }}>
+          <Link to="/services" style={{ display: "inline-block", padding: "12px 32px", borderRadius: 4, border: "1px solid rgba(201,168,76,0.35)", color: "#c9a84c", fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", textDecoration: "none" }}>
+            Voir tous les services →
+          </Link>
         </div>
       </section>
 
-      {/* ══════ COMMENT ÇA MARCHE ══════ */}
+      {/* ══ COMMENT ÇA MARCHE ══ */}
       <section className="lp-section" id="comment-ca-marche">
         <div className="lp-eyebrow">
           <div className="lp-eyebrow-line" />
@@ -166,7 +133,6 @@ const LandingScreen = () => {
         </div>
         <h2 className="lp-section-title">Comment ça <em>marche</em></h2>
         <p className="lp-section-sub">Trois étapes, moins de 5 minutes.</p>
-
         <div className="lp-steps-grid">
           {STEPS.map(({ num, icon, titre, desc }) => (
             <div key={num} className="lp-step">
@@ -177,18 +143,21 @@ const LandingScreen = () => {
             </div>
           ))}
         </div>
+        <div style={{ textAlign: "center", marginTop: 32 }}>
+          <Link to="/comment-ca-marche" style={{ display: "inline-block", padding: "12px 32px", borderRadius: 4, border: "1px solid rgba(201,168,76,0.35)", color: "#c9a84c", fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", textDecoration: "none" }}>
+            En savoir plus →
+          </Link>
+        </div>
       </section>
 
-      {/* ══════ TÉMOIGNAGES ══════ */}
+      {/* ══ TÉMOIGNAGES ══ */}
       <section className="lp-section" id="avis">
         <div className="lp-eyebrow">
           <div className="lp-eyebrow-line" />
           <span className="lp-eyebrow-text">Ils nous font confiance</span>
         </div>
         <h2 className="lp-section-title">Ce qu'ils en <em>pensent</em></h2>
-        <p className="lp-section-sub">
-          Des centaines de Calédoniens utilisent Hopela chaque jour.
-        </p>
+        <p className="lp-section-sub">Des centaines de Calédoniens utilisent Hopela chaque jour.</p>
         <div className="lp-temoignages-grid">
           {TEMOIGNAGES.map(({ nom, quartier, texte, note }) => (
             <div key={nom} className="lp-temoignage">
@@ -206,8 +175,8 @@ const LandingScreen = () => {
         </div>
       </section>
 
-      {/* ══════ CTA FINAL ══════ */}
-      <div className="lp-cta-section" id="contact">
+      {/* ══ CTA FINAL ══ */}
+      <div className="lp-cta-section">
         <div className="lp-cta-bg" />
         <h2>Prêt à trouver votre <em>prestataire</em> ?</h2>
         <p>Rejoignez des centaines de Calédoniens qui font confiance à Hopela.</p>
@@ -215,14 +184,13 @@ const LandingScreen = () => {
           <button className="btn-hero-primary" onClick={() => navigate("/login")}>
             Trouver un prestataire
           </button>
-          <button className="btn-hero-secondary" onClick={() => navigate("/register?role=prestataire")}>
-            Je suis prestataire →
-          </button>
+          <Link to="/contact" className="btn-hero-secondary" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+            Nous contacter →
+          </Link>
         </div>
       </div>
 
       <Footer />
-
     </div>
   );
 };

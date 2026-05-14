@@ -155,3 +155,62 @@
     display: none;
   }
 }
+
+/* Réutilise les styles existants + ajout burger mobile */
+
+/* ── Ajouts pour menu mobile ── */
+.lp-burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 201;
+}
+.lp-burger span {
+  width: 22px;
+  height: 2px;
+  background: rgba(245,240,232,0.7);
+  border-radius: 2px;
+  display: block;
+  transition: all 0.2s;
+}
+
+.lp-mobile-menu {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  background: rgba(10,8,4,0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201,168,76,0.12);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 200;
+}
+.lp-mobile-link {
+  display: block;
+  padding: 12px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: rgba(245,240,232,0.7);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(201,168,76,0.06);
+  transition: color 0.2s;
+}
+.lp-mobile-link:hover { color: #c9a84c; }
+.lp-mobile-cta {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+}
+.lp-mobile-cta button { flex: 1; }
+
+@media (max-width: 768px) {
+  .lp-nav, .lp-header-cta { display: none !important; }
+  .lp-burger { display: flex; }
+}
