@@ -43,7 +43,7 @@ const Footer = () => (
           <span className="lp-footer-logo-name">Hopela</span>
         </Link>
         <p className="lp-footer-tagline">
-          La plateforme qui connecte les particuliers aux prestataires locaux en temps réel, partout en Nouvelle-Calédonie.
+          La plateforme qui connecte les particuliers aux prestataires locaux en temps réel, partout dans le monde.
         </p>
       </div>
 
