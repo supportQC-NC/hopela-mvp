@@ -205,7 +205,23 @@ const CSS = `
   .ud-error { font-size:12px; color:#fca5a5; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:8px; padding:10px 12px; margin-bottom:12px; }
   .ud-empty { text-align:center; padding:32px 16px; color:rgba(245,240,232,0.3); font-size:13px; }
 
-  /* ── Profil tab ── */
+  /* ── Banner géoloc désactivée ── */
+  .ud-geo-banner {
+    background: rgba(251,191,36,0.08); border-bottom: 1px solid rgba(251,191,36,0.2);
+    padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  .ud-geo-banner-icon { font-size: 18px; flex-shrink: 0; }
+  .ud-geo-banner-text { flex: 1; font-size: 12px; color: rgba(251,191,36,0.85); line-height: 1.5; }
+  .ud-geo-banner-text strong { color: #fbbf24; }
+  .ud-geo-banner-btn {
+    flex-shrink: 0; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(251,191,36,0.4);
+    background: rgba(251,191,36,0.1); color: #fbbf24; font-family: 'DM Sans',sans-serif;
+    font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .ud-geo-banner-btn:hover { background: rgba(251,191,36,0.2); }
+  .ud-geo-banner-close {
+    background: none; border: none; color: rgba(251,191,36,0.4); cursor: pointer; font-size: 16px; padding: 0 4px;
+  }
   .ud-profile-wrap { padding:16px; }
   .ud-profile-card {
     background:#120e07; border:1px solid rgba(201,168,76,0.12); border-radius:14px; padding:20px; margin-bottom:12px;
@@ -356,7 +372,9 @@ const UserDashboard = () => {
   const [editTarget, setEditTarget] = useState(null);
   const [rayonLocal, setRayonLocal] = useState(rayonActif);
   const [rayonSaving, setRayonSaving] = useState(false);
-  const [filtreMetier, setFiltreMetier] = useState("Tous"); // synchronisé avec PublicMap
+  const [filtreMetier, setFiltreMetier] = useState("Tous");
+  const [geoBlocked, setGeoBlocked] = useState(false);   // géoloc refusée/indispo
+  const [geoBannerVisible, setGeoBannerVisible] = useState(true);
 
   // Injecter CSS
   useEffect(() => {
@@ -378,17 +396,22 @@ const UserDashboard = () => {
 
   // Demander le GPS et charger les pros au montage de la carte
   useEffect(() => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      setGeoBlocked(true);
+      dispatch(fetchPrestatairesPositions({}));
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { longitude, latitude } = pos.coords;
+        setGeoBlocked(false);
         dispatch(setGpsPosition({ longitude, latitude }));
         dispatch(fetchPrestatairesPositions({
           lng: longitude, lat: latitude, rayon: rayonActif,
         }));
       },
       () => {
-        // GPS refusé ou indisponible — charger les pros sans position
+        setGeoBlocked(true);
         dispatch(fetchPrestatairesPositions({}));
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -487,6 +510,24 @@ const UserDashboard = () => {
           <button className="ud-logout" onClick={handleLogout}>Déco.</button>
         </div>
       </header>
+
+      {/* ── Banner géoloc désactivée ── */}
+      {geoBlocked && geoBannerVisible && (
+        <div className="ud-geo-banner">
+          <span className="ud-geo-banner-icon">📍</span>
+          <div className="ud-geo-banner-text">
+            <strong>Géolocalisation désactivée.</strong> Activez-la pour voir les prestataires près de vous et centrer la carte sur votre position.
+            <br />
+            <span style={{ fontSize: 11, opacity: 0.7 }}>
+              Navigateur : cliquez sur le cadenas 🔒 dans la barre d'adresse → Localisation → Autoriser → Recharger.
+            </span>
+          </div>
+          <button className="ud-geo-banner-btn" onClick={() => window.location.reload()}>
+            Réessayer
+          </button>
+          <button className="ud-geo-banner-close" onClick={() => setGeoBannerVisible(false)}>✕</button>
+        </div>
+      )}
 
       {/* ── Contenu ── */}
       <div className="ud-content">
@@ -806,3 +847,4 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
+// PATCH — ce commentaire est un marqueur, ne pas inclure

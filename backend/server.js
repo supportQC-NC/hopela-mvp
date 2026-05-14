@@ -18,6 +18,7 @@ import metierRoutes  from "./routes/metierRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import uploadRoutes  from "./routes/uploadRoutes.js";
 import photoRoutes   from "./routes/photoRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
@@ -123,6 +124,7 @@ app.use("/api/metiers",  metierRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/upload",   uploadRoutes);
 app.use("/api/photos",   photoRoutes);
+app.use("/api/contact",  contactRoutes);
 
 // ==========================================
 // ERROR MIDDLEWARES
