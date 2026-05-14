@@ -395,7 +395,7 @@ const s = {
   popupName:    { fontWeight: 700, fontSize: 14, color: "#1a160f", marginBottom: 2 },
   popupMetier:  { fontSize: 12, fontWeight: 600, marginBottom: 5 },
   popupContact: { display: "block", fontSize: 12, color: "#6b5d4a", marginTop: 3, textDecoration: "none" },
-  recenterBtn:  { position: "absolute", bottom: 56, right: 10, zIndex: 10, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, color: "#c9a84c", background: "rgba(10,8,4,0.88)", border: "1px solid rgba(201,168,76,0.35)", borderRadius: 8, padding: "7px 14px", cursor: "pointer", backdropFilter: "blur(8px)" },
+  recenterBtn:  { position: "absolute", top: 10, right: 10, zIndex: 10, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, color: "#c9a84c", background: "rgba(10,8,4,0.88)", border: "1px solid rgba(201,168,76,0.35)", borderRadius: 8, padding: "7px 14px", cursor: "pointer", backdropFilter: "blur(8px)" },
 };
 
 if (typeof document !== "undefined" && !document.getElementById("map-keyframes")) {

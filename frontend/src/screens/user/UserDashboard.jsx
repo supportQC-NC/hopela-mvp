@@ -394,28 +394,64 @@ const UserDashboard = () => {
     }
   }, [dispatch, userInfo?.rayonRecherche]);
 
-  // Demander le GPS et charger les pros au montage de la carte
+  // Demander le GPS au montage — déclenche la popup système si jamais demandé
   useEffect(() => {
     if (!navigator.geolocation) {
       setGeoBlocked(true);
       dispatch(fetchPrestatairesPositions({}));
       return;
     }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { longitude, latitude } = pos.coords;
-        setGeoBlocked(false);
-        dispatch(setGpsPosition({ longitude, latitude }));
-        dispatch(fetchPrestatairesPositions({
-          lng: longitude, lat: latitude, rayon: rayonActif,
-        }));
-      },
-      () => {
-        setGeoBlocked(true);
-        dispatch(fetchPrestatairesPositions({}));
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+
+    const requestGps = () => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { longitude, latitude } = pos.coords;
+          setGeoBlocked(false);
+          dispatch(setGpsPosition({ longitude, latitude }));
+          dispatch(fetchPrestatairesPositions({
+            lng: longitude, lat: latitude, rayon: rayonActif,
+          }));
+        },
+        (err) => {
+          // code 1 = PERMISSION_DENIED (refusé par l'user ou le système)
+          // code 2 = POSITION_UNAVAILABLE
+          // code 3 = TIMEOUT
+          setGeoBlocked(true);
+          dispatch(fetchPrestatairesPositions({}));
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    };
+
+    // Vérifier l'état de la permission avant d'appeler
+    // "prompt" → popup système déclenchée automatiquement par getCurrentPosition
+    // "granted" → position obtenue directement
+    // "denied"  → refusé, on ne peut plus demander
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        if (result.state === "denied") {
+          // Déjà refusé → pas de popup possible, afficher le banner
+          setGeoBlocked(true);
+          dispatch(fetchPrestatairesPositions({}));
+        } else {
+          // "granted" ou "prompt" → appeler getCurrentPosition
+          // Si "prompt" : le navigateur affiche "hopela.pro souhaite accéder à votre position"
+          requestGps();
+        }
+        // Écouter si l'user change la permission dans les paramètres
+        result.onchange = () => {
+          if (result.state === "granted") {
+            setGeoBlocked(false);
+            requestGps();
+          } else if (result.state === "denied") {
+            setGeoBlocked(true);
+          }
+        };
+      });
+    } else {
+      // API Permissions non supportée → appel direct (déclenche la popup)
+      requestGps();
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLogout = async () => {
@@ -516,14 +552,14 @@ const UserDashboard = () => {
         <div className="ud-geo-banner">
           <span className="ud-geo-banner-icon">📍</span>
           <div className="ud-geo-banner-text">
-            <strong>Géolocalisation désactivée.</strong> Activez-la pour voir les prestataires près de vous et centrer la carte sur votre position.
+            <strong>Géolocalisation bloquée.</strong> Pour voir les prestataires près de vous, autorisez l'accès à votre position.
             <br />
             <span style={{ fontSize: 11, opacity: 0.7 }}>
-              Navigateur : cliquez sur le cadenas 🔒 dans la barre d'adresse → Localisation → Autoriser → Recharger.
+              Cliquez sur le cadenas 🔒 dans la barre d'adresse → <strong>Localisation</strong> → <strong>Autoriser</strong>, puis rechargez la page.
             </span>
           </div>
           <button className="ud-geo-banner-btn" onClick={() => window.location.reload()}>
-            Réessayer
+            🔄 Réessayer
           </button>
           <button className="ud-geo-banner-close" onClick={() => setGeoBannerVisible(false)}>✕</button>
         </div>
@@ -847,4 +883,3 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
-// PATCH — ce commentaire est un marqueur, ne pas inclure
