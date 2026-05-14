@@ -234,12 +234,13 @@ const LandingScreen = () => {
           <p className="lp-hero-sub fade-up-2">
             Hopela connecte les particuliers aux prestataires de services locaux
             géolocalisés en direct. Disponibilité instantanée, partout en Calédonie.
+            
           </p>
           <div className="lp-hero-actions fade-up-3">
             <button className="btn-primary" onClick={() => navigate("/login")}>
               Trouver un prestataire
             </button>
-            <button className="btn-secondary" onClick={() => navigate("/register?role=prestataire")}>
+            <button className="btn-secondary" onClick={() => navigate("/login")}>
               Devenir prestataire →
             </button>
           </div>
@@ -272,7 +273,7 @@ const LandingScreen = () => {
             <h2 className="lp-map-title">Ils sont <em>près de vous</em></h2>
           </div>
           <p className="lp-map-subtitle">
-            Chaque point est un prestataire disponible maintenant, visible en direct.
+            Chaque point est un prestataire disponible maintenant
           </p>
         </div>
         <div className="lp-map-container">
@@ -317,13 +318,13 @@ const LandingScreen = () => {
       <div className="lp-cta" id="contact">
         <div className="lp-cta-glow" />
         <h2>Prêt à trouver votre <em>prestataire</em> ?</h2>
-        <p>Rejoignez des centaines de Calédoniens qui font confiance à Hopela.</p>
+        <p>Rejoignez des centaines d'utilsateurs qui font confiance à Hopela.</p>
         <div className="lp-cta-actions">
           <button className="btn-primary" onClick={() => navigate("/login")}>
             Trouver un prestataire
           </button>
           <button className="btn-secondary" onClick={() => navigate("/register?role=prestataire")}>
-            Je suis prestataire →
+            Je suis prestataire → 
           </button>
         </div>
       </div>
