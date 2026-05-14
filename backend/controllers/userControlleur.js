@@ -1,659 +1,11 @@
-// // backend/controllers/userControlleur.js
-// import asyncHandler from "../middleware/asyncHandler.js";
-// import User from "../models/UserModel.js";
-// import generateToken from "../utils/generateToken.js";
-// import sendEmail from "../utils/sendEmail.js";
-// import crypto from "crypto";
-// import generateWelcomeEmail from "../emails/templates/welcomeEmail.js";
-// import generateResetEmail from "../emails/templates/resetEmail.js";
-
-// // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-// // Champs renvoyés dans les réponses profil
-// const profileFields =
-//   "_id email nom prenom role metiers telephoneContact emailContact siteWeb reseauxSociaux avatar isActive lastLogin location isTracked rayonRecherche savedLocations";
-
-// // =============================================
-// // AUTH
-// // =============================================
-
-// // @desc    Auth user & get token
-// // @route   POST /api/users/login
-// // @access  Public
-// const authUser = asyncHandler(async (req, res) => {
-//   const { email, password } = req.body;
-
-//   const user = await User.findOne({ email }).select("+password");
-
-//   if (!user || !user.isActive) {
-//     res.status(401);
-//     throw new Error("Email ou mot de passe invalide");
-//   }
-
-//   const isMatch = await user.comparePassword(password);
-//   if (!isMatch) {
-//     res.status(401);
-//     throw new Error("Email ou mot de passe invalide");
-//   }
-
-//   user.lastLogin = new Date();
-//   await user.save({ validateBeforeSave: false });
-
-//   generateToken(res, user._id);
-
-//   const populated = await User.findById(user._id).populate("metiers", "nom description icone");
-
-//   res.json({
-//     _id:              populated._id,
-//     email:            populated.email,
-//     nom:              populated.nom,
-//     prenom:           populated.prenom,
-//     role:             populated.role,
-//     metiers:          populated.metiers          || [],
-//     telephoneContact: populated.telephoneContact || null,
-//     emailContact:     populated.emailContact     || null,
-//     siteWeb:          populated.siteWeb          || null,
-//     reseauxSociaux:   populated.reseauxSociaux   || {},
-//     isActive:         populated.isActive,
-//     isTracked:        populated.isTracked,
-//     rayonRecherche:   populated.rayonRecherche,
-//     savedLocations:   populated.savedLocations   || [],
-//   });
-// });
-
-// // @desc    Logout user
-// // @route   POST /api/users/logout
-// // @access  Private
-// const logoutUser = asyncHandler(async (req, res) => {
-//   res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
-//   res.status(200).json({ message: "Déconnexion réussie" });
-// });
-
-// // =============================================
-// // PROFIL
-// // =============================================
-
-// // @desc    Get user profile
-// // @route   GET /api/users/profile
-// // @access  Private
-// const getUserProfile = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user._id).populate("metiers", "nom description icone");
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   res.json({
-//     _id:              user._id,
-//     email:            user.email,
-//     nom:              user.nom,
-//     prenom:           user.prenom,
-//     role:             user.role,
-//     metiers:          user.metiers          || [],
-//     telephoneContact: user.telephoneContact || null,
-//     emailContact:     user.emailContact     || null,
-//     siteWeb:          user.siteWeb          || null,
-//     reseauxSociaux:   user.reseauxSociaux   || {},
-//     avatar:           user.avatar           || null,
-//     isActive:         user.isActive,
-//     lastLogin:        user.lastLogin,
-//     location:         user.location,
-//     isTracked:        user.isTracked,
-//     rayonRecherche:   user.rayonRecherche,
-//     savedLocations:   user.savedLocations   || [],
-//   });
-// });
-
-// // @desc    Update user profile (self)
-// // @route   PUT /api/users/profile
-// // @access  Private
-// const updateUserProfile = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user._id);
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   user.nom    = req.body.nom    || user.nom;
-//   user.prenom = req.body.prenom || user.prenom;
-//   user.email  = req.body.email  || user.email;
-
-//   if (req.body.telephoneContact !== undefined) user.telephoneContact = req.body.telephoneContact;
-//   if (req.body.emailContact     !== undefined) user.emailContact     = req.body.emailContact;
-//   if (req.body.siteWeb          !== undefined) user.siteWeb          = req.body.siteWeb;
-//   if (req.body.metiers          !== undefined) user.metiers          = req.body.metiers;
-
-//   if (req.body.reseauxSociaux) {
-//     user.reseauxSociaux = {
-//       ...user.reseauxSociaux?.toObject?.() || user.reseauxSociaux || {},
-//       ...req.body.reseauxSociaux,
-//     };
-//   }
-
-//   if (req.body.password) user.password = req.body.password;
-
-//   const updatedUser = await user.save();
-//   await updatedUser.populate("metiers", "nom description icone");
-
-//   res.json({
-//     _id:              updatedUser._id,
-//     email:            updatedUser.email,
-//     nom:              updatedUser.nom,
-//     prenom:           updatedUser.prenom,
-//     role:             updatedUser.role,
-//     metiers:          updatedUser.metiers          || [],
-//     telephoneContact: updatedUser.telephoneContact || null,
-//     emailContact:     updatedUser.emailContact     || null,
-//     siteWeb:          updatedUser.siteWeb          || null,
-//     reseauxSociaux:   updatedUser.reseauxSociaux   || {},
-//     avatar:           updatedUser.avatar           || null,
-//     isActive:         updatedUser.isActive,
-//     rayonRecherche:   updatedUser.rayonRecherche,
-//     savedLocations:   updatedUser.savedLocations   || [],
-//   });
-// });
-
-// // =============================================
-// // MOT DE PASSE
-// // =============================================
-
-// // @desc    Forgot password
-// // @route   POST /api/users/forgot-password
-// // @access  Public
-// const forgotPassword = asyncHandler(async (req, res) => {
-//   const { email } = req.body;
-//   const user = await User.findOne({ email });
-
-//   if (!user) {
-//     return res.json({ message: "Si cet email existe, un lien de réinitialisation a été envoyé." });
-//   }
-
-//   const resetToken = user.getResetPasswordToken();
-//   await user.save({ validateBeforeSave: false });
-
-//   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-//   try {
-//     await sendEmail({
-//       email:   user.email,
-//       subject: "🔐 Réinitialisation de votre mot de passe",
-//       html:    generateResetEmail({ prenom: user.prenom, nom: user.nom, resetUrl }),
-//     });
-//     res.json({ message: "Si cet email existe, un lien de réinitialisation a été envoyé." });
-//   } catch (error) {
-//     user.resetPasswordToken  = null;
-//     user.resetPasswordExpire = null;
-//     await user.save({ validateBeforeSave: false });
-//     res.status(500);
-//     throw new Error("Erreur lors de l'envoi de l'email.");
-//   }
-// });
-
-// // @desc    Reset password
-// // @route   PUT /api/users/reset-password/:token
-// // @access  Public
-// const resetPassword = asyncHandler(async (req, res) => {
-//   const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
-
-//   const user = await User.findOne({
-//     resetPasswordToken:  hashedToken,
-//     resetPasswordExpire: { $gt: Date.now() },
-//   });
-
-//   if (!user) {
-//     res.status(400);
-//     throw new Error("Token invalide ou expiré");
-//   }
-
-//   user.password            = req.body.password;
-//   user.resetPasswordToken  = null;
-//   user.resetPasswordExpire = null;
-//   await user.save();
-
-//   res.json({ message: "Mot de passe réinitialisé avec succès" });
-// });
-
-// // =============================================
-// // GÉOLOCALISATION TEMPS RÉEL
-// // =============================================
-
-// // @desc    Prestataires trackés (public — landing)
-// // @route   GET /api/users/prestataires/positions/public
-// // @access  Public
-// const getPrestatairesPositionsPublic = asyncHandler(async (req, res) => {
-//   const prestataires = await User.find({ role: "prestataire", isActive: true, isTracked: true })
-//     .select("prenom nom location metiers telephoneContact avatar")
-//     .populate("metiers", "nom icone");
-
-//   res.json(prestataires);
-// });
-
-// // @desc    Prestataires dans le rayon de l'user connecté
-// // @route   GET /api/users/prestataires/positions
-// // @access  Private
-// const getPrestatairesPositions = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user._id);
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   // Utiliser la position envoyée en query (?lng=...&lat=...) ou la position stockée
-//   let lng = parseFloat(req.query.lng);
-//   let lat = parseFloat(req.query.lat);
-
-//   // Fallback sur la position stockée en BDD
-//   if (isNaN(lng) || isNaN(lat)) {
-//     [lng, lat] = user.location?.coordinates || [0, 0];
-//   }
-
-//   if (lng === 0 && lat === 0) return res.json([]);
-
-//   const rayonKm = parseFloat(req.query.rayon) || user.rayonRecherche || 10;
-
-//   const prestataires = await User.find({
-//     role:      "prestataire",
-//     isActive:  true,
-//     isTracked: true,
-//     location: {
-//       $nearSphere: {
-//         $geometry:   { type: "Point", coordinates: [lng, lat] },
-//         $maxDistance: rayonKm * 1000,
-//       },
-//     },
-//   })
-//     .select("prenom nom location isTracked metiers telephoneContact emailContact avatar")
-//     .populate("metiers", "nom icone");
-
-//   res.json(prestataires);
-// });
-
-// // @desc    Mettre à jour position (REST — prestataires)
-// // @route   PUT /api/users/location
-// // @access  Private
-// const updateLocation = asyncHandler(async (req, res) => {
-//   const { longitude, latitude } = req.body;
-
-//   const user = await User.findByIdAndUpdate(
-//     req.user._id,
-//     {
-//       location: {
-//         type:        "Point",
-//         coordinates: [longitude, latitude],
-//         updatedAt:   new Date(),
-//       },
-//       isTracked: true,
-//     },
-//     { returnDocument: "after" }
-//   ).select("prenom nom location isTracked rayonRecherche");
-
-//   res.json(user);
-// });
-
-// // @desc    Arrêter le partage de position
-// // @route   PUT /api/users/location/stop
-// // @access  Private
-// const stopTracking = asyncHandler(async (req, res) => {
-//   await User.findByIdAndUpdate(req.user._id, { isTracked: false });
-//   res.json({ message: "Partage de position désactivé" });
-// });
-
-// // @desc    Mettre à jour le rayon de recherche
-// // @route   PUT /api/users/rayon
-// // @access  Private
-// const updateRayon = asyncHandler(async (req, res) => {
-//   const { rayon } = req.body;
-
-//   if (!rayon || rayon < 1 || rayon > 500) {
-//     res.status(400);
-//     throw new Error("Le rayon doit être compris entre 1 et 500 km");
-//   }
-
-//   const user = await User.findByIdAndUpdate(
-//     req.user._id,
-//     { rayonRecherche: rayon },
-//     { returnDocument: "after" }
-//   ).select("rayonRecherche");
-
-//   res.json({ rayonRecherche: user.rayonRecherche });
-// });
-
-// // =============================================
-// // ADRESSES ENREGISTRÉES (savedLocations)
-// // =============================================
-
-// // @desc    Récupérer toutes les adresses
-// // @route   GET /api/users/locations
-// // @access  Private
-// const getSavedLocations = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user._id).select("savedLocations");
-//   res.json(user.savedLocations || []);
-// });
-
-// // @desc    Ajouter une adresse
-// // @route   POST /api/users/locations
-// // @access  Private
-// const addSavedLocation = asyncHandler(async (req, res) => {
-//   const { label, longitude, latitude, adresse, isDefault } = req.body;
-
-//   if (!label || longitude === undefined || latitude === undefined) {
-//     res.status(400);
-//     throw new Error("label, longitude et latitude sont requis");
-//   }
-
-//   const user = await User.findById(req.user._id);
-
-//   if (user.savedLocations.length >= 10) {
-//     res.status(400);
-//     throw new Error("Maximum 10 adresses enregistrées atteint");
-//   }
-
-//   // Si isDefault, retirer le défaut des autres
-//   if (isDefault) {
-//     user.savedLocations.forEach((l) => { l.isDefault = false; });
-//   }
-
-//   // Si c'est la première adresse, elle devient défaut automatiquement
-//   const isFirstLocation = user.savedLocations.length === 0;
-
-//   user.savedLocations.push({
-//     label,
-//     longitude,
-//     latitude,
-//     adresse:   adresse || null,
-//     isDefault: isDefault || isFirstLocation,
-//   });
-
-//   await user.save();
-
-//   res.status(201).json(user.savedLocations);
-// });
-
-// // @desc    Modifier une adresse
-// // @route   PUT /api/users/locations/:locationId
-// // @access  Private
-// const updateSavedLocation = asyncHandler(async (req, res) => {
-//   const { locationId } = req.params;
-//   const { label, longitude, latitude, adresse, isDefault } = req.body;
-
-//   const user = await User.findById(req.user._id);
-
-//   const loc = user.savedLocations.id(locationId);
-//   if (!loc) {
-//     res.status(404);
-//     throw new Error("Adresse non trouvée");
-//   }
-
-//   // Si on marque cette adresse comme défaut, retirer le défaut des autres
-//   if (isDefault) {
-//     user.savedLocations.forEach((l) => { l.isDefault = false; });
-//   }
-
-//   if (label      !== undefined) loc.label     = label;
-//   if (longitude  !== undefined) loc.longitude = longitude;
-//   if (latitude   !== undefined) loc.latitude  = latitude;
-//   if (adresse    !== undefined) loc.adresse   = adresse;
-//   if (isDefault  !== undefined) loc.isDefault = isDefault;
-
-//   await user.save();
-
-//   res.json(user.savedLocations);
-// });
-
-// // @desc    Supprimer une adresse
-// // @route   DELETE /api/users/locations/:locationId
-// // @access  Private
-// const deleteSavedLocation = asyncHandler(async (req, res) => {
-//   const { locationId } = req.params;
-
-//   const user = await User.findById(req.user._id);
-
-//   const loc = user.savedLocations.id(locationId);
-//   if (!loc) {
-//     res.status(404);
-//     throw new Error("Adresse non trouvée");
-//   }
-
-//   const wasDefault = loc.isDefault;
-//   loc.deleteOne();
-
-//   // Si on a supprimé l'adresse par défaut, passer la première restante en défaut
-//   if (wasDefault && user.savedLocations.length > 0) {
-//     user.savedLocations[0].isDefault = true;
-//   }
-
-//   await user.save();
-
-//   res.json(user.savedLocations);
-// });
-
-// // @desc    Définir une adresse comme adresse par défaut
-// // @route   PATCH /api/users/locations/:locationId/default
-// // @access  Private
-// const setDefaultLocation = asyncHandler(async (req, res) => {
-//   const { locationId } = req.params;
-
-//   const user = await User.findById(req.user._id);
-
-//   const loc = user.savedLocations.id(locationId);
-//   if (!loc) {
-//     res.status(404);
-//     throw new Error("Adresse non trouvée");
-//   }
-
-//   user.savedLocations.forEach((l) => { l.isDefault = false; });
-//   loc.isDefault = true;
-
-//   await user.save();
-
-//   res.json(user.savedLocations);
-// });
-
-// // =============================================
-// // REGISTER PUBLIC
-// // =============================================
-
-// // @desc    Register new user
-// // @route   POST /api/users/register
-// // @access  Public
-// const registerUser = asyncHandler(async (req, res) => {
-//   const { email, password, nom, prenom, role } = req.body;
-
-//   const allowedRoles = ["user", "prestataire"];
-//   const userRole = allowedRoles.includes(role) ? role : "user";
-
-//   const userExists = await User.findOne({ email });
-//   if (userExists) {
-//     res.status(400);
-//     throw new Error("Cet email est déjà utilisé");
-//   }
-
-//   const user = await User.create({ email, password, nom, prenom, role: userRole });
-
-//   try {
-//     await sendEmail({
-//       email:   user.email,
-//       subject: "✦ Bienvenue sur Hopela !",
-//       html:    generateWelcomeEmail({ nom: user.nom, prenom: user.prenom, email: user.email, password, role: user.role }),
-//     });
-//   } catch (error) {
-//     console.error("Erreur email de bienvenue:", error.message);
-//   }
-
-//   generateToken(res, user._id);
-
-//   res.status(201).json({
-//     _id:            user._id,
-//     email:          user.email,
-//     nom:            user.nom,
-//     prenom:         user.prenom,
-//     role:           user.role,
-//     metiers:        [],
-//     isActive:       user.isActive,
-//     rayonRecherche: user.rayonRecherche,
-//     savedLocations: [],
-//   });
-// });
-
-// // =============================================
-// // ADMIN ONLY
-// // =============================================
-
-// // @desc    Create user (Admin)
-// // @route   POST /api/users
-// // @access  Private/Admin
-// const createUser = asyncHandler(async (req, res) => {
-//   const { email, password, nom, prenom, role } = req.body;
-
-//   const userExists = await User.findOne({ email });
-//   if (userExists) {
-//     res.status(400);
-//     throw new Error("Cet email est déjà utilisé");
-//   }
-
-//   const user = await User.create({ email, password, nom, prenom, role: role || "user", createdBy: req.user._id });
-
-//   try {
-//     await sendEmail({
-//       email:   user.email,
-//       subject: "✦ Votre compte a été créé",
-//       html:    generateWelcomeEmail({ nom: user.nom, prenom: user.prenom, email: user.email, password, role: user.role }),
-//     });
-//   } catch (error) {
-//     console.error("Erreur email de bienvenue:", error.message);
-//   }
-
-//   res.status(201).json({ _id: user._id, email: user.email, nom: user.nom, prenom: user.prenom, role: user.role, isActive: user.isActive });
-// });
-
-// // @desc    Get all users
-// // @route   GET /api/users
-// // @access  Private/Admin
-// const getUsers = asyncHandler(async (req, res) => {
-//   const users = await User.find({})
-//     .select("-password")
-//     .populate("createdBy", "nom prenom email")
-//     .populate("metiers", "nom description icone")
-//     .sort({ createdAt: -1 });
-
-//   res.json(users);
-// });
-
-// // @desc    Get user by ID
-// // @route   GET /api/users/:id
-// // @access  Private/Admin
-// const getUserById = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.params.id)
-//     .select("-password")
-//     .populate("createdBy", "nom prenom email")
-//     .populate("metiers", "nom description icone");
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   res.json(user);
-// });
-
-// // @desc    Update user (Admin)
-// // @route   PUT /api/users/:id
-// // @access  Private/Admin
-// const updateUser = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.params.id);
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   user.nom      = req.body.nom      || user.nom;
-//   user.prenom   = req.body.prenom   || user.prenom;
-//   user.email    = req.body.email    || user.email;
-//   user.role     = req.body.role     || user.role;
-//   user.isActive = req.body.isActive ?? user.isActive;
-
-//   if (req.body.password) user.password = req.body.password;
-
-//   const updatedUser = await user.save();
-
-//   res.json({ _id: updatedUser._id, email: updatedUser.email, nom: updatedUser.nom, prenom: updatedUser.prenom, role: updatedUser.role, isActive: updatedUser.isActive });
-// });
-
-// // @desc    Delete user
-// // @route   DELETE /api/users/:id
-// // @access  Private/Admin
-// const deleteUser = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.params.id);
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   if (user.role === "admin" && req.user._id.toString() !== user._id.toString()) {
-//     res.status(400);
-//     throw new Error("Impossible de supprimer un autre administrateur");
-//   }
-
-//   await User.deleteOne({ _id: user._id });
-//   res.json({ message: "Utilisateur supprimé" });
-// });
-
-// // @desc    Toggle user active status
-// // @route   PATCH /api/users/:id/toggle-active
-// // @access  Private/Admin
-// const toggleUserActive = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.params.id);
-
-//   if (!user) {
-//     res.status(404);
-//     throw new Error("Utilisateur non trouvé");
-//   }
-
-//   user.isActive = !user.isActive;
-//   await user.save();
-
-//   res.json({ _id: user._id, isActive: user.isActive, message: user.isActive ? "Utilisateur activé" : "Utilisateur désactivé" });
-// });
-
-// export {
-//   authUser,
-//   registerUser,
-//   logoutUser,
-//   getUserProfile,
-//   updateUserProfile,
-//   forgotPassword,
-//   resetPassword,
-//   getPrestatairesPositionsPublic,
-//   getPrestatairesPositions,
-//   updateLocation,
-//   stopTracking,
-//   updateRayon,
-//   getSavedLocations,
-//   addSavedLocation,
-//   updateSavedLocation,
-//   deleteSavedLocation,
-//   setDefaultLocation,
-//   createUser,
-//   getUsers,
-//   getUserById,
-//   updateUser,
-//   deleteUser,
-//   toggleUserActive,
-// };
-
 // backend/controllers/userControlleur.js
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/UserModel.js";
 import generateToken from "../utils/generateToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
-import generateWelcomeEmail   from "../emails/templates/welcomeEmail.js";
-import generateResetEmail     from "../emails/templates/resetEmail.js";
+import generateWelcomeEmail    from "../emails/templates/welcomeEmail.js";
+import generateResetEmail      from "../emails/templates/resetEmail.js";
 import generateValidationEmail from "../emails/templates/validationEmail.js";
 
 // ── Helper réponse profil complet ─────────────────────────────────────────────
@@ -691,7 +43,6 @@ const authUser = asyncHandler(async (req, res) => {
     res.status(401); throw new Error("Email ou mot de passe invalide");
   }
 
-  // Prestataire non validé — bloque la connexion
   if (user.role === "prestataire" && !user.isValidated) {
     res.status(403);
     throw new Error("Votre compte est en attente de validation par un administrateur. Vous recevrez un email dès que votre compte sera activé.");
@@ -754,7 +105,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) return res.json({ message: "Si cet email existe, un lien a été envoyé." });
 
-  const token  = user.getResetPasswordToken();
+  const token = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
@@ -836,7 +187,10 @@ const updateRayon = asyncHandler(async (req, res) => {
 // ADRESSES ENREGISTRÉES
 // =============================================
 
-const getSavedLocations    = asyncHandler(async (req, res) => { const u = await User.findById(req.user._id).select("savedLocations"); res.json(u.savedLocations || []); });
+const getSavedLocations = asyncHandler(async (req, res) => {
+  const u = await User.findById(req.user._id).select("savedLocations");
+  res.json(u.savedLocations || []);
+});
 
 const addSavedLocation = asyncHandler(async (req, res) => {
   const { label, longitude, latitude, adresse, isDefault } = req.body;
@@ -886,6 +240,26 @@ const setDefaultLocation = asyncHandler(async (req, res) => {
 });
 
 // =============================================
+// STATS PUBLIQUES (landing page)
+// =============================================
+
+// @desc    Statistiques publiques agrégées — sans données sensibles
+// @route   GET /api/users/stats/public
+// @access  Public
+const getPublicStats = asyncHandler(async (req, res) => {
+  const [prestatairesActifs, usersActifs] = await Promise.all([
+    User.countDocuments({ role: "prestataire", isActive: true, isValidated: true }),
+    User.countDocuments({ role: "user",        isActive: true }),
+  ]);
+
+  res.json({
+    prestatairesActifs,
+    usersActifs,
+    tempsReponse: "< 5min",
+  });
+});
+
+// =============================================
 // REGISTER PUBLIC
 // =============================================
 
@@ -894,10 +268,9 @@ const registerUser = asyncHandler(async (req, res) => {
   const allowedRoles = ["user", "prestataire"];
   const userRole = allowedRoles.includes(role) ? role : "user";
 
-  // Validation prestataire
   if (userRole === "prestataire") {
     if (!telephoneContact?.trim()) { res.status(400); throw new Error("Le numéro de téléphone est obligatoire pour les prestataires."); }
-    if (!ridet?.trim()) { res.status(400); throw new Error("Le RIDET est obligatoire pour les prestataires."); }
+    if (!ridet?.trim())            { res.status(400); throw new Error("Le RIDET est obligatoire pour les prestataires."); }
   }
 
   if (await User.findOne({ email })) { res.status(400); throw new Error("Cet email est déjà utilisé"); }
@@ -906,23 +279,20 @@ const registerUser = asyncHandler(async (req, res) => {
     email, password, nom, prenom, role: userRole,
     telephoneContact: telephoneContact || null,
     ridet:            ridet            || null,
-    // Prestataires : isValidated = false (attente admin), users : true
     isValidated: userRole !== "prestataire",
   });
 
   try {
     await sendEmail({
-      email: user.email,
+      email:   user.email,
       subject: userRole === "prestataire" ? "✦ Inscription Hopela — en attente de validation" : "✦ Bienvenue sur Hopela !",
-      html: generateWelcomeEmail({ nom: user.nom, prenom: user.prenom, email: user.email, password, role: user.role }),
+      html:    generateWelcomeEmail({ nom: user.nom, prenom: user.prenom, email: user.email, password, role: user.role }),
     });
   } catch (e) { console.error("Email bienvenue:", e.message); }
 
   generateToken(res, user._id);
 
-  // Prestataire non validé — on retourne les infos mais sans token de session actif
   if (userRole === "prestataire") {
-    // Supprimer le cookie — il ne peut pas se connecter avant validation
     res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
     return res.status(201).json({
       pendingValidation: true,
@@ -949,8 +319,8 @@ const createUser = asyncHandler(async (req, res) => {
     email, password, nom, prenom, role: role || "user",
     createdBy: req.user._id,
     telephoneContact: telephoneContact || null,
-    ridet: ridet || null,
-    isValidated: true, // créé par admin = validé d'office
+    ridet:            ridet            || null,
+    isValidated: true,
   });
 
   try {
@@ -965,28 +335,23 @@ const createUser = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const validatePrestataire = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
-  if (!user) { res.status(404); throw new Error("Utilisateur non trouvé"); }
+  if (!user)                       { res.status(404); throw new Error("Utilisateur non trouvé"); }
   if (user.role !== "prestataire") { res.status(400); throw new Error("Cet utilisateur n'est pas un prestataire"); }
-  if (user.isValidated) { res.status(400); throw new Error("Ce prestataire est déjà validé"); }
+  if (user.isValidated)            { res.status(400); throw new Error("Ce prestataire est déjà validé"); }
 
   user.isValidated = true;
   user.isActive    = true;
   await user.save();
 
-  // Email de confirmation au prestataire
   try {
     await sendEmail({
       email:   user.email,
       subject: "✅ Votre compte Hopela est validé !",
-      html:    generateValidationEmail({
-        prenom:   user.prenom,
-        nom:      user.nom,
-        loginUrl: `${process.env.FRONTEND_URL}/login`,
-      }),
+      html:    generateValidationEmail({ prenom: user.prenom, nom: user.nom, loginUrl: `${process.env.FRONTEND_URL}/login` }),
     });
   } catch (e) { console.error("Email validation:", e.message); }
 
-  res.json({ message: `Le compte de ${user.prenom} ${user.nom} a été validé. Un email de confirmation a été envoyé.`, user: { _id: user._id, isValidated: true } });
+  res.json({ message: `Le compte de ${user.prenom} ${user.nom} a été validé.`, user: { _id: user._id, isValidated: true } });
 });
 
 const getUsers = asyncHandler(async (req, res) => {
@@ -1034,6 +399,7 @@ export {
   forgotPassword, resetPassword,
   getPrestatairesPositionsPublic, getPrestatairesPositions, updateLocation, stopTracking, updateRayon,
   getSavedLocations, addSavedLocation, updateSavedLocation, deleteSavedLocation, setDefaultLocation,
+  getPublicStats,
   validatePrestataire,
   createUser, getUsers, getUserById, updateUser, deleteUser, toggleUserActive,
 };
