@@ -87,14 +87,17 @@ const useGeolocate = () => {
   const { userInfo }           = useSelector((s) => s.auth);
   const { emitLocation, emitStopTracking } = useSocket();
 
-  // Retourne une Promise { ok, reason }
   const startTracking = () => {
     return new Promise((resolve) => {
+      console.log("🟡 startTracking appelé — userId:", userInfo?._id);
+
       if (!navigator.geolocation) {
+        console.log("❌ geolocation non supportée");
         resolve({ ok: false, reason: "unsupported" });
         return;
       }
       if (!userInfo?._id) {
+        console.log("❌ pas d'userId");
         resolve({ ok: false, reason: "no_user" });
         return;
       }
@@ -103,12 +106,14 @@ const useGeolocate = () => {
 
       const id = navigator.geolocation.watchPosition(
         ({ coords }) => {
+          console.log("✅ GPS obtenu:", coords.longitude, coords.latitude);
           dispatch(setWatchId(id));
           dispatch(setSharing(true));
           emitLocation(userInfo._id, coords.longitude, coords.latitude);
           if (!resolved) { resolved = true; resolve({ ok: true }); }
         },
         (err) => {
+          console.log("❌ GPS erreur code:", err.code, "msg:", err.message);
           navigator.geolocation.clearWatch(id);
           dispatch(setWatchId(null));
           dispatch(setSharing(false));
@@ -120,24 +125,18 @@ const useGeolocate = () => {
         { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
       );
 
-      // Stocker l'id immédiatement pour pouvoir clearWatch si besoin
+      console.log("📡 watchPosition lancé, id:", id);
       dispatch(setWatchId(id));
     });
   };
 
   const stopTracking = async () => {
-    // 1. Stopper le watchPosition GPS
+    console.log("🔴 stopTracking appelé — watchId:", watchId);
     if (watchId !== null) {
       navigator.geolocation.clearWatch(watchId);
     }
     dispatch(setWatchId(null));
-
-    // 2. Émettre stop_tracking via socket → retire le marqueur de la carte chez tous les users
-    if (userInfo?._id) {
-      emitStopTracking(userInfo._id);
-    }
-
-    // 3. Appel REST pour persister isTracked: false en BDD
+    if (userInfo?._id) emitStopTracking(userInfo._id);
     try {
       await fetch(`${API_URL}/api/users/location/stop`, {
         method: "PUT",
@@ -146,8 +145,6 @@ const useGeolocate = () => {
     } catch (e) {
       console.error("Stop tracking REST:", e.message);
     }
-
-    // 4. Mettre à jour l'état local
     dispatch(setSharing(false));
   };
 
