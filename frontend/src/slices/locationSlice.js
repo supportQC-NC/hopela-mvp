@@ -669,6 +669,8 @@ const locationSlice = createSlice({
   name: "location",
   initialState: {
     prestataires:          [],
+    // On garde une trace des ID supprimés par le Socket pour éviter que l'API ne les réinjecte
+    removedUserIds:        [], 
     loading:               false,
     error:                 null,
     isSharing:             false,
@@ -683,20 +685,25 @@ const locationSlice = createSlice({
   reducers: {
     // Socket temps réel
     updatePrestairePosition: (state, action) => {
-      // On s'assure d'utiliser 'prestaireData' (avec un 'e') envoyé par UseSocket.js
       const { userId, longitude, latitude, prestaireData } = action.payload;
       
+      // IMPORTANT: Si un user réapparaît après avoir été retiré, on le sort de la liste noire
+      state.removedUserIds = state.removedUserIds.filter((id) => id !== userId);
+
       const idx = state.prestataires.findIndex((p) => p._id === userId);
       
       if (idx !== -1) {
-        // Cas 1: Le prestataire est déjà dans la liste (mise à jour simple)
+        // Cas 1: Le prestataire est déjà dans la liste (mise à jour)
         state.prestataires[idx].location.coordinates = [longitude, latitude];
         state.prestataires[idx].location.updatedAt   = new Date().toISOString();
         state.prestataires[idx].isTracked = true;
+        // Si on a reçu des données fraîches (nom, metier), on met à jour le profil aussi
+        if (prestaireData) {
+          state.prestataires[idx] = { ...state.prestataires[idx], ...prestaireData, location: state.prestataires[idx].location };
+        }
       } else {
-        // Cas 2: Le prestataire n'est PAS dans la liste (Il vient de se réactiver)
-        // IMPORTANT: On l'ajoute forcément, même sans données complètes.
-        
+        // Cas 2: Le prestataire n'est PAS dans la liste (Activation)
+        // On l'ajoute forcément.
         let newUser = {
           _id: userId,
           location: {
@@ -708,22 +715,27 @@ const locationSlice = createSlice({
         };
 
         if (prestaireData) {
-          // On fusionne les données fraîches du fetch public
           newUser = { ...prestaireData, ...newUser };
         } else {
-          // Fallback si le fetch public a échoué ou ne l'a pas trouvé
-          // On met des valeurs par défaut pour éviter que la carte ne plante
+          // Données minimales
           newUser.prenom = "En ligne";
           newUser.nom = "";
           newUser.metiers = []; 
           newUser.telephoneContact = null;
         }
-
         state.prestataires.push(newUser);
       }
     },
     removePrestataire: (state, action) => {
-      state.prestataires = state.prestataires.filter((p) => p._id !== action.payload.userId);
+      const userId = action.payload.userId;
+      
+      // 1. On ajoute l'ID à la liste noire pour que le prochain fetch API ne le réintègre pas
+      if (!state.removedUserIds.includes(userId)) {
+        state.removedUserIds.push(userId);
+      }
+
+      // 2. On le retire de la liste affichée
+      state.prestataires = state.prestataires.filter((p) => p._id !== userId);
     },
 
     // Tracking local
@@ -745,6 +757,7 @@ const locationSlice = createSlice({
     // Reset déconnexion
     resetLocation: (state) => {
       state.prestataires          = [];
+      state.removedUserIds        = [];
       state.loading               = false;
       state.error                 = null;
       state.isSharing             = false;
@@ -760,10 +773,14 @@ const locationSlice = createSlice({
     // fetchPrestatairesPublic
     builder
       .addCase(fetchPrestatairesPublic.fulfilled, (s, a) => { 
-        // Merge pour protéger les users ajoutés par le socket en temps réel
-        const apiIds = new Set(a.payload.map(p => p._id));
+        // On filtre la réponse API pour exclure ceux que le Socket a dit de supprimer
+        const validApiUsers = a.payload.filter(u => !s.removedUserIds.includes(u._id));
+        
+        // On garde aussi les users ajoutés par le Socket qui ne sont pas encore dans l'API
+        const apiIds = new Set(validApiUsers.map(p => p._id));
         const socketOnlyUsers = s.prestataires.filter(p => !apiIds.has(p._id));
-        s.prestataires = [...a.payload, ...socketOnlyUsers]; 
+        
+        s.prestataires = [...validApiUsers, ...socketOnlyUsers]; 
       });
 
     // fetchPrestatairesPositions
@@ -772,19 +789,20 @@ const locationSlice = createSlice({
       .addCase(fetchPrestatairesPositions.fulfilled, (s, a) => { 
         s.loading = false;
         
-        // CORRECTION CRITIQUE ICI :
-        // On ne remplace pas la liste. On fusionne.
-        // Si le Socket a ajouté un user que l'API (Base de données) n'a pas encore enregistré à cause du lag,
-        // on garde ce user dans la liste pour ne pas le faire clignoter/disparaitre.
+        // LOGIQUE HYBRIDE FINALE :
+        // 1. On prend la réponse API, mais on enlève ceux qui sont dans la "liste noire" (arrêtés par socket)
         const apiList = a.payload || [];
-        const apiIds = new Set(apiList.map(p => p._id));
+        const filteredApiList = apiList.filter(u => !s.removedUserIds.includes(u._id));
         
-        // 1. On garde les users qui ne sont PAS dans la réponse API (ceux venant du socket en temps réel)
+        // 2. On identifie les IDs de cette API "nettoyée"
+        const apiIds = new Set(filteredApiList.map(p => p._id));
+        
+        // 3. On garde les users qui sont dans le state actuel mais PAS dans l'API
+        // (Ce sont ceux qui viennent de démarrer et que l'API n'a pas encore enregistrés)
         const socketOnlyUsers = s.prestataires.filter(p => !apiIds.has(p._id));
         
-        // 2. Pour ceux qui sont dans les deux, on prend la version API (plus complète)
-        // 3. On fusionne le tout
-        s.prestataires = [...apiList, ...socketOnlyUsers];
+        // 4. Fusion : API (Màj profils) + Socket (Nouveaux démarrages)
+        s.prestataires = [...filteredApiList, ...socketOnlyUsers];
       })
       .addCase(fetchPrestatairesPositions.rejected,  (s, a) => { s.loading = false; s.error = a.payload; });
 
