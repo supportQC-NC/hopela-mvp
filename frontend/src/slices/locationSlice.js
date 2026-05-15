@@ -683,9 +683,9 @@ const locationSlice = createSlice({
   reducers: {
     // Socket temps réel
     updatePrestairePosition: (state, action) => {
-      // IMPORTANT: On utilise 'prestaireData' (avec un 'e') car c'est le nom envoyé par UseSocket.js
+      // On s'assure d'utiliser 'prestaireData' (avec un 'e') envoyé par UseSocket.js
       const { userId, longitude, latitude, prestaireData } = action.payload;
-
+      
       const idx = state.prestataires.findIndex((p) => p._id === userId);
       
       if (idx !== -1) {
@@ -694,37 +694,32 @@ const locationSlice = createSlice({
         state.prestataires[idx].location.updatedAt   = new Date().toISOString();
         state.prestataires[idx].isTracked = true;
       } else {
-        // Cas 2: Le prestataire n'est PAS dans la liste (Il vient de se connecter / réactiver)
-        // On l'ajoute forcément pour qu'il apparaisse, même si on n'a pas toutes ses données
+        // Cas 2: Le prestataire n'est PAS dans la liste (Il vient de se réactiver)
+        // IMPORTANT: On l'ajoute forcément, même sans données complètes.
         
+        let newUser = {
+          _id: userId,
+          location: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+            updatedAt: new Date().toISOString(),
+          },
+          isTracked: true,
+        };
+
         if (prestaireData) {
-          // On a les données complètes du fetch public
-          state.prestataires.push({
-            ...prestaireData,
-            location: {
-              type: "Point",
-              coordinates: [longitude, latitude],
-              updatedAt: new Date().toISOString(),
-            },
-            isTracked: true,
-          });
+          // On fusionne les données fraîches du fetch public
+          newUser = { ...prestaireData, ...newUser };
         } else {
-          // On n'a PAS les données (fetch public a échoué ou lag), mais on ajoute quand même
-          // pour ne pas avoir le bug "doit recharger la page".
-          state.prestataires.push({
-            _id: userId,
-            prenom: "En ligne",
-            nom: "",
-            // Metier inconnu pour éviter de casser le filtre si celui-ci est strict
-            metiers: [], 
-            location: {
-              type: "Point",
-              coordinates: [longitude, latitude],
-              updatedAt: new Date().toISOString(),
-            },
-            isTracked: true,
-          });
+          // Fallback si le fetch public a échoué ou ne l'a pas trouvé
+          // On met des valeurs par défaut pour éviter que la carte ne plante
+          newUser.prenom = "En ligne";
+          newUser.nom = "";
+          newUser.metiers = []; 
+          newUser.telephoneContact = null;
         }
+
+        state.prestataires.push(newUser);
       }
     },
     removePrestataire: (state, action) => {
@@ -765,7 +760,7 @@ const locationSlice = createSlice({
     // fetchPrestatairesPublic
     builder
       .addCase(fetchPrestatairesPublic.fulfilled, (s, a) => { 
-        // Merge stratégique : on ne veut pas effacer les users ajoutés par le socket si l'API est lente
+        // Merge pour protéger les users ajoutés par le socket en temps réel
         const apiIds = new Set(a.payload.map(p => p._id));
         const socketOnlyUsers = s.prestataires.filter(p => !apiIds.has(p._id));
         s.prestataires = [...a.payload, ...socketOnlyUsers]; 
@@ -776,17 +771,19 @@ const locationSlice = createSlice({
       .addCase(fetchPrestatairesPositions.pending,   (s) => { s.loading = true;  s.error = null; })
       .addCase(fetchPrestatairesPositions.fulfilled, (s, a) => { 
         s.loading = false;
-        // CORRECTION ICI : Merge au lieu de remplacer
-        // Si le socket a ajouté un user que l'API (base de données) n'a pas encore enregistré,
-        // on garde ce user dans la liste pour ne pas le faire disparaître.
+        
+        // CORRECTION CRITIQUE ICI :
+        // On ne remplace pas la liste. On fusionne.
+        // Si le Socket a ajouté un user que l'API (Base de données) n'a pas encore enregistré à cause du lag,
+        // on garde ce user dans la liste pour ne pas le faire clignoter/disparaitre.
         const apiList = a.payload || [];
         const apiIds = new Set(apiList.map(p => p._id));
         
-        // On garde ceux qui ne sont pas dans la réponse API (ceux venant du socket en temps réel)
+        // 1. On garde les users qui ne sont PAS dans la réponse API (ceux venant du socket en temps réel)
         const socketOnlyUsers = s.prestataires.filter(p => !apiIds.has(p._id));
         
-        // Pour ceux qui sont dans les deux, on prend la version de l'API (plus complète)
-        // et on y ajoute les users "socket only"
+        // 2. Pour ceux qui sont dans les deux, on prend la version API (plus complète)
+        // 3. On fusionne le tout
         s.prestataires = [...apiList, ...socketOnlyUsers];
       })
       .addCase(fetchPrestatairesPositions.rejected,  (s, a) => { s.loading = false; s.error = a.payload; });
