@@ -2,17 +2,45 @@
 
 /* ══ Variables ══════════════════════════════════════════ */
 :root {
-  --gold: #c9a84c;
-  --gold-light: #e8c97a;
-  --gold-dim: rgba(201, 168, 76, 0.16);
-  --dark: #0a0804;
-  --dark-2: #110e08;
-  --dark-3: #1a160f;
-  --cream: #f5f0e8;
-  --cream-dim: rgba(245, 240, 232, 0.5);
-  --cream-faint: rgba(245, 240, 232, 0.22);
-  --border: rgba(201, 168, 76, 0.14);
-  --border-mid: rgba(201, 168, 76, 0.28);
+  /* --- Nouvelle Charte Graphique --- */
+  --bg-main: #0a0d12;
+  --bg-card: #111620;
+
+  --primary: #145c45;
+  --primary-hover: #1e7a5c;
+
+  --secondary: #1a2d4a;
+  --secondary-hover: #243d63;
+
+  --text-main: #f0f2f5;
+  --text-secondary: #b0b8c8;
+
+  --border-color: #1d2430;
+
+  --radius: 14px;
+  --transition: all 0.2s ease;
+
+  /* --- Alias & Adaptation pour le style existant --- */
+  /* Mapping de l'ancien "Gold" vers le nouveau "Primary Green" */
+  --gold: var(--primary);
+  --gold-light: var(--primary-hover);
+  --gold-dim: rgba(20, 92, 69, 0.15); /* Vert avec opacité pour les fonds */
+
+  /* Mapping des fonds sombres */
+  --dark: var(--bg-main);
+  --dark-2: var(--bg-card);
+  /* Une teinte légèrement plus claire que --bg-card pour les survols */
+  --dark-3: #1a202c;
+
+  /* Mapping des textes */
+  --cream: var(--text-main);
+  --cream-dim: var(--text-secondary);
+  --cream-faint: rgba(176, 184, 200, 0.4);
+
+  /* Mapping des bordures */
+  --border: var(--border-color);
+  /* Bordure plus visible au survol (basée sur le secondaire ou texte) */
+  --border-mid: rgba(176, 184, 200, 0.3);
 }
 
 *,
@@ -162,13 +190,16 @@ body {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #0a0804;
-  background: linear-gradient(135deg, #c9a84c, #e8c97a);
+  /* Le texte devient blanc sur fond vert foncé pour la lisibilité */
+  color: #ffffff;
+  /* Dégradé utilisant les nouveaux verts */
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   border: none;
   cursor: pointer;
   padding: 17px 28px;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.25);
+  /* Ombre verte */
+  box-shadow: 0 4px 20px rgba(20, 92, 69, 0.25);
   transition:
     transform 0.2s,
     box-shadow 0.2s;
@@ -178,7 +209,7 @@ body {
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.42);
+  box-shadow: 0 8px 32px rgba(20, 92, 69, 0.42);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -220,15 +251,16 @@ body {
   position: absolute;
   inset: 0;
   z-index: 0;
+  /* Utilisation du Primary et Secondary pour les halos de fond */
   background:
     radial-gradient(
       ellipse 90% 55% at 50% 25%,
-      rgba(201, 168, 76, 0.07) 0%,
+      rgba(20, 92, 69, 0.08) 0%,
       transparent 70%
     ),
     radial-gradient(
       ellipse 50% 40% at 5% 90%,
-      rgba(201, 168, 76, 0.04) 0%,
+      rgba(26, 45, 74, 0.06) 0%,
       transparent 60%
     );
 }
@@ -236,7 +268,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.018;
+  opacity: 0.025;
   background-image:
     linear-gradient(var(--border) 1px, transparent 1px),
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
@@ -259,7 +291,13 @@ body {
 }
 .lp-hero h1 em {
   font-style: italic;
-  background: linear-gradient(90deg, #c9a84c, #e8c97a, #c9a84c);
+  /* Utilisation des variables vertes pour l'effet shimmer */
+  background: linear-gradient(
+    90deg,
+    var(--primary),
+    var(--primary-hover),
+    var(--primary)
+  );
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -285,8 +323,9 @@ body {
   align-items: center;
   gap: 9px;
   padding: 9px 16px;
-  background: rgba(76, 175, 110, 0.08);
-  border: 1px solid rgba(76, 175, 110, 0.22);
+  /* Fond adapté à la nouvelle palette (vert très sombre/transparent) */
+  background: rgba(20, 92, 69, 0.1);
+  border: 1px solid rgba(20, 92, 69, 0.3);
   border-radius: 100px;
   font-size: 13px;
   color: var(--cream-dim);
@@ -296,7 +335,8 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #4caf6e;
+  /* Point "Live" vert plus vif */
+  background: var(--primary-hover);
   flex-shrink: 0;
   animation: pulseDot 1.8s ease-in-out infinite;
 }
@@ -482,20 +522,21 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  /* Dégradé vert au survol */
   background: linear-gradient(
     135deg,
-    rgba(201, 168, 76, 0.05) 0%,
+    rgba(20, 92, 69, 0.08) 0%,
     transparent 65%
   );
   opacity: 0;
   transition: opacity 0.28s;
 }
 .lp-cat-card:hover {
-  border-color: rgba(201, 168, 76, 0.38);
+  border-color: rgba(20, 92, 69, 0.4);
   transform: translateY(-4px);
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(201, 168, 76, 0.06);
+    0 0 0 1px rgba(20, 92, 69, 0.1);
 }
 .lp-cat-card:hover::before {
   opacity: 1;
@@ -506,8 +547,8 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: rgba(201, 168, 76, 0.08);
-  border: 1px solid rgba(201, 168, 76, 0.14);
+  background: rgba(20, 92, 69, 0.1);
+  border: 1px solid rgba(20, 92, 69, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -517,7 +558,7 @@ body {
   margin-bottom: 2px;
 }
 .lp-cat-card:hover .lp-cat-icon {
-  background: rgba(201, 168, 76, 0.14);
+  background: rgba(20, 92, 69, 0.18);
 }
 
 /* Nom */
@@ -550,7 +591,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: rgba(201, 168, 76, 0.45);
+  color: rgba(20, 92, 69, 0.5);
   padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
   transition: color 0.2s;
@@ -573,7 +614,7 @@ body {
   background: linear-gradient(
     90deg,
     var(--dark-2) 25%,
-    #1a1408 50%,
+    var(--secondary) 50%,
     var(--dark-2) 75%
   );
   background-size: 400% 100%;
@@ -685,7 +726,7 @@ body {
 .lp-step-connector {
   width: 1px;
   height: 14px;
-  background: linear-gradient(to bottom, rgba(201, 168, 76, 0.3), transparent);
+  background: linear-gradient(to bottom, rgba(20, 92, 69, 0.3), transparent);
   margin: 0 auto;
 }
 
@@ -700,10 +741,11 @@ body {
   font-size: 36px;
   font-weight: 700;
   line-height: 1;
+  /* Dégradé vert pour le numéro */
   background: linear-gradient(
     135deg,
-    rgba(201, 168, 76, 0.35),
-    rgba(201, 168, 76, 0.08)
+    rgba(20, 92, 69, 0.6),
+    rgba(20, 92, 69, 0.15)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -778,7 +820,7 @@ body {
   left: 0;
   top: -4px;
   font-size: 30px;
-  color: rgba(201, 168, 76, 0.18);
+  color: rgba(20, 92, 69, 0.25);
   line-height: 1;
   font-family: "Cormorant Garamond", serif;
 }
@@ -792,14 +834,15 @@ body {
   height: 36px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #c9a84c, #8a6c28);
+  /* Dégradé vert pour l'avatar */
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: "Cormorant Garamond", serif;
   font-size: 15px;
   font-weight: 700;
-  color: #0a0804;
+  color: #fff;
 }
 .lp-author-name {
   font-size: 13px;
@@ -848,9 +891,10 @@ body {
 .lp-cta-glow {
   position: absolute;
   inset: 0;
+  /* Halo vert en bas */
   background: radial-gradient(
     ellipse 70% 80% at 50% 110%,
-    rgba(201, 168, 76, 0.08),
+    rgba(20, 92, 69, 0.1),
     transparent
   );
   pointer-events: none;
