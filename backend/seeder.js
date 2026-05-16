@@ -6,14 +6,16 @@ import colors from "colors";
 import connectDB from "./config/db.js";
 
 // Models
-import User    from "./models/UserModel.js";
-import Metier  from "./models/MetierModel.js";
-import Service from "./models/ServiceModel.js";
+import Categorie from "./models/CategorieModel.js";
+import Metier    from "./models/MetierModel.js";
+import User      from "./models/UserModel.js";
+import Service   from "./models/ServiceModel.js";
 
 // Data — 1 fichier par modèle
-import usersData    from "./data/users.js";
-import metiersData  from "./data/metiers.js";
-import servicesData from "./data/services.js";
+import categoriesData from "./data/categories.js";
+import metiersData    from "./data/metiers.js";
+import usersData      from "./data/users.js";
+import servicesData   from "./data/services.js";
 
 dotenv.config();
 connectDB();
@@ -25,23 +27,53 @@ const importData = async () => {
     await Service.deleteMany();
     await User.deleteMany();
     await Metier.deleteMany();
+    await Categorie.deleteMany();
     console.log("🗑️  Base de données nettoyée".yellow);
 
-    // 2. Créer les métiers
-    const createdMetiers = await Metier.insertMany(metiersData);
+    // 2. Créer les catégories
+    const createdCategories = await Categorie.insertMany(categoriesData);
+    console.log(`✅ ${createdCategories.length} catégorie(s) créée(s)`.green);
+
+    // Map nom → ObjectId catégorie
+    const categorieMap = {};
+    createdCategories.forEach((c) => { categorieMap[c.nom] = c._id; });
+
+    // 3. Créer les métiers (résolution de la catégorie par nom)
+    const metiersReady = metiersData.map((m) => {
+      const { categorieNom, ...cleanMetier } = m;
+      const categorieId = categorieMap[categorieNom];
+
+      if (!categorieId) {
+        throw new Error(
+          `Catégorie introuvable pour le métier "${m.nom}" : "${categorieNom}"`
+        );
+      }
+
+      return { ...cleanMetier, categorie: categorieId };
+    });
+
+    const createdMetiers = await Metier.insertMany(metiersReady);
     console.log(`✅ ${createdMetiers.length} métier(s) créé(s)`.green);
 
-    // Map nom → ObjectId
+    // Map nom → ObjectId métier
     const metierMap = {};
     createdMetiers.forEach((m) => { metierMap[m.nom] = m._id; });
 
-    // 3. Créer les users
+    // 4. Créer les users (résolution du métier par nom)
     const createdUsers = [];
     for (const userData of usersData) {
       const { metierNom, ...cleanUser } = userData;
-      if (metierNom && metierMap[metierNom]) {
-        cleanUser.metiers = [metierMap[metierNom]];
+
+      if (metierNom) {
+        const metierId = metierMap[metierNom];
+        if (!metierId) {
+          throw new Error(
+            `Métier introuvable pour le prestataire "${userData.email}" : "${metierNom}"`
+          );
+        }
+        cleanUser.metiers = [metierId];
       }
+
       const user = await User.create(cleanUser);
       createdUsers.push(user);
     }
@@ -51,7 +83,7 @@ const importData = async () => {
     const userMap = {};
     createdUsers.forEach((u) => { userMap[u.email] = u._id; });
 
-    // 4. Créer les services
+    // 5. Créer les services
     const servicesReady = [];
     for (const s of servicesData) {
       const { prestataireEmail, ...cleanService } = s;
@@ -81,6 +113,7 @@ const destroyData = async () => {
     await Service.deleteMany();
     await User.deleteMany();
     await Metier.deleteMany();
+    await Categorie.deleteMany();
     console.log("🗑️  Toutes les données ont été supprimées !".red.bold);
     process.exit();
   } catch (error) {

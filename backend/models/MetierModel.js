@@ -4,33 +4,38 @@ import mongoose from "mongoose";
 const metierSchema = new mongoose.Schema(
   {
     nom: {
-      type: String,
+      type:     String,
       required: [true, "Le nom du métier est requis"],
-      unique: true,
-      trim: true,
+      unique:   true,
+      trim:     true,
     },
     description: {
-      type: String,
-      trim: true,
+      type:    String,
+      trim:    true,
       default: null,
     },
     icone: {
-      // Nom d'icône (ex: "wrench", "scissors") ou URL SVG
-      type: String,
-      trim: true,
+      // Nom d'icône Lucide (ex: "wrench") ou emoji
+      type:    String,
+      trim:    true,
       default: null,
     },
+    categorie: {
+      type:     mongoose.Schema.Types.ObjectId,
+      ref:      "Categorie",
+      required: [true, "La catégorie du métier est requise"],
+    },
     isActive: {
-      type: Boolean,
+      type:    Boolean,
       default: true,
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type:    mongoose.Schema.Types.ObjectId,
+      ref:     "User",
       default: null,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 // ⚠️  La suppression n'est autorisée que si aucun prestataire

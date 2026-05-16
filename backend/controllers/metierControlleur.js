@@ -1,7 +1,8 @@
 // backend/controllers/metierControlleur.js
 import asyncHandler from "../middleware/asyncHandler.js";
-import Metier from "../models/MetierModel.js";
-import User   from "../models/UserModel.js";
+import Metier       from "../models/MetierModel.js";
+import Categorie    from "../models/CategorieModel.js";
+import User         from "../models/UserModel.js";
 
 // =============================================
 // PUBLIC
@@ -11,7 +12,9 @@ import User   from "../models/UserModel.js";
 // @route   GET /api/metiers
 // @access  Public
 const getMetiers = asyncHandler(async (req, res) => {
-  const metiers = await Metier.find({ isActive: true }).sort({ nom: 1 });
+  const metiers = await Metier.find({ isActive: true })
+    .populate("categorie", "nom icone ordre")
+    .sort({ nom: 1 });
   res.json(metiers);
 });
 
@@ -19,7 +22,8 @@ const getMetiers = asyncHandler(async (req, res) => {
 // @route   GET /api/metiers/:id
 // @access  Public
 const getMetierById = asyncHandler(async (req, res) => {
-  const metier = await Metier.findById(req.params.id);
+  const metier = await Metier.findById(req.params.id)
+    .populate("categorie", "nom icone ordre");
 
   if (!metier) {
     res.status(404);
@@ -38,6 +42,7 @@ const getMetierById = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getAllMetiers = asyncHandler(async (req, res) => {
   const metiers = await Metier.find({})
+    .populate("categorie", "nom icone ordre")
     .populate("createdBy", "nom prenom email")
     .sort({ nom: 1 });
   res.json(metiers);
@@ -47,13 +52,26 @@ const getAllMetiers = asyncHandler(async (req, res) => {
 // @route   POST /api/metiers
 // @access  Private/Admin
 const createMetier = asyncHandler(async (req, res) => {
-  const { nom, description, icone } = req.body;
+  const { nom, description, icone, categorieId } = req.body;
 
   if (!nom) {
     res.status(400);
     throw new Error("Le nom du métier est requis");
   }
 
+  if (!categorieId) {
+    res.status(400);
+    throw new Error("La catégorie du métier est requise");
+  }
+
+  // Vérifie que la catégorie existe
+  const categorie = await Categorie.findById(categorieId);
+  if (!categorie) {
+    res.status(404);
+    throw new Error("Catégorie introuvable");
+  }
+
+  // Vérifie que le nom n'existe pas déjà
   const exists = await Metier.findOne({ nom: { $regex: new RegExp(`^${nom}$`, "i") } });
   if (exists) {
     res.status(400);
@@ -64,10 +82,13 @@ const createMetier = asyncHandler(async (req, res) => {
     nom,
     description: description || null,
     icone:       icone       || null,
+    categorie:   categorieId,
     createdBy:   req.user._id,
   });
 
-  res.status(201).json(metier);
+  // Retourne le métier populé pour que le front dispose de l'objet catégorie complet
+  const populated = await Metier.findById(metier._id).populate("categorie", "nom icone ordre");
+  res.status(201).json(populated);
 });
 
 // @desc    Modifier un métier
@@ -86,8 +107,19 @@ const updateMetier = asyncHandler(async (req, res) => {
   if (req.body.icone       !== undefined) metier.icone       = req.body.icone;
   if (req.body.isActive    !== undefined) metier.isActive    = req.body.isActive;
 
+  // Mise à jour de la catégorie si fournie
+  if (req.body.categorieId !== undefined) {
+    const categorie = await Categorie.findById(req.body.categorieId);
+    if (!categorie) {
+      res.status(404);
+      throw new Error("Catégorie introuvable");
+    }
+    metier.categorie = req.body.categorieId;
+  }
+
   const updated = await metier.save();
-  res.json(updated);
+  const populated = await Metier.findById(updated._id).populate("categorie", "nom icone ordre");
+  res.json(populated);
 });
 
 // @desc    Supprimer un métier
