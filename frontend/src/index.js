@@ -18,6 +18,7 @@ import LoginScreen            from "./screens/public/LoginScreen";
 import ForgotPasswordScreen   from "./screens/public/ForgotPasswordScreen";
 import ResetPasswordScreen    from "./screens/public/ResetPasswordScreen";
 import ServicesScreen         from "./screens/public/ServicesScreen";
+import CategorieScreen        from "./screens/public/CategorieScreen";  // ← nouveau
 import CommentCaMarcheScreen  from "./screens/public/CommentCaMarcheScreen";
 import ContactScreen          from "./screens/public/ContactScreen";
 import NotFoundScreen         from "./screens/NotFoundScreen";
@@ -39,13 +40,14 @@ const router = createBrowserRouter(
     <Route path="/" element={<App />}>
 
       {/* ── Public ── */}
-      <Route index                        element={<LandingScreen />} />
-      <Route path="login"                 element={<LoginScreen />} />
-      <Route path="forgot-password"       element={<ForgotPasswordScreen />} />
-      <Route path="reset-password/:token" element={<ResetPasswordScreen />} />
-      <Route path="services"              element={<ServicesScreen />} />
-      <Route path="comment-ca-marche"     element={<CommentCaMarcheScreen />} />
-      <Route path="contact"               element={<ContactScreen />} />
+      <Route index                                  element={<LandingScreen />} />
+      <Route path="login"                           element={<LoginScreen />} />
+      <Route path="forgot-password"                 element={<ForgotPasswordScreen />} />
+      <Route path="reset-password/:token"           element={<ResetPasswordScreen />} />
+      <Route path="services"                        element={<ServicesScreen />} />
+      <Route path="services/categories/:id"         element={<CategorieScreen />} />  {/* ← nouveau */}
+      <Route path="comment-ca-marche"               element={<CommentCaMarcheScreen />} />
+      <Route path="contact"                         element={<ContactScreen />} />
 
       {/* ── Pages légales ── */}
       <Route path="mentions-legales"  element={<MentionLegalesScreen />} />

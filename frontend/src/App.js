@@ -25,7 +25,8 @@ const App = () => {
 
   const isPublicRoute =
     PUBLIC_ROUTES.includes(pathname) ||
-    pathname.startsWith("/reset-password/");
+    pathname.startsWith("/reset-password/")  ||
+    pathname.startsWith("/services/categories/"); // ← nouvelle route publique catégorie
 
   if (!userInfo && !isPublicRoute) {
     return <Navigate to="/login" replace />;

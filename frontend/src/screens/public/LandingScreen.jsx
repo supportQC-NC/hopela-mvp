@@ -1,6 +1,18 @@
 // src/screens/public/LandingScreen.jsx
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Wrench,
+  Home,
+  Sparkles,
+  HeartPulse,
+  Accessibility,
+  Car,
+  BookOpen,
+  FolderOpen,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import PublicMap from "../../components/map/PublicMap";
@@ -11,51 +23,137 @@ const FONT_HREF =
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-const METIERS = [
-  { emoji: "⚡", label: "Électricien" },
-  { emoji: "🔧", label: "Plombier" },
-  { emoji: "🎨", label: "Peintre" },
-  { emoji: "🌿", label: "Jardinier" },
-  { emoji: "❄️", label: "Climatisation" },
-  { emoji: "🧹", label: "Ménage" },
-  { emoji: "🧱", label: "Maçon" },
-  { emoji: "📸", label: "Photographe" },
-  { emoji: "💻", label: "Informaticien" },
-  { emoji: "🛵", label: "Coursier" },
-  { emoji: "🪚", label: "Menuisier" },
-  { emoji: "👶", label: "Garde enfants" },
+// ── Mapping icône Lucide ─────────────────────────────────────────────────────
+const LUCIDE_MAP = {
+  wrench: Wrench,
+  home: Home,
+  sparkles: Sparkles,
+  "heart-pulse": HeartPulse,
+  accessibility: Accessibility,
+  car: Car,
+  "book-open": BookOpen,
+};
+
+const CatIcon = ({ icone, size = 26 }) => {
+  const Icon = LUCIDE_MAP[icone] || FolderOpen;
+  return <Icon size={size} strokeWidth={1.5} />;
+};
+
+// ── Cards avantages (codées en dur) ─────────────────────────────────────────
+const AVANTAGES = [
+  {
+    icon: "📍",
+    titre: "Géolocalisation en temps réel",
+    desc: "Visualisez les prestataires disponibles autour de vous maintenant, sur une carte interactive live.",
+    accent: "#c9a84c",
+  },
+  {
+    icon: "✅",
+    titre: "Prestataires vérifiés",
+    desc: "Chaque professionnel est validé par notre équipe : vérification du RIDET et identité contrôlée.",
+    accent: "#4ade80",
+  },
+  {
+    icon: "📞",
+    titre: "Contact direct & sans frais",
+    desc: "Appelez directement le prestataire. Aucune commission, aucun intermédiaire, aucun frais cachés.",
+    accent: "#60a5fa",
+  },
+  {
+    icon: "⚡",
+    titre: "Disponibilité immédiate",
+    desc: "Le prestataire partage sa position en direct. Vous savez en un coup d'œil s'il est disponible.",
+    accent: "#f59e0b",
+  },
+  {
+    icon: "🗺️",
+    titre: "Couverture Grand Nouméa",
+    desc: "Nouméa, Dumbéa, Paita, Mont-Dore — tous les prestataires de la zone sur une seule plateforme.",
+    accent: "#a78bfa",
+  },
+  {
+    icon: "🔒",
+    titre: "Données protégées",
+    desc: "Vos informations personnelles sont sécurisées et ne sont jamais partagées sans votre consentement.",
+    accent: "#34d399",
+  },
 ];
 
+// ── Étapes ───────────────────────────────────────────────────────────────────
 const STEPS = [
-  { num: "01", icon: "🗺️", titre: "Consultez la carte",    desc: "Visualisez en temps réel tous les prestataires disponibles autour de vous grâce à la géolocalisation." },
-  { num: "02", icon: "👆", titre: "Choisissez un profil",  desc: "Consultez le métier et les services de chaque prestataire. Cliquez sur un marqueur pour les détails." },
-  { num: "03", icon: "✅", titre: "Contactez & confirmez", desc: "Prenez contact directement avec le prestataire et planifiez votre intervention en quelques secondes." },
+  {
+    num: "01",
+    icon: "🗺️",
+    titre: "Consultez la carte",
+    desc: "Visualisez en temps réel tous les prestataires disponibles autour de vous grâce à la géolocalisation.",
+  },
+  {
+    num: "02",
+    icon: "👆",
+    titre: "Choisissez un profil",
+    desc: "Consultez le métier et les services de chaque prestataire. Cliquez sur un marqueur pour les détails.",
+  },
+  {
+    num: "03",
+    icon: "✅",
+    titre: "Contactez & confirmez",
+    desc: "Prenez contact directement avec le prestataire et planifiez votre intervention en quelques secondes.",
+  },
 ];
 
+// ── Témoignages ──────────────────────────────────────────────────────────────
 const TEMOIGNAGES = [
-  { nom: "Marie K.",     quartier: "Anse Vata", texte: "Électricien trouvé en 3 minutes, intervention le jour même. Incroyable !", note: 5 },
-  { nom: "Samuel W.",    quartier: "Dumbéa",    texte: "Le plombier était professionnel et rapide. Je recommande Hopela à tous.", note: 5 },
-  { nom: "Angélique T.", quartier: "Mont-Dore", texte: "La carte en temps réel c'est génial, on voit exactement où est le prestataire.", note: 5 },
+  {
+    nom: "Marie K.",
+    quartier: "Anse Vata",
+    texte:
+      "Électricien trouvé en 3 minutes, intervention le jour même. Incroyable !",
+    note: 5,
+  },
+  {
+    nom: "Samuel W.",
+    quartier: "Dumbéa",
+    texte:
+      "Le plombier était professionnel et rapide. Je recommande Hopela à tous.",
+    note: 5,
+  },
+  {
+    nom: "Angélique T.",
+    quartier: "Mont-Dore",
+    texte:
+      "La carte en temps réel c'est génial, on voit exactement où est le prestataire.",
+    note: 5,
+  },
 ];
 
-/* ── Hook stats BDD ─────────────────────────────────────────────── */
+// ── Stats publiques ──────────────────────────────────────────────────────────
 const usePublicStats = () => {
   const [stats, setStats] = useState(null);
   useEffect(() => {
     fetch(`${API_URL}/api/users/stats/public`)
-      .then((r) => r.ok ? r.json() : null)
+      .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && setStats(d))
       .catch(() => {});
   }, []);
   return stats;
 };
 
-/* ── StatsBloc ──────────────────────────────────────────────────── */
+// ─────────────────────────────────────────────────────────
+// Bloc Stats
+// ─────────────────────────────────────────────────────────
 const StatsBloc = ({ stats }) => {
   const items = [
-    { value: stats ? `${stats.prestatairesActifs}+` : null, label: "Prestataires actifs",    icon: "🛠️" },
-    { value: stats ? `${stats.usersActifs}+`        : null, label: "Utilisateurs inscrits",  icon: "👥" },
-    { value: "< 5min",                                      label: "Temps de réponse moyen", icon: "⚡" },
+    {
+      value: stats ? `${stats.prestatairesActifs}+` : null,
+      label: "Prestataires actifs",
+      icon: "🛠️",
+    },
+    {
+      value: stats ? `${stats.usersActifs}+` : null,
+      label: "Utilisateurs inscrits",
+      icon: "👥",
+    },
+    { value: "< 5min", label: "Temps de réponse moyen", icon: "⚡" },
   ];
   return (
     <div className="lp-stats-wrap">
@@ -63,7 +161,9 @@ const StatsBloc = ({ stats }) => {
         {items.map(({ value, label, icon }) => (
           <div key={label} className="lp-stat">
             <span className="lp-stat-icon">{icon}</span>
-            <div className={`lp-stat-value${!value ? " lp-skeleton" : ""}`}>{value ?? "···"}</div>
+            <div className={`lp-stat-value${!value ? " lp-skeleton" : ""}`}>
+              {value ?? "···"}
+            </div>
             <div className="lp-stat-label">{label}</div>
           </div>
         ))}
@@ -72,73 +172,173 @@ const StatsBloc = ({ stats }) => {
   );
 };
 
-/* ── MetiersBloc : select mobile / chips tablette+ ─────────────── */
-const MetiersBloc = () => {
-  const [selected, setSelected] = useState("");
+// ─────────────────────────────────────────────────────────
+// Carrousel catégories
+// ─────────────────────────────────────────────────────────
+const CategoriesCarousel = () => {
+  const navigate = useNavigate();
+  const trackRef = useRef(null);
+  const [cats, setCats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
 
-  const toCarte = () =>
-    document.getElementById("carte")?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    fetch(`${API_URL}/api/categories`)
+      .then((r) => r.json())
+      .then((d) => {
+        setCats(Array.isArray(d) ? d : []);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  const handleChip = (label) => {
-    setSelected((prev) => (prev === label ? "" : label));
-    toCarte();
+  // Mettre à jour les flèches selon la position du scroll
+  const updateArrows = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanPrev(el.scrollLeft > 8);
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
+  }, []);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    updateArrows();
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    return () => el.removeEventListener("scroll", updateArrows);
+  }, [cats, updateArrows]);
+
+  const scroll = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    // Largeur d'une card + gap
+    const cardW = el.querySelector(".lp-cat-card")?.offsetWidth || 280;
+    el.scrollBy({ left: dir * (cardW + 16), behavior: "smooth" });
   };
 
-  const handleSelect = (e) => {
-    setSelected(e.target.value);
-    if (e.target.value) setTimeout(toCarte, 80);
-  };
+  // Skeleton cards
+  const skeletons = [...Array(5)].map((_, i) => (
+    <div key={i} className="lp-cat-card lp-cat-skeleton" />
+  ));
 
   return (
-    <section className="lp-section" id="services">
-      <div className="lp-eyebrow">
-        <div className="lp-eyebrow-line" />
-        <span className="lp-eyebrow-text">Nos services</span>
-      </div>
-      <h2 className="lp-section-title">Tous les <em>métiers</em></h2>
-      <p className="lp-section-sub">
-        Des prestataires qualifiés dans tous les domaines, disponibles maintenant près de chez vous.
-      </p>
-
-      {/* SELECT — mobile < 640px */}
-      <div className="lp-select-wrap">
-        <span className="lp-select-prefix">🔍</span>
-        <select className="lp-select" value={selected} onChange={handleSelect}>
-          <option value="">Choisir un métier…</option>
-          {METIERS.map(({ emoji, label }) => (
-            <option key={label} value={label}>{emoji}  {label}</option>
-          ))}
-        </select>
-        <span className="lp-select-arrow" aria-hidden>›</span>
-      </div>
-
-      {/* CHIPS — tablette+ ≥ 640px */}
-      <div className="lp-chips">
-        {METIERS.map(({ emoji, label }) => (
-          <button
-            key={label}
-            type="button"
-            className={`lp-chip${selected === label ? " lp-chip--on" : ""}`}
-            onClick={() => handleChip(label)}
-          >
-            <span className="lp-chip-e">{emoji}</span>
-            <span className="lp-chip-l">{label}</span>
-          </button>
-        ))}
-      </div>
-
-      {selected && (
-        <div className="lp-hint">
-          <span>{METIERS.find((m) => m.label === selected)?.emoji}</span>
-          <span><strong>{selected}</strong> — disponible sur la carte</span>
-          <a href="#carte" className="lp-hint-btn">Voir ↓</a>
+    <section className="lp-section lp-carousel-section" id="categories">
+      {/* Header */}
+      <div className="lp-carousel-header">
+        <div>
+          <div className="lp-eyebrow">
+            <div className="lp-eyebrow-line" />
+            <span className="lp-eyebrow-text">Nos services</span>
+          </div>
+          <h2 className="lp-section-title">
+            Nos <em>catégories</em>
+          </h2>
+          <p className="lp-section-sub">
+            Des prestataires qualifiés dans tous les domaines, disponibles
+            maintenant près de chez vous.
+          </p>
         </div>
-      )}
+
+        {/* Flèches — desktop */}
+        <div className="lp-carousel-arrows">
+          <button
+            className={`lp-arrow${canPrev ? "" : " lp-arrow--disabled"}`}
+            onClick={() => scroll(-1)}
+            aria-label="Précédent"
+            disabled={!canPrev}
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            className={`lp-arrow${canNext ? "" : " lp-arrow--disabled"}`}
+            onClick={() => scroll(1)}
+            aria-label="Suivant"
+            disabled={!canNext}
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Track */}
+      <div className="lp-carousel-track" ref={trackRef}>
+        {loading
+          ? skeletons
+          : cats.map((cat) => (
+              <div
+                key={cat._id}
+                className="lp-cat-card"
+                onClick={() => navigate(`/services/categories/${cat._id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  navigate(`/services/categories/${cat._id}`)
+                }
+                aria-label={`Voir ${cat.nom}`}
+              >
+                {/* Icône */}
+                <div className="lp-cat-icon">
+                  <CatIcon icone={cat.icone} size={24} />
+                </div>
+
+                {/* Contenu */}
+                <div className="lp-cat-nom">{cat.nom}</div>
+                {cat.description && (
+                  <div className="lp-cat-desc">{cat.description}</div>
+                )}
+
+                {/* Lien */}
+                <div className="lp-cat-link">
+                  Voir les métiers <span className="lp-cat-arrow">→</span>
+                </div>
+              </div>
+            ))}
+      </div>
+
+      {/* Indicateur de scroll — mobile */}
+      <div className="lp-carousel-hint">
+        <span>Faites glisser pour voir plus</span>
+        <ChevronRight size={13} />
+      </div>
     </section>
   );
 };
 
-/* ── TemoignagesBloc ─────────────────────────────────────────────── */
+// ─────────────────────────────────────────────────────────
+// Cards avantages
+// ─────────────────────────────────────────────────────────
+const AvantagesBloc = () => (
+  <section className="lp-section lp-avantages-section" id="avantages">
+    <div className="lp-eyebrow">
+      <div className="lp-eyebrow-line" />
+      <span className="lp-eyebrow-text">Pourquoi Hopela</span>
+    </div>
+    <h2 className="lp-section-title">
+      Conçu pour <em>vous</em>
+    </h2>
+    <p className="lp-section-sub">
+      Une plateforme pensée pour les habitants de Nouvelle-Calédonie, du
+      particulier au professionnel.
+    </p>
+    <div className="lp-avantages-grid">
+      {AVANTAGES.map(({ icon, titre, desc, accent }) => (
+        <div className="lp-av-card" key={titre}>
+          {/* Ligne de couleur en haut */}
+          <div className="lp-av-bar" style={{ background: accent }} />
+          <div className="lp-av-icon">{icon}</div>
+          <div className="lp-av-titre">{titre}</div>
+          <div className="lp-av-desc">{desc}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+// ─────────────────────────────────────────────────────────
+// Témoignages
+// ─────────────────────────────────────────────────────────
 const TemoignagesBloc = () => {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
@@ -146,9 +346,14 @@ const TemoignagesBloc = () => {
 
   const goTo = (i) => {
     setActive(i);
-    trackRef.current?.scrollTo({ left: trackRef.current.offsetWidth * i, behavior: "smooth" });
+    trackRef.current?.scrollTo({
+      left: trackRef.current.offsetWidth * i,
+      behavior: "smooth",
+    });
   };
-  const onTouchStart = (e) => { x0.current = e.touches[0].clientX; };
+  const onTouchStart = (e) => {
+    x0.current = e.touches[0].clientX;
+  };
   const onTouchEnd = (e) => {
     if (x0.current === null) return;
     const dx = x0.current - e.changedTouches[0].clientX;
@@ -159,7 +364,9 @@ const TemoignagesBloc = () => {
   };
   const onScroll = () => {
     if (!trackRef.current) return;
-    setActive(Math.round(trackRef.current.scrollLeft / trackRef.current.offsetWidth));
+    setActive(
+      Math.round(trackRef.current.scrollLeft / trackRef.current.offsetWidth),
+    );
   };
 
   return (
@@ -168,10 +375,19 @@ const TemoignagesBloc = () => {
         <div className="lp-eyebrow-line" />
         <span className="lp-eyebrow-text">Ils nous font confiance</span>
       </div>
-      <h2 className="lp-section-title">Ce qu'ils en <em>pensent</em></h2>
-      <p className="lp-section-sub">Des centaines de Calédoniens utilisent Hopela chaque jour.</p>
-      <div className="lp-temoignages" ref={trackRef}
-        onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onScroll={onScroll}>
+      <h2 className="lp-section-title">
+        Ce qu'ils en <em>pensent</em>
+      </h2>
+      <p className="lp-section-sub">
+        Des centaines de Calédoniens utilisent Hopela chaque jour.
+      </p>
+      <div
+        className="lp-temoignages"
+        ref={trackRef}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onScroll={onScroll}
+      >
         {TEMOIGNAGES.map(({ nom, quartier, texte, note }) => (
           <article key={nom} className="lp-temoignage">
             <div className="lp-stars">{"★".repeat(note)}</div>
@@ -188,29 +404,34 @@ const TemoignagesBloc = () => {
       </div>
       <div className="lp-dots">
         {TEMOIGNAGES.map((_, i) => (
-          <button key={i} className={`lp-dot${i === active ? " lp-dot--on" : ""}`}
-            onClick={() => goTo(i)} aria-label={`Avis ${i + 1}`} />
+          <button
+            key={i}
+            className={`lp-dot${i === active ? " lp-dot--on" : ""}`}
+            onClick={() => goTo(i)}
+            aria-label={`Avis ${i + 1}`}
+          />
         ))}
       </div>
     </section>
   );
 };
 
-/* ═══════════════════════════════════════════════════
-   PAGE PRINCIPALE
-═══════════════════════════════════════════════════ */
+// ─────────────────────────────────────────────────────────
+// Page principale
+// ─────────────────────────────────────────────────────────
 const LandingScreen = () => {
   const navigate = useNavigate();
   const stats = usePublicStats();
 
-  // Nombre de prestataires en ligne — remontée depuis PublicMap via prop
   const [prestatairesEnLigne, setPrestatairesEnLigne] = useState(null);
   const handleCount = useCallback((n) => setPrestatairesEnLigne(n), []);
 
   useEffect(() => {
     if (!document.getElementById("hopela-fonts")) {
       const link = document.createElement("link");
-      link.id = "hopela-fonts"; link.rel = "stylesheet"; link.href = FONT_HREF;
+      link.id = "hopela-fonts";
+      link.rel = "stylesheet";
+      link.href = FONT_HREF;
       document.head.appendChild(link);
     }
   }, []);
@@ -229,23 +450,28 @@ const LandingScreen = () => {
             <span className="lp-eyebrow-text">Nouvelle-Calédonie</span>
           </div>
           <h1 className="fade-up-1">
-            Trouvez un<br /><em>prestataire</em><br />en temps réel
+            Trouvez un
+            <br />
+            <em>prestataire</em>
+            <br />
+            en temps réel
           </h1>
           <p className="lp-hero-sub fade-up-2">
             Hopela connecte les particuliers aux prestataires de services locaux
-            géolocalisés en direct. Disponibilité instantanée, partout en Calédonie.
-            
+            géolocalisés en direct. Disponibilité instantanée, partout en
+            Calédonie.
           </p>
           <div className="lp-hero-actions fade-up-3">
             <button className="btn-primary" onClick={() => navigate("/login")}>
               Trouver un prestataire
             </button>
-            <button className="btn-secondary" onClick={() => navigate("/login")}>
+            <button
+              className="btn-secondary"
+              onClick={() => navigate("/login")}
+            >
               Devenir prestataire →
             </button>
           </div>
-
-          {/* Badge live — affiche le vrai nombre */}
           <div className="lp-hero-badge fade-up-4">
             <span className="lp-live-dot" />
             {prestatairesEnLigne === null ? (
@@ -254,8 +480,11 @@ const LandingScreen = () => {
               <span>Aucun prestataire en ligne pour le moment</span>
             ) : (
               <span>
-                <strong style={{ color: "#4caf6e", fontWeight: 700 }}>{prestatairesEnLigne}</strong>
-                {" "}prestataire{prestatairesEnLigne > 1 ? "s" : ""} disponible{prestatairesEnLigne > 1 ? "s" : ""} en ce moment
+                <strong style={{ color: "#4caf6e", fontWeight: 700 }}>
+                  {prestatairesEnLigne}
+                </strong>{" "}
+                prestataire{prestatairesEnLigne > 1 ? "s" : ""} disponible
+                {prestatairesEnLigne > 1 ? "s" : ""} en ce moment
               </span>
             )}
           </div>
@@ -268,16 +497,19 @@ const LandingScreen = () => {
           <div>
             <div className="lp-eyebrow" style={{ marginBottom: 10 }}>
               <div className="lp-eyebrow-line" />
-              <span className="lp-eyebrow-text">Géolocalisation temps réel</span>
+              <span className="lp-eyebrow-text">
+                Géolocalisation temps réel
+              </span>
             </div>
-            <h2 className="lp-map-title">Ils sont <em>près de vous</em></h2>
+            <h2 className="lp-map-title">
+              Ils sont <em>près de vous</em>
+            </h2>
           </div>
           <p className="lp-map-subtitle">
             Chaque point est un prestataire disponible maintenant
           </p>
         </div>
         <div className="lp-map-container">
-          {/* onCountChange remonte le nb de prestataires en ligne vers le badge hero */}
           <PublicMap onCountChange={handleCount} />
         </div>
       </section>
@@ -285,8 +517,8 @@ const LandingScreen = () => {
       {/* ══ STATS ══ */}
       <StatsBloc stats={stats} />
 
-      {/* ══ MÉTIERS ══ */}
-      <MetiersBloc />
+      {/* ══ CARROUSEL CATÉGORIES ══ */}
+      <CategoriesCarousel />
 
       {/* ══ COMMENT ÇA MARCHE ══ */}
       <section className="lp-section" id="comment-ca-marche">
@@ -294,7 +526,9 @@ const LandingScreen = () => {
           <div className="lp-eyebrow-line" />
           <span className="lp-eyebrow-text">Simple & rapide</span>
         </div>
-        <h2 className="lp-section-title">Comment ça <em>marche</em></h2>
+        <h2 className="lp-section-title">
+          Comment ça <em>marche</em>
+        </h2>
         <p className="lp-section-sub">Trois étapes, moins de 5 minutes.</p>
         <div className="lp-steps">
           {STEPS.map(({ num, icon, titre, desc }, i) => (
@@ -311,20 +545,30 @@ const LandingScreen = () => {
         </div>
       </section>
 
+      {/* ══ AVANTAGES ══ */}
+      <AvantagesBloc />
+
       {/* ══ TÉMOIGNAGES ══ */}
       <TemoignagesBloc />
 
       {/* ══ CTA FINAL ══ */}
       <div className="lp-cta" id="contact">
         <div className="lp-cta-glow" />
-        <h2>Prêt à trouver votre <em>prestataire</em> ?</h2>
-        <p>Rejoignez des centaines d'utilsateurs qui font confiance à Hopela.</p>
+        <h2>
+          Prêt à trouver votre <em>prestataire</em> ?
+        </h2>
+        <p>
+          Rejoignez des centaines d'utilisateurs qui font confiance à Hopela.
+        </p>
         <div className="lp-cta-actions">
           <button className="btn-primary" onClick={() => navigate("/login")}>
             Trouver un prestataire
           </button>
-          <button className="btn-secondary" onClick={() => navigate("/register?role=prestataire")}>
-            Je suis prestataire → 
+          <button
+            className="btn-secondary"
+            onClick={() => navigate("/register?role=prestataire")}
+          >
+            Je suis prestataire →
           </button>
         </div>
       </div>
