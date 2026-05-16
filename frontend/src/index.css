@@ -1,54 +1,246 @@
-/* RESET CSS
-*/
+/* ──────────────────────────────────────────────────────────────────────── */
+/* 1. IMPORTS & FONTS                                                       */
+/* ──────────────────────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+/* ──────────────────────────────────────────────────────────────────────── */
+/* 2. DESIGN SYSTEM & VARIABLES                                              */
+/* ──────────────────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    /* --- Couleurs (HSL) --- */
+    --background: 216 47% 80%;
+    --foreground: 252 33% 3%;
+    --card: 216 47% 80%;
+    --card-foreground: 252 33% 3%;
+    --popover: 216 47% 80%;
+    --popover-foreground: 252 33% 3%;
+    --primary: 161 64% 78%;
+    --primary-foreground: 252 33% 3%;
+    --secondary: 223 28% 95%;
+    --secondary-foreground: 252 33% 3%;
+    --muted: 216 47% 20%;
+    --muted-foreground: 252 33% 70%;
+    --accent: 160 61% 70%;
+    --accent-foreground: 252 33% 3%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 252 33% 3%;
+    --border: 216 47% 20%;
+    --input: 216 47% 20%;
+    --ring: 160 61% 40%;
+    --radius: 0.5rem;
+
+    /* --- Typographie --- */
+    --font-sans: "Inter", sans-serif;
+  }
+
+  .dark {
+    /* --- Dark Mode Colors --- */
+    --background: 216 48% 20%;
+    --foreground: 252 29% 97%;
+    --card: 216 48% 20%;
+    --card-foreground: 252 29% 97%;
+    --popover: 216 48% 20%;
+    --popover-foreground: 252 29% 97%;
+    --primary: 161 64% 22%;
+    --primary-foreground: 252 29% 97%;
+    --secondary: 218 29% 5%;
+    --secondary-foreground: 252 29% 97%;
+    --muted: 216 47% 80%;
+    --muted-foreground: 252 29% 97%;
+    --accent: 160 61% 30%;
+    --accent-foreground: 252 29% 97%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 252 29% 10%;
+    --border: 216 48% 60%;
+    --input: 216 47% 80%;
+    --ring: 160 61% 60%;
+  }
 }
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* 3. RESET CSS                                                              */
+/* ──────────────────────────────────────────────────────────────────────── */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
 }
+
 body {
-	line-height: 1;
+  line-height: 1;
 }
-ol, ul {
-	list-style: none;
+
+ol,
+ul {
+  list-style: none;
 }
-blockquote, q {
-	quotes: none;
+
+blockquote,
+q {
+  quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
 }
+
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
+/* ──────────────────────────────────────────────────────────────────────── */
+/* 4. TYPOGRAPHY & GLOBAL STYLES                                             */
+/* ──────────────────────────────────────────────────────────────────────── */
 
+html {
+  font-size: 100%; /* 16px */
+}
 
-/* ========================================   test ================================================= */
+body {
+  /* Application de la charte graphique */
+  font-family: var(--font-sans);
+  font-weight: 400;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
 
+/* Titres (Modular Scale - Major Third) */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 4.21rem; /* 67.36px */
+}
+h2 {
+  font-size: 3.158rem; /* 50.56px */
+}
+h3 {
+  font-size: 2.369rem; /* 37.92px */
+}
+h4 {
+  font-size: 1.777rem; /* 28.48px */
+}
+h5 {
+  font-size: 1.333rem; /* 21.28px */
+}
+
+small {
+  font-size: 0.75rem; /* 12px */
+}
+
+/* Composants globaux */
 .App-logo {
   height: 80px;
   width: 80px;

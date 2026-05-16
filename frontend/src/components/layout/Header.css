@@ -1,25 +1,44 @@
 /* src/components/layout/Header.css */
 
+/* Intégration des variables pour la cohérence */
+:root {
+  --bg-main: #0a0d12;
+  --bg-card: #111620;
+  --primary: #145c45;
+  --primary-hover: #1e7a5c;
+  --text-main: #f0f2f5;
+  --text-secondary: #b0b8c8;
+  --border-color: #1d2430;
+}
+
 .lp-header {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 200;
   height: 68px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 48px;
-  background: rgba(46, 43, 36, 0.75);
-  backdrop-filter: blur(24px);
-  
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
-  transition: background 0.3s, border-color 0.3s;
+  /* Fond sombre légèrement transparent pour effet verre */
+  background: rgba(10, 13, 18, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  /* Bordure fine sombre */
+  border-bottom: 1px solid var(--border-color);
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .lp-header.scrolled {
-  background: rgba(10, 8, 4, 0.97);
-  border-bottom-color: rgba(104, 97, 78, 0.28);
+  /* Fond opaque au scroll */
+  background: var(--bg-main);
+  border-bottom-color: var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Logo ── */
@@ -30,46 +49,58 @@
   text-decoration: none;
 }
 
+/* Version Texte (si utilisée) */
 .lp-logo-mark {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #c9a84c, #8a6c28);
+  /* Dégradé Vert */
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: "Cormorant Garamond", serif;
   font-weight: 700;
   font-size: 19px;
-  color: #c7c3bd;
+  /* Texte blanc pour contraste optimal */
+  color: #ffffff;
   flex-shrink: 0;
-  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.35),
-              0 4px 16px rgba(201, 168, 76, 0.18);
-  transition: box-shadow 0.25s;
-
+  /* Ombre verte douce */
+  box-shadow:
+    0 0 0 1px rgba(20, 92, 69, 0.3),
+    0 4px 16px rgba(20, 92, 69, 0.2);
+  transition:
+    box-shadow 0.25s,
+    transform 0.25s;
 }
 
 .lp-logo:hover .lp-logo-mark {
-  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.6),
-              0 6px 24px rgba(201, 168, 76, 0.32);
+  box-shadow:
+    0 0 0 1px rgba(30, 122, 92, 0.5),
+    0 6px 24px rgba(20, 92, 69, 0.35);
+  transform: translateY(-1px);
 }
 
 .lp-logo-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: "Cormorant Garamond", serif;
   font-weight: 700;
   font-size: 24px;
- 
-  color: #c7c3bd;
+  color: var(--text-main);
   letter-spacing: 0.5px;
 }
+
+/* Version Image (Prioritaire dans le fichier source) */
 .lp-logo-mark {
   width: 50px;
   height: 50px;
-  border-radius: 2px;
+  border-radius: 8px; /* Coins légèrement arrondis plus modernes */
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Fond vert de secours si pas d'image */
+  background: var(--primary);
+  border: 1px solid rgba(20, 92, 69, 0.2);
 }
 
 .lp-logo-img {
@@ -87,33 +118,30 @@
 
 .lp-nav a {
   font-size: 13px;
-  font-weight: 900;
-  color: #c7c3bd;
+  font-weight: 600; /* Légèrement plus gras pour meilleure lisibilité */
+  color: var(--text-secondary); /* Gris par défaut */
   text-decoration: none;
   letter-spacing: 0.3px;
   transition: color 0.2s;
   position: relative;
-
-    text-transform: uppercase;
-    
+  text-transform: uppercase;
 }
 
 .lp-nav a::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -3px;
   left: 0;
   right: 0;
-  height: 1px;
-  background: #c9a84c;
+  height: 2px; /* Trait un peu plus épais */
+  background: var(--primary); /* Vert */
   transform: scaleX(0);
-  transition: transform 0.25s;
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform-origin: left;
-
 }
 
 .lp-nav a:hover {
- color: #c9a84c;
+  color: var(--text-main); /* Blanc au survol */
 }
 
 .lp-nav a:hover::after {
@@ -128,10 +156,10 @@
 }
 
 .btn-ghost {
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(245, 240, 232, 0.5);
+  color: var(--text-secondary);
   background: none;
   border: none;
   cursor: pointer;
@@ -142,28 +170,30 @@
 }
 
 .btn-ghost:hover {
-  color: #f5f0e8;
+  color: var(--text-main);
 }
 
+/* Bouton principal (anciennement Gold, maintenant Primary Green) */
 .btn-gold {
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  color: #0a0804;
-  background: linear-gradient(135deg, #c9a84c, #e8c97a);
-  border: none;
+  color: #ffffff; /* Texte blanc sur fond vert */
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  border: 1px solid rgba(20, 92, 69, 0.2); /* Bordure subtile */
   cursor: pointer;
   text-decoration: none;
-  padding: 10px 22px;
-  border-radius: 6px;
+  padding: 10px 24px;
+  border-radius: 8px; /* Coins un peu plus arrondis */
   transition: all 0.22s;
-  box-shadow: 0 2px 12px rgba(201, 168, 76, 0.22);
+  box-shadow: 0 4px 12px rgba(20, 92, 69, 0.25);
 }
 
 .btn-gold:hover {
-  box-shadow: 0 4px 22px rgba(201, 168, 76, 0.42);
+  background: linear-gradient(135deg, var(--primary-hover), #1e8a6c);
+  box-shadow: 0 6px 20px rgba(20, 92, 69, 0.4);
   transform: translateY(-1px);
 }
 
@@ -177,8 +207,6 @@
     display: none;
   }
 }
-
-/* Réutilise les styles existants + ajout burger mobile */
 
 /* ── Ajouts pour menu mobile ── */
 .lp-burger {
@@ -194,7 +222,7 @@
 .lp-burger span {
   width: 22px;
   height: 2px;
-  background: rgba(245,240,232,0.7);
+  background: var(--text-main);
   border-radius: 2px;
   display: block;
   transition: all 0.2s;
@@ -202,37 +230,50 @@
 
 .lp-mobile-menu {
   position: fixed;
-  top: 56px;
+  top: 68px; /* Aligné avec la hauteur du header */
   left: 0;
   right: 0;
-  background: rgba(10,8,4,0.98);
+  background: rgba(10, 13, 18, 0.98); /* Fond très sombre */
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(201,168,76,0.12);
+  border-bottom: 1px solid var(--border-color);
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   z-index: 200;
+  max-height: calc(100vh - 68px);
+  overflow-y: auto;
 }
 .lp-mobile-link {
   display: block;
-  padding: 12px 0;
-  font-family: 'DM Sans', sans-serif;
+  padding: 14px 0;
+  font-family: "DM Sans", sans-serif;
   font-size: 15px;
-  color: rgba(245,240,232,0.7);
+  font-weight: 500;
+  color: var(--text-secondary);
   text-decoration: none;
-  border-bottom: 1px solid rgba(201,168,76,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: color 0.2s;
 }
-.lp-mobile-link:hover { color: #c9a84c; }
+.lp-mobile-link:hover {
+  color: var(--primary-hover);
+  padding-left: 5px; /* Petit effet de glissement */
+}
 .lp-mobile-cta {
   display: flex;
   gap: 10px;
-  padding-top: 16px;
+  padding-top: 20px;
 }
-.lp-mobile-cta button { flex: 1; }
+.lp-mobile-cta button {
+  flex: 1;
+}
 
 @media (max-width: 768px) {
-  .lp-nav, .lp-header-cta { display: none !important; }
-  .lp-burger { display: flex; }
+  .lp-nav,
+  .lp-header-cta {
+    display: none !important;
+  }
+  .lp-burger {
+    display: flex;
+  }
 }

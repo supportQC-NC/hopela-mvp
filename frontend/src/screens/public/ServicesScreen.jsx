@@ -16,7 +16,7 @@ import Footer from "../../components/layout/Footer";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-// ── Mapping icône Lucide (même mapping que AdminCatalogues) ──────────────────
+// ── Mapping icône Lucide ─────────────────────────────────────────────────────
 const LUCIDE_CAT = {
   wrench: Wrench,
   home: Home,
@@ -66,42 +66,67 @@ const AVANTAGES = [
   },
 ];
 
-// ── CSS inline (cohérent avec la charte existante) ───────────────────────────
+// ── CSS inline (Adapté à la nouvelle charte Vert/Sombre) ─────────────────────
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-  .sv-root { min-height:100vh; background:#0a0804; color:#f5f0e8; font-family:'DM Sans',sans-serif; }
+  /* Palette de couleurs utilisée */
+  :root {
+    --bg-main: #0A0D12;
+    --bg-card: #111620;
+    --primary: #145C45;
+    --primary-hover: #1E7A5C;
+    --text-main: #F0F2F5;
+    --text-secondary: #B0B8C8;
+    --border-color: #1d2430;
+  }
+
+  .sv-root { min-height:100vh; background:var(--bg-main); color:var(--text-main); font-family:'DM Sans',sans-serif; }
 
   /* ── Hero ── */
-  .sv-hero { padding:120px 24px 80px; text-align:center; background:linear-gradient(180deg,#0f0b05,#0a0804); }
-  .sv-hero-eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:#c9a84c; margin-bottom:20px; }
-  .sv-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,72px); font-weight:700; color:#f5f0e8; line-height:1.1; margin-bottom:20px; }
-  .sv-hero h1 em { font-style:italic; color:#c9a84c; }
-  .sv-hero p { font-size:16px; color:rgba(245,240,232,0.5); max-width:560px; margin:0 auto 40px; line-height:1.7; }
-  .sv-cta { display:inline-block; background:linear-gradient(135deg,#c9a84c,#e8c97a); color:#0a0804; text-decoration:none; font-weight:700; font-size:13px; letter-spacing:2px; text-transform:uppercase; padding:16px 40px; border-radius:4px; transition:all 0.2s; }
-  .sv-cta:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,168,76,0.4); }
+  .sv-hero { padding:120px 24px 80px; text-align:center; background:linear-gradient(180deg,#0F1219,var(--bg-main)); }
+  .sv-hero-eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--primary-hover); margin-bottom:20px; font-weight:700; }
+  .sv-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,72px); font-weight:700; color:var(--text-main); line-height:1.1; margin-bottom:20px; }
+  .sv-hero h1 em { font-style:italic; color:var(--primary); }
+  .sv-hero p { font-size:16px; color:var(--text-secondary); max-width:560px; margin:0 auto 40px; line-height:1.7; font-weight:300; }
+  
+  .sv-cta { 
+    display:inline-block; 
+    background:linear-gradient(135deg,var(--primary),var(--primary-hover)); 
+    color:#ffffff; /* Blanc pour lisibilité */
+    text-decoration:none; 
+    font-weight:700; 
+    font-size:13px; 
+    letter-spacing:2px; 
+    text-transform:uppercase; 
+    padding:16px 40px; 
+    border-radius:8px; /* Coins plus arrondis */
+    transition:all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 15px rgba(20, 92, 69, 0.3);
+  }
+  .sv-cta:hover { transform:translateY(-2px); box-shadow: 0 8px 25px rgba(20, 92, 69, 0.5); filter: brightness(1.1); }
 
   /* ── Sections ── */
   .sv-section { padding:80px 24px; max-width:1100px; margin:0 auto; }
-  .sv-section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,48px); font-weight:700; color:#f5f0e8; text-align:center; margin-bottom:12px; }
-  .sv-section-title em { font-style:italic; color:#c9a84c; }
-  .sv-section-sub { text-align:center; font-size:14px; color:rgba(245,240,232,0.4); margin-bottom:56px; }
+  .sv-section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,48px); font-weight:700; color:var(--text-main); text-align:center; margin-bottom:12px; }
+  .sv-section-title em { font-style:italic; color:var(--primary); }
+  .sv-section-sub { text-align:center; font-size:14px; color:var(--text-secondary); margin-bottom:56px; font-weight:300; }
 
   /* ── Grille catégories ── */
-  .sv-cat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .sv-cat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
 
-  /* ── Card catégorie (cliquable) ── */
+  /* ── Card catégorie ── */
   .sv-cat-card {
-    background:#120e07;
-    border:1px solid rgba(201,168,76,0.12);
+    background:var(--bg-card);
+    border:1px solid var(--border-color);
     border-radius:18px;
-    padding:28px 24px;
+    padding:32px 24px;
     cursor:pointer;
     text-decoration:none;
     display:flex;
     flex-direction:column;
-    gap:14px;
-    transition:all 0.28s cubic-bezier(0.25,0.46,0.45,0.94);
+    gap:16px;
+    transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
     position:relative;
     overflow:hidden;
   }
@@ -109,11 +134,16 @@ const CSS = `
     content:'';
     position:absolute;
     inset:0;
-    background:linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
+    background:linear-gradient(135deg, rgba(20, 92, 69, 0.08) 0%, transparent 65%);
     opacity:0;
-    transition:opacity 0.28s;
+    transition:opacity 0.3s;
   }
-  .sv-cat-card:hover { border-color:rgba(201,168,76,0.4); transform:translateY(-5px); box-shadow:0 20px 50px rgba(0,0,0,0.5),0 0 0 1px rgba(201,168,76,0.08); }
+  .sv-cat-card:hover { 
+    border-color:var(--primary); 
+    transform:translateY(-6px); 
+    box-shadow:0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(20, 92, 69, 0.3); 
+    background: rgba(17, 22, 32, 0.8);
+  }
   .sv-cat-card:hover::before { opacity:1; }
 
   /* Header de la card : icône + compteur */
@@ -121,69 +151,78 @@ const CSS = `
   .sv-cat-icon-wrap {
     width:56px; height:56px;
     border-radius:14px;
-    background:rgba(201,168,76,0.08);
-    border:1px solid rgba(201,168,76,0.15);
+    background:rgba(20, 92, 69, 0.1);
+    border:1px solid rgba(20, 92, 69, 0.2);
     display:flex; align-items:center; justify-content:center;
-    color:#c9a84c;
+    color:var(--primary-hover);
     flex-shrink:0;
-    transition:background 0.28s;
+    transition:background 0.3s, color 0.3s;
   }
-  .sv-cat-card:hover .sv-cat-icon-wrap { background:rgba(201,168,76,0.14); }
+  .sv-cat-card:hover .sv-cat-icon-wrap { background:rgba(20, 92, 69, 0.2); color: #ffffff; }
 
   .sv-cat-count-badge {
     font-size:11px; font-weight:600;
-    color:rgba(201,168,76,0.7);
-    background:rgba(201,168,76,0.08);
-    border:1px solid rgba(201,168,76,0.14);
+    color:var(--primary-hover);
+    background:rgba(20, 92, 69, 0.1);
+    border:1px solid rgba(20, 92, 69, 0.2);
     border-radius:20px;
     padding:4px 12px;
     white-space:nowrap;
+    transition: all 0.3s;
+  }
+  .sv-cat-card:hover .sv-cat-count-badge {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
   }
 
   /* Corps de la card */
   .sv-cat-nom {
     font-family:'Cormorant Garamond',serif;
-    font-size:22px; font-weight:700; color:#f5f0e8;
+    font-size:24px; font-weight:700; color:var(--text-main);
     line-height:1.2;
   }
   .sv-cat-desc {
-    font-size:12px; color:rgba(245,240,232,0.35); line-height:1.65;
+    font-size:13px; color:var(--text-secondary); line-height:1.65;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    font-weight:300;
   }
 
-  /* Footer de la card : lien "Voir les métiers" */
+  /* Footer de la card */
   .sv-cat-card-foot {
     display:flex; align-items:center; justify-content:space-between;
-    padding-top:12px;
-    border-top:1px solid rgba(255,255,255,0.04);
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,0.06);
     margin-top:auto;
   }
   .sv-cat-voir {
     font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
-    color:rgba(201,168,76,0.5);
+    color:var(--text-secondary);
     transition:color 0.2s;
   }
-  .sv-cat-card:hover .sv-cat-voir { color:#c9a84c; }
+  .sv-cat-card:hover .sv-cat-voir { color:var(--primary-hover); }
   .sv-cat-arrow {
     width:28px; height:28px; border-radius:50%;
-    border:1px solid rgba(201,168,76,0.2);
+    border:1px solid rgba(20, 92, 69, 0.3);
     display:flex; align-items:center; justify-content:center;
-    font-size:12px; color:rgba(201,168,76,0.5);
+    font-size:12px; color:var(--primary);
     transition:all 0.2s;
   }
   .sv-cat-card:hover .sv-cat-arrow {
-    background:rgba(201,168,76,0.1);
-    border-color:rgba(201,168,76,0.4);
-    color:#c9a84c;
-    transform:translateX(3px);
+    background:var(--primary);
+    border-color:var(--primary);
+    color:#ffffff;
+    transform:translateX(4px);
   }
 
   /* ── Skeleton loader ── */
-  .sv-skeleton-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .sv-skeleton-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
   .sv-skeleton-card {
-    background:#120e07; border:1px solid rgba(201,168,76,0.07);
-    border-radius:18px; padding:28px 24px; height:180px;
-    background: linear-gradient(90deg,#120e07 25%,#1a1408 50%,#120e07 75%);
+    background:var(--bg-card); 
+    border:1px solid var(--border-color);
+    border-radius:18px; padding:32px 24px; height:220px;
+    /* Shimmer adapté aux couleurs sombres/bleutées */
+    background: linear-gradient(90deg,var(--bg-card) 25%, #1A2D4A 50%,var(--bg-card) 75%);
     background-size:400% 100%;
     animation:sv-shimmer 1.6s infinite;
   }
@@ -191,23 +230,57 @@ const CSS = `
 
   /* ── Avantages ── */
   .sv-avantages { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
-  .sv-av-card { background:#120e07; border:1px solid rgba(201,168,76,0.12); border-radius:14px; padding:24px; display:flex; gap:16px; }
+  .sv-av-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:24px; display:flex; gap:16px; transition: transform 0.2s; }
+  .sv-av-card:hover { transform: translateY(-2px); border-color: rgba(20, 92, 69, 0.3); }
   .sv-av-icon { font-size:28px; flex-shrink:0; }
-  .sv-av-title { font-size:15px; font-weight:600; color:#f5f0e8; margin-bottom:6px; }
-  .sv-av-text { font-size:13px; color:rgba(245,240,232,0.45); line-height:1.6; }
+  .sv-av-title { font-size:16px; font-weight:600; color:var(--text-main); margin-bottom:6px; }
+  .sv-av-text { font-size:13px; color:var(--text-secondary); line-height:1.6; font-weight:300; }
 
   /* ── Divider / CTA ── */
-  .sv-divider { height:1px; background:rgba(201,168,76,0.08); max-width:1100px; margin:0 auto; }
-  .sv-cta-section { padding:80px 24px; text-align:center; }
-  .sv-cta-section h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,48px); font-weight:700; color:#f5f0e8; margin-bottom:16px; }
-  .sv-cta-section h2 em { font-style:italic; color:#c9a84c; }
-  .sv-cta-section p { font-size:14px; color:rgba(245,240,232,0.45); margin-bottom:32px; }
-  .sv-cta-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
-  .sv-btn-ghost { border:1px solid rgba(201,168,76,0.35); color:#c9a84c; background:none; padding:14px 32px; border-radius:4px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; text-decoration:none; transition:all 0.2s; display:inline-block; }
-  .sv-btn-ghost:hover { background:rgba(201,168,76,0.06); }
+  .sv-divider { height:1px; background:var(--border-color); max-width:1100px; margin:0 auto; }
+  .sv-cta-section { padding:100px 24px; text-align:center; position:relative; overflow:hidden; }
+  /* Halo de fond pour le CTA */
+  .sv-cta-section::before {
+    content: '';
+    position:absolute;
+    top:50%; left:50%; transform:translate(-50%, -50%);
+    width:400px; height:400px;
+    background:radial-gradient(circle, rgba(20, 92, 69, 0.15), transparent 70%);
+    z-index:0;
+    pointer-events:none;
+  }
+  
+  .sv-cta-section h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,48px); font-weight:700; color:var(--text-main); margin-bottom:16px; position:relative; z-index:1; }
+  .sv-cta-section h2 em { font-style:italic; color:var(--primary); }
+  .sv-cta-section p { font-size:15px; color:var(--text-secondary); margin-bottom:32px; max-width:500px; margin-left:auto; margin-right:auto; position:relative; z-index:1; font-weight:300; }
+  
+  .sv-cta-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
+  .sv-btn-ghost { 
+    border:1px solid var(--border-color); 
+    color:var(--text-main); 
+    background:rgba(255,255,255,0.03); 
+    padding:14px 32px; 
+    border-radius:8px; 
+    font-family:'DM Sans',sans-serif; 
+    font-size:12px; 
+    font-weight:600; 
+    letter-spacing:1px; 
+    text-transform:uppercase; 
+    cursor:pointer; 
+    text-decoration:none; 
+    transition:all 0.2s; 
+    display:inline-block; 
+  }
+  .sv-btn-ghost:hover { 
+    border-color:var(--primary); 
+    color:var(--primary); 
+    background:rgba(20, 92, 69, 0.05); 
+    transform: translateY(-1px);
+  }
 
   @media (max-width:640px) {
     .sv-cat-grid, .sv-skeleton-grid { grid-template-columns:1fr; }
+    .sv-hero { padding: 100px 20px 60px; }
   }
 `;
 
@@ -246,7 +319,7 @@ const ServicesScreen = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Compte de métiers par catégorie (côté client, sur les données déjà fetchées)
+  // Compte de métiers par catégorie (côté client)
   const metiersByCategorie = (catId) =>
     metiers.filter((m) => (m.categorie?._id || m.categorie) === catId).length;
 

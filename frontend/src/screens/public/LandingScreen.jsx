@@ -12,6 +12,10 @@ import {
   FolderOpen,
   ChevronLeft,
   ChevronRight,
+  Check,
+  Zap,
+  Shield,
+  Users,
 } from "lucide-react";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
@@ -42,40 +46,22 @@ const CatIcon = ({ icone, size = 26 }) => {
 // ── Cards avantages (codées en dur) ─────────────────────────────────────────
 const AVANTAGES = [
   {
-    icon: "📍",
-    titre: "Géolocalisation en temps réel",
-    desc: "Visualisez les prestataires disponibles autour de vous maintenant, sur une carte interactive live.",
-    accent: "#c9a84c",
-  },
-  {
-    icon: "✅",
-    titre: "Prestataires vérifiés",
-    desc: "Chaque professionnel est validé par notre équipe : vérification du RIDET et identité contrôlée.",
-    accent: "#4ade80",
-  },
-  {
-    icon: "📞",
-    titre: "Contact direct & sans frais",
-    desc: "Appelez directement le prestataire. Aucune commission, aucun intermédiaire, aucun frais cachés.",
-    accent: "#60a5fa",
-  },
-  {
-    icon: "⚡",
+    icon: <Zap size={24} className="text-yellow-400" />,
     titre: "Disponibilité immédiate",
-    desc: "Le prestataire partage sa position en direct. Vous savez en un coup d'œil s'il est disponible.",
-    accent: "#f59e0b",
+    desc: "Trouvez un prestataire disponible maintenant grâce à la géolocalisation en direct.",
+    accent: "#145C45",
   },
   {
-    icon: "🗺️",
-    titre: "Couverture Grand Nouméa",
-    desc: "Nouméa, Dumbéa, Paita, Mont-Dore — tous les prestataires de la zone sur une seule plateforme.",
-    accent: "#a78bfa",
+    icon: <Shield size={24} className="text-blue-400" />,
+    titre: "Prestataires vérifiés",
+    desc: "Identité et qualifications contrôlées pour une tranquillité d'esprit totale.",
+    accent: "#1A2D4A",
   },
   {
-    icon: "🔒",
-    titre: "Données protégées",
-    desc: "Vos informations personnelles sont sécurisées et ne sont jamais partagées sans votre consentement.",
-    accent: "#34d399",
+    icon: <Users size={24} className="text-green-400" />,
+    titre: "Communauté locale",
+    desc: "Soutenez l'économie locale en faisant appel à des talents de Nouvelle-Calédonie.",
+    accent: "#145C45",
   },
 ];
 
@@ -83,21 +69,18 @@ const AVANTAGES = [
 const STEPS = [
   {
     num: "01",
-    icon: "🗺️",
-    titre: "Consultez la carte",
-    desc: "Visualisez en temps réel tous les prestataires disponibles autour de vous grâce à la géolocalisation.",
+    titre: "Localisez",
+    desc: "Ouvrez la carte et voyez qui est disponible autour de vous en temps réel.",
   },
   {
     num: "02",
-    icon: "👆",
-    titre: "Choisissez un profil",
-    desc: "Consultez le métier et les services de chaque prestataire. Cliquez sur un marqueur pour les détails.",
+    titre: "Choisissez",
+    desc: "Filtrer par métier, consultez les profils et les avis des autres utilisateurs.",
   },
   {
     num: "03",
-    icon: "✅",
-    titre: "Contactez & confirmez",
-    desc: "Prenez contact directement avec le prestataire et planifiez votre intervention en quelques secondes.",
+    titre: "Contactez",
+    desc: "Appelez ou messagez directement le prestataire pour fixer un rendez-vous.",
   },
 ];
 
@@ -105,24 +88,70 @@ const STEPS = [
 const TEMOIGNAGES = [
   {
     nom: "Marie K.",
-    quartier: "Anse Vata",
+    quartier: "Nouméa",
     texte:
-      "Électricien trouvé en 3 minutes, intervention le jour même. Incroyable !",
+      "J'ai trouvé un plombier en 5 minutes, intervention dans l'heure. Super service !",
     note: 5,
   },
   {
-    nom: "Samuel W.",
+    nom: "Jean-Louis M.",
     quartier: "Dumbéa",
     texte:
-      "Le plombier était professionnel et rapide. Je recommande Hopela à tous.",
+      "Très pratique pour voir qui est disponible sans avoir à appeler 10 personnes.",
     note: 5,
   },
   {
-    nom: "Angélique T.",
+    nom: "Sophie T.",
     quartier: "Mont-Dore",
     texte:
-      "La carte en temps réel c'est génial, on voit exactement où est le prestataire.",
+      "L'interface est fluide et les prestataires sont vraiment qualifiés.",
     note: 5,
+  },
+];
+
+// ── Plans Tarifaires ─────────────────────────────────────────────────────────
+const PRICING_PLANS = [
+  {
+    id: "monthly",
+    name: "Mensuel",
+    price: 3600,
+    period: "/ mois",
+    desc: "Flexibilité totale",
+    features: [
+      "Accès illimité à la carte",
+      "Profils vérifiés",
+      "Support par email",
+      "Sans engagement",
+    ],
+    featured: false,
+  },
+  {
+    id: "annual",
+    name: "Annuel",
+    price: 3600,
+    period: "/ mois",
+    desc: "Engagement 12 mois (3 mois offerts)",
+    features: [
+      "Tout le plan Mensuel",
+      "3 mois OFFERTS (payez 9 mois)",
+      "Priorité au support",
+      "Badge 'Premium' sur votre profil",
+    ],
+    featured: true,
+  },
+  {
+    id: "quarterly",
+    name: "Trimestriel",
+    price: 3600,
+    period: "/ mois",
+    desc: "Engagement 3 mois",
+    features: [
+      "Accès illimité à la carte",
+      "Profils vérifiés",
+      "Support prioritaire",
+      "Facturation tous les 3 mois",
+    ],
+    featured: false,
   },
 ];
 
@@ -139,19 +168,48 @@ const usePublicStats = () => {
 };
 
 // ─────────────────────────────────────────────────────────
-// Bloc Stats
+// Bloc Stats (CORRIGÉ)
 // ─────────────────────────────────────────────────────────
+// const StatsBloc = () => {
+//   const stats = usePublicStats();
+
+//   // Données par défaut au cas où l'API ne renvoie pas un tableau ou ne répond pas
+//   const defaultStats = [
+//     { label: "Prestataires", value: "120+" },
+//     { label: "Interventions", value: "3.5k" },
+//     { label: "Satisfaits", value: "98%" },
+//   ];
+
+//   // FIX : On vérifie explicitement que stats est un tableau
+//   const displayStats = Array.isArray(stats) ? stats : defaultStats;
+
+//   return (
+//     <section className="lp-stats-wrap">
+//       <div className="lp-stats">
+//         {displayStats.map((s, i) => (
+//           <div key={i} className="lp-stat">
+//             <div className="lp-stat-value">{stats ? s.value : "..."}</div>
+//             <div className="lp-stat-label">{s.label}</div>
+//           </div>
+//         ))}
+//       </div>
+//     </section>
+//   );
+// };
 
 // ─────────────────────────────────────────────────────────
-// Carrousel catégories
+// Carrousel catégories (Avec Auto-scroll)
 // ─────────────────────────────────────────────────────────
 const CategoriesCarousel = () => {
   const navigate = useNavigate();
   const trackRef = useRef(null);
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Auto Scroll Logic
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/api/categories`)
@@ -163,223 +221,178 @@ const CategoriesCarousel = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Mettre à jour les flèches selon la position du scroll
-  const updateArrows = useCallback(() => {
+  const checkScroll = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    setCanPrev(el.scrollLeft > 8);
-    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 10);
   }, []);
 
   useEffect(() => {
     const el = trackRef.current;
-    if (!el) return;
-    updateArrows();
-    el.addEventListener("scroll", updateArrows, { passive: true });
-    return () => el.removeEventListener("scroll", updateArrows);
-  }, [cats, updateArrows]);
+    if (el) {
+      el.addEventListener("scroll", checkScroll, { passive: true });
+      window.addEventListener("resize", checkScroll);
+      checkScroll(); // Init check
+    }
+    return () => {
+      if (el) el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [cats, checkScroll]);
+
+  // Défilement automatique
+  useEffect(() => {
+    if (isPaused || loading) return;
+
+    const interval = setInterval(() => {
+      const el = trackRef.current;
+      if (!el) return;
+
+      // Si on est tout à droite, on revient au début
+      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: 300, behavior: "smooth" });
+      }
+    }, 1500); // Défile toutes les 1.5 secondes
+
+    return () => clearInterval(interval);
+  }, [isPaused, loading]);
 
   const scroll = (dir) => {
     const el = trackRef.current;
     if (!el) return;
-    // Largeur d'une card + gap
-    const cardW = el.querySelector(".lp-cat-card")?.offsetWidth || 280;
-    el.scrollBy({ left: dir * (cardW + 16), behavior: "smooth" });
+    el.scrollBy({ left: dir * 300, behavior: "smooth" });
   };
 
-  // Skeleton cards
-  const skeletons = [...Array(5)].map((_, i) => (
-    <div key={i} className="lp-cat-card lp-cat-skeleton" />
-  ));
+  if (loading)
+    return (
+      <section className="lp-section">
+        <div className="lp-stats">
+          <div className="lp-stat">Chargement...</div>
+        </div>
+      </section>
+    );
 
   return (
     <section className="lp-section lp-carousel-section" id="categories">
-      {/* Header */}
       <div className="lp-carousel-header">
-        <div>
+        <div style={{ maxWidth: 600 }}>
           <div className="lp-eyebrow">
-            <div className="lp-eyebrow-line" />
             <span className="lp-eyebrow-text">Nos services</span>
           </div>
           <h2 className="lp-section-title">
-            Nos <em>catégories</em>
+            Explorez nos <em>catégories</em>
           </h2>
           <p className="lp-section-sub">
-            Des prestataires qualifiés dans tous les domaines, disponibles
-            maintenant près de chez vous.
+            Un large éventail de métiers disponibles pour répondre à tous vos
+            besoins au quotidien.
           </p>
         </div>
-
-        {/* Flèches — desktop */}
         <div className="lp-carousel-arrows">
           <button
-            className={`lp-arrow${canPrev ? "" : " lp-arrow--disabled"}`}
+            className={`lp-arrow${!canScrollLeft ? " lp-arrow--disabled" : ""}`}
             onClick={() => scroll(-1)}
             aria-label="Précédent"
-            disabled={!canPrev}
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={20} />
           </button>
           <button
-            className={`lp-arrow${canNext ? "" : " lp-arrow--disabled"}`}
+            className={`lp-arrow${!canScrollRight ? " lp-arrow--disabled" : ""}`}
             onClick={() => scroll(1)}
             aria-label="Suivant"
-            disabled={!canNext}
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={20} />
           </button>
         </div>
       </div>
 
-      {/* Track */}
-      <div className="lp-carousel-track" ref={trackRef}>
-        {loading
-          ? skeletons
-          : cats.map((cat) => (
-              <div
-                key={cat._id}
-                className="lp-cat-card"
-                onClick={() => navigate(`/services/categories/${cat._id}`)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) =>
-                  e.key === "Enter" &&
-                  navigate(`/services/categories/${cat._id}`)
-                }
-                aria-label={`Voir ${cat.nom}`}
-              >
-                {/* Icône */}
-                <div className="lp-cat-icon">
-                  <CatIcon icone={cat.icone} size={24} />
-                </div>
-
-                {/* Contenu */}
-                <div className="lp-cat-nom">{cat.nom}</div>
-                {cat.description && (
-                  <div className="lp-cat-desc">{cat.description}</div>
-                )}
-
-                {/* Lien */}
-                <div className="lp-cat-link">
-                  Voir les métiers <span className="lp-cat-arrow">→</span>
-                </div>
-              </div>
-            ))}
-      </div>
-
-      {/* Indicateur de scroll — mobile */}
-      <div className="lp-carousel-hint">
-        <span>Faites glisser pour voir plus</span>
-        <ChevronRight size={13} />
+      <div
+        className="lp-carousel-track"
+        ref={trackRef}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {cats.map((cat) => (
+          <div
+            key={cat._id}
+            className="lp-cat-card"
+            onClick={() => navigate(`/services/categories/${cat._id}`)}
+            role="button"
+            tabIndex={0}
+          >
+            <div className="lp-cat-icon">
+              <CatIcon icone={cat.icone} size={28} />
+            </div>
+            <div className="lp-cat-nom">{cat.nom}</div>
+            {cat.description && (
+              <div className="lp-cat-desc">{cat.description}</div>
+            )}
+            <div className="lp-cat-link">
+              Découvrir <span>→</span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
 };
 
 // ─────────────────────────────────────────────────────────
-// Cards avantages
+// Bloc Pricing
 // ─────────────────────────────────────────────────────────
-const AvantagesBloc = () => (
-  <section className="lp-section lp-avantages-section" id="avantages">
-    <div className="lp-eyebrow">
-      <div className="lp-eyebrow-line" />
-      <span className="lp-eyebrow-text">Pourquoi Hopela</span>
-    </div>
-    <h2 className="lp-section-title">
-      Conçu pour <em>vous</em>
-    </h2>
-    <p className="lp-section-sub">
-      Une plateforme pensée pour les habitants de Nouvelle-Calédonie, du
-      particulier au professionnel.
-    </p>
-    <div className="lp-avantages-grid">
-      {AVANTAGES.map(({ icon, titre, desc, accent }) => (
-        <div className="lp-av-card" key={titre}>
-          {/* Ligne de couleur en haut */}
-          <div className="lp-av-bar" style={{ background: accent }} />
-          <div className="lp-av-icon">{icon}</div>
-          <div className="lp-av-titre">{titre}</div>
-          <div className="lp-av-desc">{desc}</div>
-        </div>
-      ))}
-    </div>
-  </section>
-);
-
-// ─────────────────────────────────────────────────────────
-// Témoignages
-// ─────────────────────────────────────────────────────────
-const TemoignagesBloc = () => {
-  const trackRef = useRef(null);
-  const [active, setActive] = useState(0);
-  const x0 = useRef(null);
-
-  const goTo = (i) => {
-    setActive(i);
-    trackRef.current?.scrollTo({
-      left: trackRef.current.offsetWidth * i,
-      behavior: "smooth",
-    });
-  };
-  const onTouchStart = (e) => {
-    x0.current = e.touches[0].clientX;
-  };
-  const onTouchEnd = (e) => {
-    if (x0.current === null) return;
-    const dx = x0.current - e.changedTouches[0].clientX;
-    if (Math.abs(dx) < 40) return;
-    if (dx > 0 && active < TEMOIGNAGES.length - 1) goTo(active + 1);
-    if (dx < 0 && active > 0) goTo(active - 1);
-    x0.current = null;
-  };
-  const onScroll = () => {
-    if (!trackRef.current) return;
-    setActive(
-      Math.round(trackRef.current.scrollLeft / trackRef.current.offsetWidth),
-    );
-  };
-
+const PricingBloc = () => {
   return (
-    <section className="lp-section" id="avis">
-      <div className="lp-eyebrow">
-        <div className="lp-eyebrow-line" />
-        <span className="lp-eyebrow-text">Ils nous font confiance</span>
+    <section className="lp-pricing-section" id="tarifs">
+      <div style={{ textAlign: "center", marginBottom: 60 }}>
+        <div className="lp-eyebrow">
+          <span className="lp-eyebrow-text">Tarification</span>
+        </div>
+        <h2 className="lp-section-title">
+          Choisissez votre <em>abonnement</em>
+        </h2>
+        <p className="lp-section-sub" style={{ margin: "0 auto" }}>
+          Des offres simples et transparentes pour les particuliers comme pour
+          les professionnels.
+        </p>
       </div>
-      <h2 className="lp-section-title">
-        Ce qu'ils en <em>pensent</em>
-      </h2>
-      <p className="lp-section-sub">
-        Des centaines de Calédoniens utilisent Hopela chaque jour.
-      </p>
-      <div
-        className="lp-temoignages"
-        ref={trackRef}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        onScroll={onScroll}
-      >
-        {TEMOIGNAGES.map(({ nom, quartier, texte, note }) => (
-          <article key={nom} className="lp-temoignage">
-            <div className="lp-stars">{"★".repeat(note)}</div>
-            <p className="lp-texte">{texte}</p>
-            <div className="lp-author">
-              <div className="lp-avatar">{nom[0]}</div>
-              <div>
-                <div className="lp-author-name">{nom}</div>
-                <div className="lp-author-loc">📍 {quartier}</div>
-              </div>
+
+      <div className="lp-pricing-grid">
+        {PRICING_PLANS.map((plan) => (
+          <div
+            key={plan.id}
+            className={`lp-price-card ${plan.featured ? "lp-price-card--featured" : ""}`}
+          >
+            {plan.featured && <div className="lp-badge">Le plus populaire</div>}
+
+            <div className="lp-plan-name">{plan.name}</div>
+
+            <div className="lp-price-wrapper">
+              <span className="lp-price-currency">XPF</span>
+              <span className="lp-price-amount">
+                {plan.price.toLocaleString()}
+              </span>
+              <span className="lp-price-period">{plan.period}</span>
             </div>
-          </article>
-        ))}
-      </div>
-      <div className="lp-dots">
-        {TEMOIGNAGES.map((_, i) => (
-          <button
-            key={i}
-            className={`lp-dot${i === active ? " lp-dot--on" : ""}`}
-            onClick={() => goTo(i)}
-            aria-label={`Avis ${i + 1}`}
-          />
+
+            <div className="lp-price-desc">{plan.desc}</div>
+
+            <ul className="lp-features-list">
+              {plan.features.map((feat, i) => (
+                <li key={i}>
+                  <Check size={16} strokeWidth={3} />
+                  {feat}
+                </li>
+              ))}
+            </ul>
+
+            <button
+              className={`lp-price-btn ${plan.featured ? "btn-primary" : ""}`}
+            >
+              {plan.featured ? "Commencer maintenant" : "Choisir cette offre"}
+            </button>
+          </div>
         ))}
       </div>
     </section>
@@ -391,8 +404,6 @@ const TemoignagesBloc = () => {
 // ─────────────────────────────────────────────────────────
 const LandingScreen = () => {
   const navigate = useNavigate();
-  const stats = usePublicStats();
-
   const [prestatairesEnLigne, setPrestatairesEnLigne] = useState(null);
   const handleCount = useCallback((n) => setPrestatairesEnLigne(n), []);
 
@@ -407,29 +418,24 @@ const LandingScreen = () => {
   }, []);
 
   return (
-    <div style={{ background: "#0a0804", minHeight: "100vh" }}>
+    <div style={{ background: "var(--dark)", minHeight: "100vh" }}>
       <Header />
 
       {/* ══ HERO ══ */}
       <section className="lp-hero" id="accueil">
         <div className="lp-hero-bg" />
-        <div className="lp-hero-grid" />
         <div className="lp-hero-content">
           <div className="lp-eyebrow fade-up">
-            <div className="lp-eyebrow-line" />
             <span className="lp-eyebrow-text">Nouvelle-Calédonie</span>
           </div>
           <h1 className="fade-up-1">
-            Trouvez un
+            Trouvez votre
             <br />
-            <em>prestataire</em>
-            <br />
-            en temps réel
+            <em>prestataire</em> idéal
           </h1>
           <p className="lp-hero-sub fade-up-2">
-            Hopela connecte les particuliers aux prestataires de services locaux
-            géolocalisés en direct. Disponibilité instantanée, partout en
-            Calédonie.
+            La première plateforme de mise en relation géolocalisée en temps
+            réel. Simple, rapide et sécurisé pour tous vos besoins.
           </p>
           <div className="lp-hero-actions fade-up-3">
             <button className="btn-primary" onClick={() => navigate("/login")}>
@@ -439,25 +445,20 @@ const LandingScreen = () => {
               className="btn-secondary"
               onClick={() => navigate("/login")}
             >
-              Devenir prestataire →
+              Devenir prestataire
             </button>
           </div>
-          <div className="lp-hero-badge fade-up-4">
-            <span className="lp-live-dot" />
-            {prestatairesEnLigne === null ? (
-              <span>Prestataires disponibles en ce moment</span>
-            ) : prestatairesEnLigne === 0 ? (
-              <span>Aucun prestataire en ligne pour le moment</span>
-            ) : (
+
+          {prestatairesEnLigne !== null && (
+            <div className="lp-hero-badge fade-up-4">
+              <span className="lp-live-dot" />
               <span>
-                <strong style={{ color: "#4caf6e", fontWeight: 700 }}>
-                  {prestatairesEnLigne}
-                </strong>{" "}
-                prestataire{prestatairesEnLigne > 1 ? "s" : ""} disponible
-                {prestatairesEnLigne > 1 ? "s" : ""} en ce moment
+                <strong>{prestatairesEnLigne}</strong> prestataire
+                {prestatairesEnLigne > 1 && "s"} connecté
+                {prestatairesEnLigne > 1 && "s"}
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -465,18 +466,15 @@ const LandingScreen = () => {
       <section className="lp-map-section" id="carte">
         <div className="lp-map-header">
           <div>
-            <div className="lp-eyebrow" style={{ marginBottom: 10 }}>
-              <div className="lp-eyebrow-line" />
-              <span className="lp-eyebrow-text">
-                Géolocalisation temps réel
-              </span>
+            <div className="lp-eyebrow">
+              <span className="lp-eyebrow-text">Carte interactive</span>
             </div>
             <h2 className="lp-map-title">
-              Ils sont <em>près de vous</em>
+              Ils sont <em>près de chez vous</em>
             </h2>
           </div>
           <p className="lp-map-subtitle">
-            Chaque point est un prestataire disponible maintenant
+            Visualisez les disponibilités en temps réel
           </p>
         </div>
         <div className="lp-map-container">
@@ -485,51 +483,114 @@ const LandingScreen = () => {
       </section>
 
       {/* ══ STATS ══ */}
+      {/* <StatsBloc /> */}
 
       {/* ══ CARROUSEL CATÉGORIES ══ */}
       <CategoriesCarousel />
 
       {/* ══ COMMENT ÇA MARCHE ══ */}
       <section className="lp-section" id="comment-ca-marche">
-        <div className="lp-eyebrow">
-          <div className="lp-eyebrow-line" />
-          <span className="lp-eyebrow-text">Simple & rapide</span>
+        <div style={{ textAlign: "center", marginBottom: 50 }}>
+          <div className="lp-eyebrow">
+            <span className="lp-eyebrow-text">Processus</span>
+          </div>
+          <h2 className="lp-section-title">
+            Comment ça <em>marche</em> ?
+          </h2>
         </div>
-        <h2 className="lp-section-title">
-          Comment ça <em>marche</em>
-        </h2>
-        <p className="lp-section-sub">Trois étapes, moins de 5 minutes.</p>
         <div className="lp-steps">
-          {STEPS.map(({ num, icon, titre, desc }, i) => (
-            <div key={num} className="lp-step">
-              {i < STEPS.length - 1 && <div className="lp-step-connector" />}
-              <div className="lp-step-head">
-                <span className="lp-step-num">{num}</span>
-                <span className="lp-step-icon">{icon}</span>
+          {STEPS.map((step, i) => (
+            <div key={i} className="lp-step">
+              <span className="lp-step-num">{step.num}</span>
+              <div className="lp-step-content">
+                <h3>{step.titre}</h3>
+                <p>{step.desc}</p>
               </div>
-              <h3 className="lp-step-title">{titre}</h3>
-              <p className="lp-step-desc">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ══ AVANTAGES ══ */}
-      <AvantagesBloc />
+      <section className="lp-section lp-avantages-section">
+        <div className="lp-eyebrow">
+          <span className="lp-eyebrow-text">Avantages</span>
+        </div>
+        <h2 className="lp-section-title">
+          Pourquoi <em>Hopela</em> ?
+        </h2>
+        <div className="lp-avantages-grid">
+          {AVANTAGES.map((av, i) => (
+            <div className="lp-av-card" key={i}>
+              <div
+                className="lp-av-bar"
+                style={{ background: av.accent }}
+              ></div>
+              {av.icon}
+              <div className="lp-av-titre">{av.titre}</div>
+              <div className="lp-av-desc">{av.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══ PRICING ══ */}
+      <PricingBloc />
 
       {/* ══ TÉMOIGNAGES ══ */}
-      <TemoignagesBloc />
+      <section className="lp-section" id="avis">
+        <div className="lp-eyebrow">
+          <span className="lp-eyebrow-text">Avis clients</span>
+        </div>
+        <h2 className="lp-section-title">
+          Ils nous font <em>confiance</em>
+        </h2>
+        <div className="lp-temoignages">
+          {TEMOIGNAGES.map((t, i) => (
+            <article key={i} className="lp-temoignage">
+              <div className="lp-stars">{"★".repeat(t.note)}</div>
+              <p className="lp-texte">"{t.texte}"</p>
+              <div className="lp-author">
+                <div className="lp-avatar">{t.nom[0]}</div>
+                <div>
+                  <div className="lp-author-name">{t.nom}</div>
+                  <div style={{ fontSize: 12, color: "var(--cream-dim)" }}>
+                    {t.quartier}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       {/* ══ CTA FINAL ══ */}
       <div className="lp-cta" id="contact">
         <div className="lp-cta-glow" />
-        <h2>
-          Prêt à trouver votre <em>prestataire</em> ?
+        <h2 style={{ position: "relative", zIndex: 2, marginBottom: 20 }}>
+          Prêt à démarrer ?
         </h2>
-        <p>
-          Rejoignez des centaines d'utilisateurs qui font confiance à Hopela.
+        <p
+          style={{
+            position: "relative",
+            zIndex: 2,
+            marginBottom: 40,
+            maxWidth: 500,
+            margin: "0 auto 40px",
+          }}
+        >
+          Rejoignez la communauté Hopela et simplifiez votre quotidien.
         </p>
-        <div className="lp-cta-actions">
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            display: "flex",
+            gap: 16,
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <button className="btn-primary" onClick={() => navigate("/login")}>
             Trouver un prestataire
           </button>
@@ -537,7 +598,7 @@ const LandingScreen = () => {
             className="btn-secondary"
             onClick={() => navigate("/register?role=prestataire")}
           >
-            Je suis prestataire →
+            S'inscrire comme pro
           </button>
         </div>
       </div>
