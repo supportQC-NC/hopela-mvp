@@ -141,36 +141,6 @@ const usePublicStats = () => {
 // ─────────────────────────────────────────────────────────
 // Bloc Stats
 // ─────────────────────────────────────────────────────────
-const StatsBloc = ({ stats }) => {
-  const items = [
-    {
-      value: stats ? `${stats.prestatairesActifs}+` : null,
-      label: "Prestataires actifs",
-      icon: "🛠️",
-    },
-    {
-      value: stats ? `${stats.usersActifs}+` : null,
-      label: "Utilisateurs inscrits",
-      icon: "👥",
-    },
-    { value: "< 5min", label: "Temps de réponse moyen", icon: "⚡" },
-  ];
-  return (
-    <div className="lp-stats-wrap">
-      <div className="lp-stats">
-        {items.map(({ value, label, icon }) => (
-          <div key={label} className="lp-stat">
-            <span className="lp-stat-icon">{icon}</span>
-            <div className={`lp-stat-value${!value ? " lp-skeleton" : ""}`}>
-              {value ?? "···"}
-            </div>
-            <div className="lp-stat-label">{label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 // ─────────────────────────────────────────────────────────
 // Carrousel catégories
@@ -515,7 +485,6 @@ const LandingScreen = () => {
       </section>
 
       {/* ══ STATS ══ */}
-      <StatsBloc stats={stats} />
 
       {/* ══ CARROUSEL CATÉGORIES ══ */}
       <CategoriesCarousel />
