@@ -1,36 +1,36 @@
 /* src/screens/public/LandingScreen.css */
 
-/* ══ REALTIMECOLORS PALETTE APPLICATION ═════════════════════════════════ */
+/* ══ REALTIMECOLORS PALETTE (UPDATED) ═════════════════════════════════ */
 :root {
-  /* --- Mapping exact de ta palette RealtimeColors --- */
+  /* --- 1. Background Principal (Fond de page) --- */
+  /* C'est l'ancienne couleur de carte : Bleu Nuit profond */
+  --bg-main: #1a2d4a;
 
-  /* 1. Background (Le plus sombre) */
-  --bg-main: #0a0d12;
+  /* --- 2. Card Background (Blocs de contenu) --- */
+  /* Une nuance très légèrement plus claire pour que les cartes "ressortent" du fond */
+  --bg-card: #223a60;
 
-  /* 2. Card Background (Bleu nuit profond) */
-  --bg-card: #1a2d4a;
-
-  /* 3. Primary (Vert forêt - Boutons principaux) */
+  /* --- 3. Primary (Boutons, Actions) --- */
   --primary: #145c45;
 
-  /* 4. Accent (Vert océan - Survol, Bordures, Badges) */
+  /* --- 4. Accent (Survol, Bordures, Highlights) --- */
   --accent: #1e7a5c;
 
-  /* 5. Foreground (Texte principal - Blanc cassé) */
+  /* --- 5. Foreground (Texte) --- */
   --text-main: #f5f4f9;
 
-  /* --- Dérivés pour l'interface --- */
-  --text-secondary: #cbd5e1; /* Gris clair dérivé pour le secondaire */
-  --border-color: #334155; /* Bordure légèrement plus claire que le fond carte */
+  /* --- Dérivés --- */
+  --text-secondary: #cbd5e1;
+  --border-color: #385075; /* Bordure un peu plus claire que le fond carte */
 
-  /* --- Polices (Inter-Inter comme demandé) --- */
-  --font-sans: "Inter", sans-serif; /* Sera appliqué partout */
-  --font-heading: "Inter", sans-serif; /* Titres en Inter aussi */
+  /* --- Polices --- */
+  --font-sans: "Inter", sans-serif;
+  --font-heading: "Inter", sans-serif;
 
-  /* --- Alias internes --- */
+  /* --- Alias --- */
   --dark: var(--bg-main);
   --dark-2: var(--bg-card);
-  --gold: var(--primary); /* On utilise le vert comme "Gold" */
+  --gold: var(--primary);
   --gold-light: var(--accent);
   --cream: var(--text-main);
   --cream-dim: var(--text-secondary);
@@ -39,12 +39,19 @@
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* ══ Reset & Base ══════════════════════════════════════════ */
+/* ══ GLOBAL BODY UPDATE ═════════════════════════════════════════════════ */
+/* Force le fond bleu sur toute la page */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* ══ RESET & BASE ══════════════════════════════════════════ */
 html {
   scroll-behavior: smooth;
 }
 
-/* Scrollbar adaptée à la palette */
+/* Scrollbar adaptée au nouveau fond bleu */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -84,7 +91,7 @@ html {
   100% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(30, 122, 92, 0.7); /* Utilisation de l'accent */
+    box-shadow: 0 0 0 0 rgba(30, 122, 92, 0.7);
   }
   50% {
     transform: scale(1.2);
@@ -110,7 +117,128 @@ html {
   animation-delay: 0.4s;
 }
 
-/* ══ Layout commun & Typo (INTER) ═══════════════════════════════════ */
+/* ══ HERO (Ajusté pour fond bleu) ════════════════════════════════════ */
+.lp-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 20px 80px;
+  overflow: hidden;
+}
+.lp-hero-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.lp-hero-video-wrapper iframe {
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100vh;
+  min-width: 177.77vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.3; /* Opacité réduite car le fond est bleu, pas noir */
+  filter: grayscale(20%) contrast(1.1);
+  pointer-events: none;
+}
+/* Overlay : Transitionne du noir (haut) vers le bleu (bas) pour la continuité */
+.lp-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 13, 18, 0.9) 0%,
+    rgba(26, 45, 74, 0.6) 100%
+  );
+  backdrop-filter: blur(3px);
+}
+.lp-hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: left;
+  max-width: 800px;
+  width: 100%;
+}
+
+.lp-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  margin-top: 24px;
+  padding: 8px 16px;
+  background: rgba(20, 92, 69, 0.2);
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+  animation: float 4s ease-in-out infinite;
+}
+.lp-hero-badge span {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+.lp-hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--text-main);
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.lp-hero h1 span.highlight {
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+}
+.lp-hero h1 span.highlight::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: var(--primary);
+  z-index: -1;
+  opacity: 0.3;
+  transform: skewX(-10deg);
+  border-radius: 4px;
+}
+
+.lp-hero-sub {
+  font-size: 20px;
+  color: #e2e8f0;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  font-weight: 400;
+  max-width: 600px;
+  border-left: 3px solid var(--primary);
+  padding-left: 24px;
+}
+.lp-hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* ══ Layout commun ════════════════════════════════════════ */
 .lp-section {
   padding: 80px 20px;
   max-width: 1200px;
@@ -124,7 +252,7 @@ html {
   gap: 8px;
   margin-bottom: 16px;
   padding: 6px 14px;
-  background: rgba(30, 122, 92, 0.15); /* Accent transparent */
+  background: rgba(30, 122, 92, 0.15);
   border: 1px solid var(--accent);
   border-radius: 100px;
 }
@@ -137,9 +265,9 @@ html {
 }
 
 .lp-section-title {
-  font-family: var(--font-heading); /* INTER */
+  font-family: var(--font-heading);
   font-size: clamp(32px, 5vw, 56px);
-  font-weight: 800; /* Plus gras avec Inter */
+  font-weight: 800;
   color: var(--text-main);
   margin-bottom: 16px;
   line-height: 1.1;
@@ -157,33 +285,32 @@ html {
   left: 0;
   width: 100%;
   height: 8px;
-  background: rgba(30, 122, 92, 0.2); /* Accent subtil */
+  background: rgba(30, 122, 92, 0.2);
   z-index: -1;
   transform: skewX(-12deg);
 }
-
 .lp-section-sub {
-  font-size: 18px; /* Légèrement plus grand pour Inter */
+  font-size: 18px;
   color: var(--text-secondary);
   max-width: 600px;
   line-height: 1.6;
   font-weight: 400;
 }
 
-/* ══ Boutons (Real Colors) ════════════════════════════════════════════ */
+/* ══ Boutons ════════════════════════════════════════════ */
 .btn-primary {
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #ffffff; /* Toujours blanc sur le vert foncé */
-  background: var(--primary); /* #145C45 */
+  color: #ffffff;
+  background: var(--primary);
   border: 1px solid var(--primary);
   cursor: pointer;
   padding: 16px 32px;
-  border-radius: 8px; /* Coins moins arrondis pour Inter */
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2); /* Style bouton "appuyé" */
+  border-radius: 8px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
   transition: var(--transition);
   display: inline-flex;
   align-items: center;
@@ -191,7 +318,7 @@ html {
   gap: 8px;
 }
 .btn-primary:hover {
-  background: var(--accent); /* #1E7A5C au survol */
+  background: var(--accent);
   border-color: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
@@ -219,87 +346,7 @@ html {
   background: rgba(30, 122, 92, 0.05);
 }
 
-/* ══ HERO (Inter & Real Colors) ═══════════════════════════════════════ */
-.lp-hero {
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 100px 20px 60px;
-  position: relative;
-  overflow: hidden;
-}
-.lp-hero-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  /* Utilisation des couleurs pour le dégradé de fond */
-  background:
-    radial-gradient(circle at 20% 50%, rgba(20, 92, 69, 0.15), transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(26, 45, 74, 0.4), transparent 50%);
-}
-.lp-hero-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  max-width: 900px;
-}
-.lp-hero h1 {
-  font-family: var(--font-heading); /* INTER */
-  font-size: clamp(40px, 7vw, 80px);
-  font-weight: 900; /* Titre Impact */
-  line-height: 1.05;
-  color: var(--text-main);
-  margin-bottom: 24px;
-  letter-spacing: -0.02em;
-}
-.lp-hero h1 em {
-  font-style: italic;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.lp-hero-sub {
-  font-size: 20px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 40px;
-  font-weight: 400;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.lp-hero-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-}
-
-.lp-hero-badge {
-  margin-top: 40px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
-  background: rgba(20, 92, 69, 0.1);
-  border: 1px solid var(--primary);
-  border-radius: 8px;
-  font-size: 13px;
-  color: var(--text-main);
-  font-weight: 500;
-}
-.lp-live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent); /* Vert clair pour le point */
-  box-shadow: 0 0 10px var(--accent);
-  animation: pulseDot 2s infinite;
-}
-
-/* ══ CARTE (Map) ═══════════════════════════════════════ */
+/* ══ MAP ═══════════════════════════════════════ */
 .lp-map-section {
   padding-bottom: 80px;
 }
@@ -326,7 +373,7 @@ html {
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border-color);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Ombre plus douce sur fond bleu */
   position: relative;
   z-index: 10;
   background: var(--bg-card);
@@ -352,13 +399,13 @@ html {
   transition: background 0.3s;
 }
 .lp-stat:hover {
-  background: rgba(30, 122, 92, 0.1); /* Légère teinte verte */
+  background: #2a4570; /* Survol plus clair */
 }
 .lp-stat-value {
   font-family: var(--font-heading);
   font-size: 42px;
   font-weight: 800;
-  color: var(--accent); /* Chiffres en vert clair */
+  color: var(--accent);
   line-height: 1;
   margin-bottom: 8px;
 }
@@ -370,7 +417,7 @@ html {
   font-weight: 600;
 }
 
-/* ══ CARROUSEL CATÉGORIES (Contraste Max) ════════════════════ */
+/* ══ CARROUSEL (Sur fond bleu, on garde les cartes légèrement plus claires) ════════════════════ */
 .lp-carousel-section {
   padding-bottom: 80px;
 }
@@ -426,7 +473,7 @@ html {
   flex: 0 0 300px;
   min-width: 300px;
   scroll-snap-align: start;
-  background: var(--bg-card); /* Bleu nuit */
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 32px;
@@ -436,21 +483,18 @@ html {
   gap: 20px;
   transition: var(--transition);
 }
-
-/* HOVER CARD : Contraste Fort */
 .lp-cat-card:hover {
   border-color: var(--accent);
-  background: #223654; /* Version légèrement plus claire du bleu nuit */
+  background: #2f4d7a; /* Eclaircissement au survol */
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
-
 .lp-cat-icon {
   width: 56px;
   height: 56px;
   border-radius: 12px;
-  background: rgba(20, 92, 69, 0.2); /* Vert sombre transparent */
-  color: var(--accent); /* Icône en vert clair */
+  background: rgba(20, 92, 69, 0.2);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -459,7 +503,7 @@ html {
   font-family: var(--font-heading);
   font-size: 24px;
   font-weight: 700;
-  color: var(--text-main); /* Blanc sur fond bleu = Excellent contraste */
+  color: var(--text-main);
 }
 .lp-cat-desc {
   font-size: 15px;
@@ -500,7 +544,7 @@ html {
 }
 .lp-av-card:hover {
   border-color: var(--primary);
-  background: #223654;
+  background: #2f4d7a;
 }
 .lp-av-bar {
   height: 4px;
@@ -527,7 +571,7 @@ html {
   line-height: 1.6;
 }
 
-/* ══ PRICING (Contraste Optimized) ═══════════════════ */
+/* ══ PRICING ═════════════════════════════════════════ */
 .lp-pricing-section {
   padding: 80px 20px;
   max-width: 1200px;
@@ -550,13 +594,11 @@ html {
   position: relative;
   transition: var(--transition);
 }
-
-/* Carte Featured */
 .lp-price-card--featured {
-  background: linear-gradient(180deg, #1e364d, #1a2d4a);
+  background: linear-gradient(180deg, #253e64, #1a2d4a);
   border-color: var(--primary);
   transform: scale(1.05);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 2;
 }
 .lp-price-card--featured:hover {
@@ -579,7 +621,6 @@ html {
   letter-spacing: 1px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-
 .lp-plan-name {
   font-size: 13px;
   font-weight: 700;
@@ -588,7 +629,6 @@ html {
   letter-spacing: 1.5px;
   margin-bottom: 20px;
 }
-
 .lp-price-wrapper {
   display: flex;
   align-items: baseline;
@@ -612,7 +652,6 @@ html {
   color: var(--text-secondary);
   margin-left: 6px;
 }
-
 .lp-price-desc {
   font-size: 14px;
   color: var(--primary);
@@ -649,7 +688,6 @@ html {
   border: none;
   font-size: 14px;
 }
-
 .lp-price-card:not(.lp-price-card--featured) .lp-price-btn {
   background: transparent;
   border: 1px solid var(--border-color);
@@ -660,7 +698,6 @@ html {
   color: var(--primary);
   background: rgba(20, 92, 69, 0.1);
 }
-
 .lp-price-card--featured .lp-price-btn {
   background: var(--primary);
   color: white;
@@ -761,13 +798,16 @@ html {
 /* ══ CTA FINAL ══════════════════════════════════════════ */
 .lp-cta {
   margin: 80px 20px;
-  background: linear-gradient(180deg, var(--bg-card), var(--bg-main));
+  background: linear-gradient(
+    180deg,
+    var(--bg-card),
+    var(--bg-main)
+  ); /* Fusion des bleus */
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 80px 20px;
   text-align: center;
   position: relative;
-  color: var(--text-main);
   overflow: hidden;
 }
 .lp-cta-glow {
@@ -778,7 +818,6 @@ html {
   filter: blur(120px);
   opacity: 0.1;
   border-radius: 50%;
-
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

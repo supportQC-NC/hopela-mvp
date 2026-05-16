@@ -1,161 +1,199 @@
 /* src/components/layout/Footer.css */
 
-/* On réintègre les variables pour s'assurer de la cohérence si ce fichier est isolé */
+/* ── DESIGN SYSTEM REALTIMECOLORS (FOOTER) ───────────────────────────────────── */
 :root {
-  --bg-main: #0a0d12;
+  /* --- Fond de page --- */
+  --bg-main: #1a2d4a;
+
+  /* --- Fond du Footer (Légèrement plus foncé pour ancrer la page) --- */
+  --bg-footer: #12253f;
+
+  /* --- Cartes / Éléments --- */
+  --bg-card: #223a60;
+
+  /* --- Actions (Vert Forêt) --- */
   --primary: #145c45;
-  --primary-hover: #1e7a5c;
-  --text-main: #f0f2f5;
-  --text-secondary: #b0b8c8;
-  --border-color: #1d2430;
+
+  /* --- Accent / Survol (Vert Océan) --- */
+  --accent: #1e7a5c;
+
+  /* --- Textes --- */
+  --text-main: #f5f4f9;
+  --text-secondary: #cbd5e1;
+
+  /* --- Bordures --- */
+  --border-color: #385075;
+
+  /* --- Police Inter --- */
+  --font-sans: "Inter", sans-serif;
 }
 
+/* ── CONTAINER FOOTER ───────────────────────────────────────────────────────── */
 .lp-footer {
-  border-top: 1px solid var(--border-color);
-  padding: 56px 48px 36px;
-  background: var(--bg-main);
-}
-
-/* ── Top ── */
-.lp-footer-top {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
-  gap: 48px;
-  margin-bottom: 48px;
-}
-
-/* Brand */
-.lp-footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  margin-bottom: 16px;
-}
-
-.lp-footer-logo-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  /* Remplacement du dégradé doré par le dégradé vert */
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 700;
-  font-size: 16px;
-  /* Texte blanc pour un meilleur contraste sur le vert foncé */
-  color: #ffffff;
-  flex-shrink: 0;
-}
-
-.lp-footer-logo-name {
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 700;
-  font-size: 20px;
+  border-top: 1px solid rgba(56, 80, 117, 0.5); /* Bordure bleue subtile */
+  padding: 80px 48px 48px; /* Plus d'espace pour le moderne */
+  background: var(--bg-footer);
   color: var(--text-main);
 }
 
-.lp-footer-tagline {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  font-weight: 300;
-  max-width: 220px;
+/* ── TOP SECTION (Grid) ─────────────────────────────────────────────────────── */
+.lp-footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 64px;
 }
 
-/* Colonnes liens */
-.lp-footer-col-title {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  /* Titre des colonnes en vert */
-  color: var(--primary);
+/* ── BRANDING ──────────────────────────────────────────────────────────────── */
+.lp-footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
   margin-bottom: 20px;
+}
+
+.lp-footer-logo-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px; /* Forme moderne arrondie */
+  /* Dégradé Vert Chart */
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(20, 92, 69, 0.3);
+}
+
+.lp-footer-logo-name {
+  font-family: var(--font-sans);
+  font-weight: 800; /* Inter Bold */
+  font-size: 22px;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.lp-footer-tagline {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-weight: 400;
+  max-width: 260px;
+}
+
+/* ── COLUMNS LINKS ─────────────────────────────────────────────────────────── */
+.lp-footer-col-title {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent); /* Vert pour les titres de colonnes */
+  margin-bottom: 24px;
 }
 
 .lp-footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .lp-footer-links a {
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 14px;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.2s;
-  font-weight: 300;
+  transition: all 0.2s ease;
+  font-weight: 400;
+  display: inline-block;
 }
 
 .lp-footer-links a:hover {
-  /* Survol en vert plus clair */
-  color: var(--primary-hover);
+  color: var(--text-main); /* Blanc au survol */
+  transform: translateX(4px); /* Petit mouvement moderne */
 }
 
-/* ── Bottom ── */
+/* ── BOTTOM SECTION (Legal) ─────────────────────────────────────────────────── */
 .lp-footer-bottom {
-  border-top: 1px solid var(--border-color);
-  padding-top: 28px;
+  border-top: 1px solid rgba(56, 80, 117, 0.3);
+  padding-top: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
 }
 
 .lp-footer-copy {
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
   color: var(--text-secondary);
-  opacity: 0.6;
-  letter-spacing: 0.3px;
+  opacity: 0.7;
+  letter-spacing: 0.02em;
 }
 
 .lp-footer-legal {
   display: flex;
-  gap: 24px;
+  gap: 32px;
 }
 
 .lp-footer-legal a {
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
   color: var(--text-secondary);
-  opacity: 0.6;
+  opacity: 0.7;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
 .lp-footer-legal a:hover {
-  color: var(--primary);
+  color: var(--accent); /* Vert au survol */
   opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
-/* ── Responsive ── */
+/* ── RESPONSIVE ────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .lp-footer {
-    padding: 48px 20px 28px;
+    padding: 64px 24px 32px;
   }
 
   .lp-footer-top {
     grid-template-columns: 1fr 1fr;
-    gap: 36px;
+    gap: 40px;
   }
 
   .lp-footer-brand {
     grid-column: 1 / -1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 32px;
+    margin-bottom: 16px;
   }
 }
 
 @media (max-width: 520px) {
   .lp-footer-top {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 
   .lp-footer-bottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 20px;
+  }
+
+  .lp-footer-legal {
+    flex-direction: column;
+    gap: 12px;
   }
 }
