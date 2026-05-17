@@ -2,25 +2,61 @@
 @use "./landingTokens" as t;
 
 .lp-map-section {
-  padding: 140px v.$space-5 v.$space-20;
-  max-width: v.$max-content;
-  margin: 0 auto;
   position: relative;
+  overflow: hidden;
+
   min-height: 96vh;
+  padding: 140px 0 v.$space-20;
+
+  background:
+    radial-gradient(
+      circle at 12% 10%,
+      rgba(0, 166, 178, 0.07),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(255, 70, 90, 0.045),
+      transparent 34%
+    );
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image:
+      linear-gradient(rgba(3, 18, 29, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(3, 18, 29, 0.018) 1px, transparent 1px);
+
+    background-size: 72px 72px;
+    pointer-events: none;
+  }
+}
+
+.lp-map-header,
+.lp-map-container {
+  position: relative;
+  z-index: 1;
+
+  width: min(100% - 40px, v.$max-wide);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .lp-map-header {
   display: flex;
   flex-direction: column;
-  gap: v.$space-3;
-  margin-bottom: v.$space-6;
-  text-align: center;
+  gap: v.$space-4;
+
+  margin-bottom: v.$space-10;
+
+  text-align: left;
 
   @media (min-width: v.$bp-md) {
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    text-align: left;
   }
 }
 
@@ -29,10 +65,16 @@
 }
 
 .lp-map-title {
-  font-size: clamp(28px, 5vw, 42px);
-  font-weight: v.$font-extrabold;
+  max-width: 760px;
+
+  margin: 0;
+
   color: t.$lp-text;
-  letter-spacing: -0.02em;
+
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 0.96;
+  font-weight: v.$font-black;
+  letter-spacing: -0.065em;
 
   em {
     font-style: italic;
@@ -41,18 +83,95 @@
 }
 
 .lp-map-subtitle {
-  font-size: v.$text-md;
+  max-width: 420px;
+
   color: t.$lp-text-sub;
+
+  font-size: clamp(17px, 1.5vw, 20px);
+  line-height: 1.7;
   font-weight: v.$font-medium;
 }
 
 .lp-map-container {
-  height: 480px;
-  border-radius: v.$radius-xl;
+  height: 560px;
+
   overflow: hidden;
-  border: 1px solid t.$lp-border;
-  box-shadow: t.$lp-shadow;
-  position: relative;
-  z-index: 10;
-  background: t.$lp-bg-alt;
+
+  border-radius: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(255, 255, 255, 0.54) 52%,
+    rgba(235, 249, 251, 0.42)
+  );
+
+  box-shadow:
+    0 36px 90px rgba(3, 18, 29, 0.16),
+    0 16px 42px rgba(0, 166, 178, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    pointer-events: none;
+
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+      inset 0 0 90px rgba(3, 18, 29, 0.08);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 36px;
+    right: 36px;
+    z-index: 3;
+
+    height: 4px;
+    border-radius: v.$radius-full;
+
+    background: linear-gradient(90deg, t.$lp-primary, rgba(255, 70, 90, 0.58));
+
+    pointer-events: none;
+  }
+}
+
+@media (max-width: v.$bp-md) {
+  .lp-map-section {
+    min-height: auto;
+    padding-top: v.$space-10;
+    padding-bottom: v.$space-10;
+  }
+
+  .lp-map-header {
+    margin-bottom: v.$space-8;
+  }
+
+  .lp-map-title {
+    font-size: clamp(38px, 11vw, 56px);
+  }
+
+  .lp-map-container {
+    height: 460px;
+    border-radius: 34px;
+  }
+}
+
+@media (max-width: v.$bp-sm) {
+  .lp-map-header,
+  .lp-map-container {
+    width: calc(100% - 28px);
+  }
+
+  .lp-map-container {
+    height: 420px;
+  }
 }
