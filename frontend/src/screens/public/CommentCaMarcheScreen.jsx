@@ -1,147 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 // src/screens/public/CommentCaMarcheScreen.jsx
-import { useEffect } from "react";
+
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import { useState } from "react";
-
-const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
-
-  /* Variables pour la cohérence avec la Landing Page */
-  :root {
-    --bg-main: #0A0D12;
-    --bg-card: #111620;
-    --primary: #145C45;
-    --primary-hover: #1E7A5C;
-    --text-main: #F0F2F5;
-    --text-secondary: #B0B8C8;
-    --border-color: #1d2430;
-  }
-
-  .ccm-root { min-height:100vh; background:var(--bg-main); color:var(--text-main); font-family:'DM Sans',sans-serif; }
-  
-  .ccm-hero { padding:120px 24px 80px; text-align:center; background: linear-gradient(180deg, #0F1219, var(--bg-main)); }
-  .ccm-eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--primary-hover); margin-bottom:20px; font-weight:700; }
-  .ccm-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,72px); font-weight:700; color:var(--text-main); margin-bottom:20px; line-height:1.1; }
-  .ccm-hero h1 em { font-style:italic; color:var(--primary); }
-  .ccm-hero p { font-size:16px; color:var(--text-secondary); max-width:540px; margin:0 auto; line-height:1.7; font-weight:300; }
-  
-  .ccm-section { padding:80px 24px; max-width:1000px; margin:0 auto; }
-  .ccm-divider { height:1px; background:var(--border-color); max-width:1000px; margin:0 auto; }
-  
-  .ccm-title { font-family:'Cormorant Garamond',serif; font-size:clamp(26px,4vw,42px); font-weight:700; color:var(--text-main); text-align:center; margin-bottom:12px; }
-  .ccm-title em { font-style:italic; color:var(--primary); }
-  .ccm-sub { text-align:center; font-size:14px; color:var(--text-secondary); margin-bottom:56px; font-weight:300; }
-
-  /* Étapes */
-  .ccm-steps { display:flex; flex-direction:column; gap:0; }
-  .ccm-step { display:flex; gap:32px; align-items:flex-start; padding:32px 0; border-bottom:1px solid var(--border-color); transition: background 0.3s; }
-  .ccm-step:last-child { border-bottom:none; }
-  
-  /* Numéro de l'étape */
-  .ccm-step-num { 
-    font-family:'Cormorant Garamond',serif; 
-    font-size:64px; font-weight:700; 
-    color:rgba(20, 92, 69, 0.15); /* Vert très subtil */
-    line-height:1; flex-shrink:0; width:80px; text-align:center; 
-  }
-  
-  .ccm-step-content { flex:1; }
-  .ccm-step-icon { font-size:28px; margin-bottom:10px; display:block; }
-  .ccm-step-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--text-main); margin-bottom:10px; }
-  .ccm-step-text { font-size:14px; color:var(--text-secondary); line-height:1.75; font-weight:300; }
-  
-  .ccm-step-badge { 
-    display:inline-block; margin-top:12px; font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; 
-    color:var(--primary-hover); 
-    background:rgba(20, 92, 69, 0.1); 
-    border:1px solid rgba(20, 92, 69, 0.2); 
-    border-radius:20px; padding:4px 12px; 
-  }
-
-  /* Deux colonnes user / presta */
-  .ccm-two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  @media(max-width:640px){ 
-    .ccm-two-col{grid-template-columns:1fr;} 
-    .ccm-step{flex-direction:column;gap:16px;} 
-  }
-  
-  .ccm-col-card { 
-    background:var(--bg-card); 
-    border:1px solid var(--border-color); 
-    border-radius:16px; padding:32px 24px; 
-    transition: transform 0.3s;
-  }
-  .ccm-col-card:hover { transform: translateY(-4px); border-color: rgba(20, 92, 69, 0.3); }
-
-  .ccm-col-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--text-main); margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border-color); }
-  .ccm-col-title em { color:var(--primary); font-style:italic; }
-  
-  .ccm-col-list { list-style:none; display:flex; flex-direction:column; gap:12px; }
-  .ccm-col-list li { display:flex; gap:12px; font-size:13px; color:var(--text-secondary); line-height:1.6; }
-  .ccm-col-list li span:first-child { flex-shrink:0; font-size:16px; }
-
-  /* FAQ */
-  .ccm-faq { display:flex; flex-direction:column; gap:12px; }
-  .ccm-faq-item { 
-    background:var(--bg-card); 
-    border:1px solid var(--border-color); 
-    border-radius:12px; overflow:hidden; 
-    transition: border-color 0.2s;
-  }
-  .ccm-faq-item:hover { border-color: var(--primary); }
-  
-  .ccm-faq-q { 
-    padding:18px 20px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; 
-    font-size:14px; font-weight:600; color:var(--text-main); 
-  }
-  .ccm-faq-q:hover { background:rgba(20, 92, 69, 0.05); }
-  .ccm-faq-a { padding:0 20px 18px; font-size:13px; color:var(--text-secondary); line-height:1.7; font-weight:300; }
-
-  /* CTA */
-  .ccm-cta { padding:100px 24px; text-align:center; position: relative; overflow: hidden; }
-  /* Effet de fond subtil */
-  .ccm-cta::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(20, 92, 69, 0.15), transparent 70%);
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .ccm-cta h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,48px); font-weight:700; color:var(--text-main); margin-bottom:16px; position:relative; z-index:1; }
-  .ccm-cta h2 em { font-style:italic; color:var(--primary); }
-  .ccm-cta p { font-size:14px; color:var(--text-secondary); margin-bottom:32px; position:relative; z-index:1; font-weight:300; }
-  
-  .ccm-cta-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
-  
-  .ccm-btn-gold { 
-    background:linear-gradient(135deg,var(--primary),var(--primary-hover)); 
-    color:#ffffff; 
-    text-decoration:none; 
-    font-weight:700; font-size:12px; letter-spacing:2px; text-transform:uppercase; 
-    padding:15px 36px; border-radius:8px; 
-    transition:all 0.3s;
-    box-shadow: 0 4px 15px rgba(20, 92, 69, 0.3);
-  }
-  .ccm-btn-gold:hover { transform:translateY(-2px); box-shadow: 0 8px 25px rgba(20, 92, 69, 0.5); }
-  
-  .ccm-btn-ghost { 
-    border:1px solid var(--border-color); 
-    color:var(--text-main); background:rgba(255,255,255,0.03); 
-    padding:14px 32px; border-radius:8px; font-size:12px; font-weight:600; 
-    letter-spacing:1.5px; text-transform:uppercase; text-decoration:none; 
-    transition:all 0.2s; 
-  }
-  .ccm-btn-ghost:hover { 
-    border-color:var(--primary); color:var(--primary); background:rgba(20, 92, 69, 0.05); 
-  }
-`;
+import "./commentCaMarcheScreen.scss";
 
 const STEPS_USER = [
   {
@@ -212,210 +75,158 @@ const FAQ = [
   },
   {
     q: "Comment mes données de localisation sont-elles gérées ?",
-    a: "Votre position n'est partagée que si vous l'activez explicitement. Pour les prestataires, la position est visible uniquement lors du partage actif. Pour les utilisateurs, la position sert uniquement à filtrer les prestataires et n'est jamais stockée de façon permanente.",
+    a: "Votre position n'est partagée que si vous l'activez explicitement. Pour les prestataires, la position est visible uniquement lors du partage actif.",
   },
   {
     q: "Puis-je utiliser Hopela sans créer de compte ?",
-    a: "Vous pouvez consulter la carte en mode public sur la page d'accueil. Pour voir les prestataires dans un rayon personnalisé, enregistrer des adresses et accéder au tableau complet, un compte gratuit est requis.",
+    a: "Vous pouvez consulter la carte en mode public. Pour accéder aux fonctionnalités personnalisées, un compte gratuit est requis.",
   },
   {
     q: "Comment devenir prestataire sur Hopela ?",
-    a: "Créez un compte prestataire avec votre RIDET et numéro de téléphone professionnel. Notre équipe valide votre inscription sous 24h et vous recevez un email de confirmation pour accéder à votre espace.",
+    a: "Créez un compte prestataire avec votre RIDET et numéro de téléphone professionnel. Notre équipe valide votre inscription sous 24h.",
   },
   {
     q: "Hopela couvre-t-il toute la Nouvelle-Calédonie ?",
-    a: "Actuellement, la plateforme est optimisée pour le Grand Nouméa (Nouméa, Dumbéa, Paita, Mont-Dore). L'extension à d'autres zones est prévue selon la croissance de la communauté de prestataires.",
+    a: "Actuellement, la plateforme est optimisée pour le Grand Nouméa : Nouméa, Dumbéa, Paita et Mont-Dore.",
   },
 ];
 
 const CommentCaMarcheScreen = () => {
   const [openFaq, setOpenFaq] = useState(null);
 
-  useEffect(() => {
-    if (!document.getElementById("ccm-css")) {
-      const s = document.createElement("style");
-      s.id = "ccm-css";
-      s.textContent = CSS;
-      document.head.appendChild(s);
-    }
-  }, []);
-
   return (
     <div className="ccm-root">
       <Header />
 
-      <div className="ccm-hero">
-        <div className="ccm-eyebrow">Guide d'utilisation</div>
-        <h1>
-          Comment ça
-          <br />
-          <em>marche ?</em>
-        </h1>
-        <p>
-          Hopela est simple, rapide et gratuit. Voici comment trouver un
-          prestataire ou proposer vos services en quelques étapes.
-        </p>
-      </div>
+      <section className="ccm-hero">
+        <div className="ccm-hero-inner">
+          <div className="ccm-eyebrow">Guide d'utilisation</div>
+          <h1>
+            Comment ça
+            <br />
+            <em>marche ?</em>
+          </h1>
+          <p>
+            Hopela est simple, rapide et gratuit. Voici comment trouver un
+            prestataire ou proposer vos services en quelques étapes.
+          </p>
+        </div>
+      </section>
 
-      {/* Étapes utilisateur */}
-      <div className="ccm-section">
-        <div className="ccm-title">
-          Pour les <em>particuliers</em>
+      <section className="ccm-section">
+        <div className="ccm-section-head">
+          <div className="ccm-eyebrow">Particuliers</div>
+          <h2>
+            Trouver un prestataire <em>disponible</em>
+          </h2>
+          <p>Un parcours simple pour passer du besoin au contact direct.</p>
         </div>
-        <div className="ccm-sub">
-          Trouver un prestataire disponible maintenant
-        </div>
+
         <div className="ccm-steps">
           {STEPS_USER.map((s) => (
-            <div className="ccm-step" key={s.num}>
+            <article className="ccm-step" key={s.num}>
               <div className="ccm-step-num">{s.num}</div>
               <div className="ccm-step-content">
                 <div className="ccm-step-icon">{s.icon}</div>
-                <div className="ccm-step-title">{s.title}</div>
-                <div className="ccm-step-text">{s.text}</div>
-                <span className="ccm-step-badge">{s.badge}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+                <span>{s.badge}</span>
               </div>
-            </div>
+            </article>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="ccm-divider" />
+      <section className="ccm-section">
+        <div className="ccm-section-head">
+          <div className="ccm-eyebrow">Prestataires</div>
+          <h2>
+            Être visible en <em>temps réel</em>
+          </h2>
+          <p>Activez votre disponibilité et recevez des appels directement.</p>
+        </div>
 
-      {/* Étapes prestataire */}
-      <div className="ccm-section">
-        <div className="ccm-title">
-          Pour les <em>prestataires</em>
-        </div>
-        <div className="ccm-sub">
-          Proposer vos services et être visible en temps réel
-        </div>
         <div className="ccm-steps">
           {STEPS_PRESTA.map((s) => (
-            <div className="ccm-step" key={s.num}>
+            <article className="ccm-step" key={s.num}>
               <div className="ccm-step-num">{s.num}</div>
               <div className="ccm-step-content">
                 <div className="ccm-step-icon">{s.icon}</div>
-                <div className="ccm-step-title">{s.title}</div>
-                <div className="ccm-step-text">{s.text}</div>
-                <span className="ccm-step-badge">{s.badge}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+                <span>{s.badge}</span>
               </div>
-            </div>
+            </article>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="ccm-divider" />
-
-      {/* Comparatif */}
-      <div className="ccm-section">
-        <div className="ccm-title">
-          Ce que vous <em>obtenez</em>
+      <section className="ccm-section">
+        <div className="ccm-section-head">
+          <div className="ccm-eyebrow">Profils</div>
+          <h2>
+            Ce que vous <em>obtenez</em>
+          </h2>
+          <p>Une expérience adaptée selon votre usage.</p>
         </div>
-        <div className="ccm-sub">Selon votre profil</div>
+
         <div className="ccm-two-col">
-          <div className="ccm-col-card">
-            <div className="ccm-col-title">
+          <article className="ccm-col-card">
+            <h3>
               Particulier <em>👤</em>
-            </div>
-            <ul className="ccm-col-list">
-              <li>
-                <span>🗺️</span>
-                <span>
-                  Carte en temps réel avec tous les prestataires disponibles
-                </span>
-              </li>
-              <li>
-                <span>📍</span>
-                <span>
-                  Jusqu'à 10 adresses enregistrées (domicile, bureau…)
-                </span>
-              </li>
-              <li>
-                <span>⊙</span>
-                <span>Rayon de recherche personnalisable (1 à 100 km)</span>
-              </li>
-              <li>
-                <span>📞</span>
-                <span>Contact direct — pas d'intermédiaire</span>
-              </li>
-              <li>
-                <span>🔍</span>
-                <span>Filtrage par métier en temps réel</span>
-              </li>
-              <li>
-                <span>🆓</span>
-                <span>100% gratuit</span>
-              </li>
+            </h3>
+            <ul>
+              <li>🗺️ Carte en temps réel avec les prestataires disponibles</li>
+              <li>📍 Adresses enregistrées</li>
+              <li>⊙ Rayon de recherche personnalisable</li>
+              <li>📞 Contact direct sans intermédiaire</li>
+              <li>🔍 Filtrage par métier</li>
+              <li>🆓 Accès gratuit</li>
             </ul>
-          </div>
-          <div className="ccm-col-card">
-            <div className="ccm-col-title">
+          </article>
+
+          <article className="ccm-col-card">
+            <h3>
               Prestataire <em>🔧</em>
-            </div>
-            <ul className="ccm-col-list">
-              <li>
-                <span>📍</span>
-                <span>
-                  Visibilité sur la carte pour tous les utilisateurs du Grand
-                  Nouméa
-                </span>
-              </li>
-              <li>
-                <span>⚡</span>
-                <span>
-                  Partage de position en un tap — activable / désactivable
-                </span>
-              </li>
-              <li>
-                <span>✅</span>
-                <span>Profil certifié avec badge RIDET vérifié</span>
-              </li>
-              <li>
-                <span>🔧</span>
-                <span>Affichage de votre métier et vos coordonnées</span>
-              </li>
-              <li>
-                <span>📱</span>
-                <span>Dashboard simple et mobile-first</span>
-              </li>
-              <li>
-                <span>🆓</span>
-                <span>Gratuit pendant le MVP</span>
-              </li>
+            </h3>
+            <ul>
+              <li>📍 Visibilité sur la carte</li>
+              <li>⚡ Partage de position activable / désactivable</li>
+              <li>✅ Profil certifié avec RIDET vérifié</li>
+              <li>🔧 Affichage métier et coordonnées</li>
+              <li>📱 Dashboard mobile-first</li>
+              <li>🆓 Gratuit pendant le MVP</li>
             </ul>
-          </div>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <div className="ccm-divider" />
-
-      {/* FAQ */}
-      <div className="ccm-section">
-        <div className="ccm-title">
-          Questions <em>fréquentes</em>
+      <section className="ccm-section">
+        <div className="ccm-section-head">
+          <div className="ccm-eyebrow">FAQ</div>
+          <h2>
+            Questions <em>fréquentes</em>
+          </h2>
+          <p>Tout ce que vous devez savoir avant de commencer.</p>
         </div>
-        <div className="ccm-sub">Tout ce que vous devez savoir</div>
+
         <div className="ccm-faq">
           {FAQ.map((f, i) => (
-            <div className="ccm-faq-item" key={i}>
-              <div
-                className="ccm-faq-q"
+            <article className="ccm-faq-item" key={f.q}>
+              <button
+                type="button"
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
               >
                 <span>{f.q}</span>
-                <span style={{ color: "var(--primary-hover)", fontSize: 18 }}>
-                  {openFaq === i ? "−" : "+"}
-                </span>
-              </div>
-              {openFaq === i && <div className="ccm-faq-a">{f.a}</div>}
-            </div>
+                <strong>{openFaq === i ? "−" : "+"}</strong>
+              </button>
+              {openFaq === i && <p>{f.a}</p>}
+            </article>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* CTA */}
-      <div className="ccm-cta">
+      <section className="ccm-cta">
         <h2>
           Prêt à <em>commencer</em> ?
         </h2>
@@ -424,14 +235,14 @@ const CommentCaMarcheScreen = () => {
           près de vous.
         </p>
         <div className="ccm-cta-row">
-          <Link to="/login" className="ccm-btn-gold">
+          <Link to="/login" className="ccm-btn-primary">
             Créer un compte →
           </Link>
-          <Link to="/services" className="ccm-btn-ghost">
+          <Link to="/services" className="ccm-btn-secondary">
             Voir les services
           </Link>
         </div>
-      </div>
+      </section>
 
       <Footer />
     </div>
