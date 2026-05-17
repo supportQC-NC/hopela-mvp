@@ -19,6 +19,7 @@
 .lp-avantages-section {
   background: #f0f4f7;
   padding: 80px 20px;
+  min-height: 96vh;
 }
 
 .lp-avantages-inner {

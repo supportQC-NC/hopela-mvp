@@ -3,6 +3,7 @@
 
 .lp-steps-section {
   @include t.section-shell;
+  min-height: 96vh;
 }
 .lp-eyebrow {
   @include t.eyebrow;

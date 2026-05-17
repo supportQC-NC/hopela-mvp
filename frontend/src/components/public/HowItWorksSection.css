@@ -27,6 +27,9 @@
     padding: 100px 0;
   }
 }
+.lp-steps-section {
+  min-height: 96vh;
+}
 
 .lp-eyebrow {
   display: inline-flex;

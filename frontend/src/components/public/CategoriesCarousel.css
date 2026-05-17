@@ -29,6 +29,7 @@
 }
 .lp-carousel-section {
   padding-top: 0;
+  min-height: 96vh;
 }
 
 .lp-eyebrow {
