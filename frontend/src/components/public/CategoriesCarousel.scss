@@ -1,0 +1,142 @@
+@use "../../styles/variables" as v;
+@use "./landingTokens" as t;
+
+.lp-carousel-section {
+  @include t.section-shell;
+  padding-top: 0;
+}
+
+.lp-eyebrow {
+  @include t.eyebrow;
+}
+.lp-section-title {
+  @include t.title;
+}
+.lp-section-sub {
+  @include t.subtitle;
+}
+
+.lp-carousel-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: v.$space-8;
+  flex-wrap: wrap;
+  gap: v.$space-5;
+}
+
+.lp-carousel-intro {
+  max-width: 600px;
+}
+
+.lp-carousel-arrows {
+  display: flex;
+  gap: 10px;
+}
+
+.lp-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: v.$radius-md;
+  border: 1px solid t.$lp-border-md;
+  background: t.$lp-bg-card;
+  color: t.$lp-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: v.$transition-smooth;
+
+  &:hover:not(.lp-arrow--disabled) {
+    background: t.$lp-primary;
+    border-color: t.$lp-primary;
+    color: #ffffff;
+  }
+
+  &--disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.lp-carousel-track {
+  display: flex;
+  gap: v.$space-6;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 10px 4px 30px;
+  margin: 0 -4px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.lp-cat-card {
+  flex: 0 0 300px;
+  min-width: 300px;
+  scroll-snap-align: start;
+  background: t.$lp-bg-card;
+  border: 1px solid t.$lp-border;
+  border-radius: v.$radius-lg;
+  padding: v.$space-8;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-5;
+  transition: v.$transition-smooth;
+  box-shadow: t.$lp-shadow;
+
+  &:hover {
+    border-color: t.$lp-primary;
+    transform: translateY(-5px);
+    box-shadow: t.$lp-shadow-hover;
+  }
+
+  @media (min-width: v.$bp-lg) {
+    flex: 0 0 320px;
+  }
+}
+
+.lp-cat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: v.$radius-lg;
+  background: rgba(0, 166, 178, 0.08);
+  color: t.$lp-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-cat-nom {
+  font-size: v.$text-2xl;
+  font-weight: v.$font-bold;
+  color: t.$lp-text;
+}
+
+.lp-cat-desc {
+  font-size: v.$text-base;
+  color: t.$lp-text-sub;
+  line-height: v.$leading-relaxed;
+  flex: 1;
+}
+
+.lp-cat-link {
+  font-size: v.$text-sm;
+  font-weight: v.$font-bold;
+  color: t.$lp-primary;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lp-carousel-loading {
+  max-width: v.$max-content;
+  margin: 0 auto;
+  padding: v.$space-10 v.$space-5;
+  color: t.$lp-text-sub;
+}

@@ -1,0 +1,57 @@
+@use "../../styles/variables" as v;
+@use "./landingTokens" as t;
+
+.lp-map-section {
+  padding: 140px v.$space-5 v.$space-20;
+  max-width: v.$max-content;
+  margin: 0 auto;
+  position: relative;
+}
+
+.lp-map-header {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-3;
+  margin-bottom: v.$space-6;
+  text-align: center;
+
+  @media (min-width: v.$bp-md) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    text-align: left;
+  }
+}
+
+.lp-eyebrow {
+  @include t.eyebrow;
+}
+
+.lp-map-title {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: v.$font-extrabold;
+  color: t.$lp-text;
+  letter-spacing: -0.02em;
+
+  em {
+    font-style: italic;
+    color: t.$lp-primary;
+  }
+}
+
+.lp-map-subtitle {
+  font-size: v.$text-md;
+  color: t.$lp-text-sub;
+  font-weight: v.$font-medium;
+}
+
+.lp-map-container {
+  height: 480px;
+  border-radius: v.$radius-xl;
+  overflow: hidden;
+  border: 1px solid t.$lp-border;
+  box-shadow: t.$lp-shadow;
+  position: relative;
+  z-index: 10;
+  background: t.$lp-bg-alt;
+}

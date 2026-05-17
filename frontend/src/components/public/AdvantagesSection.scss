@@ -1,0 +1,66 @@
+@use "../../styles/variables" as v;
+@use "./landingTokens" as t;
+
+.lp-avantages-section {
+  background: t.$lp-bg-alt;
+  padding: v.$space-20 v.$space-5;
+}
+
+.lp-avantages-inner {
+  max-width: v.$max-content;
+  margin: 0 auto;
+}
+
+.lp-eyebrow {
+  @include t.eyebrow;
+}
+.lp-section-title {
+  @include t.title;
+}
+
+.lp-avantages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: v.$space-6;
+  margin-top: v.$space-8;
+}
+
+.lp-av-card {
+  background: t.$lp-bg-card;
+  border: 1px solid t.$lp-border;
+  border-radius: v.$radius-xl;
+  padding: v.$space-8;
+  transition: v.$transition-smooth;
+  box-shadow: t.$lp-shadow;
+
+  &:hover {
+    border-color: t.$lp-primary;
+    transform: translateY(-3px);
+    box-shadow: t.$lp-shadow-hover;
+  }
+}
+
+.lp-av-bar {
+  height: 4px;
+  width: 40px;
+  border-radius: 2px;
+  margin-bottom: v.$space-5;
+}
+
+.lp-av-icon {
+  color: t.$lp-primary;
+}
+
+.lp-av-titre {
+  font-size: v.$text-xl;
+  font-weight: v.$font-bold;
+  color: t.$lp-text;
+  margin-bottom: v.$space-3;
+  margin-top: v.$space-5;
+}
+
+.lp-av-desc {
+  font-size: v.$text-base;
+  color: t.$lp-text-sub;
+  line-height: v.$leading-relaxed;
+}

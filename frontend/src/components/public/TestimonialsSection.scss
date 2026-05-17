@@ -1,0 +1,88 @@
+@use "../../styles/variables" as v;
+@use "./landingTokens" as t;
+
+.lp-testimonials-section {
+  @include t.section-shell;
+}
+.lp-eyebrow {
+  @include t.eyebrow;
+}
+.lp-section-title {
+  @include t.title;
+}
+
+.lp-temoignages {
+  display: flex;
+  gap: v.$space-5;
+  overflow-x: auto;
+  padding: 0 v.$space-5 v.$space-5;
+  margin: v.$space-8 -20px 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.lp-temoignage {
+  min-width: 300px;
+  background: t.$lp-bg-card;
+  border: 1px solid t.$lp-border;
+  border-radius: v.$radius-lg;
+  padding: v.$space-6;
+  transition: v.$transition-smooth;
+  box-shadow: t.$lp-shadow;
+
+  &:hover {
+    border-color: t.$lp-primary;
+    transform: translateY(-3px);
+    box-shadow: t.$lp-shadow-hover;
+  }
+}
+
+.lp-stars {
+  color: #f59e0b;
+  margin-bottom: v.$space-3;
+  letter-spacing: 2px;
+  font-size: v.$text-lg;
+}
+
+.lp-texte {
+  font-style: italic;
+  color: t.$lp-text;
+  margin-bottom: v.$space-4;
+  font-size: v.$text-base;
+  line-height: v.$leading-relaxed;
+  opacity: 0.85;
+}
+
+.lp-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: t.$lp-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: v.$text-sm;
+  font-weight: v.$font-bold;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.lp-author-name {
+  font-size: v.$text-sm;
+  font-weight: v.$font-semibold;
+  color: t.$lp-text;
+}
+
+.lp-author-area {
+  font-size: 12px;
+  color: t.$lp-text-sub;
+}
