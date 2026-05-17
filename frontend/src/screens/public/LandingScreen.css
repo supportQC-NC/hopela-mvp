@@ -157,7 +157,7 @@ body {
   font-family: "Inter", sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #102a43;
+  color: #00a6b2;
   background: transparent;
   border: 1px solid rgba(16, 42, 67, 0.14);
   cursor: pointer;
@@ -168,11 +168,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-}
-.btn-secondary:hover {
   border-color: #00a6b2;
   color: #00a6b2;
-  background: rgba(0, 166, 178, 0.05);
+}
+.btn-secondary:hover {
+  background-color: #00a6b2;
+  color: #102a43;
 }
 
 .lp-hero {

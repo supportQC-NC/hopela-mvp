@@ -195,7 +195,7 @@ body {
   font-family: v.$font-sans;
   font-size: v.$text-sm;
   font-weight: v.$font-semibold;
-  color: $lp-text;
+  color: $lp-primary;
   background: transparent;
   border: 1px solid $lp-border-md;
   cursor: pointer;
@@ -206,11 +206,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: v.$space-2;
+  border-color: $lp-primary;
+  color: $lp-primary;
 
   &:hover {
-    border-color: $lp-primary;
-    color: $lp-primary;
-    background: rgba(0, 166, 178, 0.05);
+    background-color: $lp-primary;
+    color: $lp-text;
   }
 }
 
