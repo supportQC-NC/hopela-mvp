@@ -61,6 +61,17 @@ const TABS = [
   { key: "profil", icon: "✏️", label: "Mon profil" },
 ];
 
+const getId = (value) => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value._id || "";
+};
+
+const getMetierCategorieId = (metier) => {
+  if (!metier) return "";
+  return getId(metier.categorieId) || getId(metier.categorie);
+};
+
 const DesktopTabs = ({ activeTab, setActiveTab }) => (
   <div className="pd-desktop-tabs">
     {TABS.map(({ key, icon, label }) => (
@@ -97,6 +108,7 @@ const PrestataireDashboard = () => {
   const [selectedCategorieId, setSelectedCategorieId] = useState("");
   const [selectedMetierId, setSelectedMetierId] = useState("");
   const [siteWeb, setSiteWeb] = useState("");
+
   const [reseaux, setReseaux] = useState({
     facebook: "",
     instagram: "",
@@ -114,8 +126,10 @@ const PrestataireDashboard = () => {
   useEffect(() => {
     if (!userInfo) return;
 
-    setSelectedCategorieId(userInfo.categorieId || "");
-    setSelectedMetierId(userInfo.metierId || "");
+    const firstMetier = userInfo.metiers?.[0];
+    const metierId = getId(firstMetier);
+
+    setSelectedMetierId(metierId);
     setSiteWeb(userInfo.siteWeb || "");
 
     if (userInfo.reseauxSociaux) {
@@ -125,6 +139,17 @@ const PrestataireDashboard = () => {
       }));
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    if (!selectedMetierId || metiers.length === 0) return;
+
+    const metierComplet = metiers.find((m) => m._id === selectedMetierId);
+    const categorieId = getMetierCategorieId(metierComplet);
+
+    if (categorieId) {
+      setSelectedCategorieId(categorieId);
+    }
+  }, [selectedMetierId, metiers]);
 
   useEffect(() => {
     if (!updateSuccess) return;
@@ -137,12 +162,11 @@ const PrestataireDashboard = () => {
   }, [updateSuccess, dispatch]);
 
   const metiersFiltres = selectedCategorieId
-    ? metiers.filter(
-        (m) =>
-          m.isActive &&
-          (m.categorieId === selectedCategorieId ||
-            m.categorie?._id === selectedCategorieId),
-      )
+    ? metiers.filter((m) => {
+        const categorieId = getMetierCategorieId(m);
+
+        return m.isActive && categorieId === selectedCategorieId;
+      })
     : [];
 
   const metierSelectionne = metiers.find((m) => m._id === selectedMetierId);
@@ -183,8 +207,7 @@ const PrestataireDashboard = () => {
 
     dispatch(
       updateProfile({
-        categorieId: selectedCategorieId,
-        metierId: selectedMetierId,
+        metiers: selectedMetierId ? [selectedMetierId] : [],
         siteWeb,
         reseauxSociaux: reseaux,
       }),
@@ -341,7 +364,8 @@ const PrestataireDashboard = () => {
               <div className="pd-form-section-title">Votre métier</div>
 
               <div className="pd-form-section-sub">
-                Sélectionnez votre catégorie puis votre métier.
+                La catégorie sert uniquement à filtrer les métiers. Seul le
+                métier est enregistré dans votre profil.
               </div>
 
               <div className="pd-field">
@@ -495,7 +519,7 @@ const PrestataireDashboard = () => {
             <button
               type="submit"
               className="pd-save-btn"
-              disabled={updateLoading}
+              disabled={updateLoading || !selectedMetierId}
             >
               {updateLoading && <span className="pd-spinner" />}
               {updateLoading ? "Enregistrement..." : "💾 Sauvegarder le profil"}
