@@ -1,0 +1,143 @@
+// ============================================================
+// variables.scss — Design tokens Hopela
+// Chemin : src/styles/variables.scss
+//
+// Usage dans un composant :
+//   @use '../../styles/variables' as v;
+//   color: v.$pub-text-main;
+// ============================================================
+
+// ── BREAKPOINTS ─────────────────────────────────────────────
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
+// ── ESPACEMENTS ─────────────────────────────────────────────
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-20: 80px;
+
+// ── BORDER RADIUS ───────────────────────────────────────────
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-3xl: 24px;
+$radius-full: 9999px;
+
+// ── TRANSITIONS ─────────────────────────────────────────────
+$transition-fast: all 0.2s ease;
+$transition-base: all 0.3s ease;
+$transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+// ── Z-INDEX ─────────────────────────────────────────────────
+$z-behind: -1;
+$z-dropdown: 100;
+$z-fixed: 300;
+$z-modal: 400;
+
+// ============================================================
+// ESPACE PUBLIC — Bleu Nuit
+// ============================================================
+$pub-bg-main: #1a2d4a;
+$pub-bg-card: #223a60;
+$pub-bg-card-hover: #2f4d7a;
+
+$pub-primary: #145c45;
+$pub-accent: #1e7a5c;
+
+$pub-text-main: #f5f4f9;
+$pub-text-secondary: #cbd5e1;
+$pub-text-muted: #e2e8f0;
+
+$pub-border: #385075;
+
+$pub-primary-a10: rgba(20, 92, 69, 0.1);
+$pub-primary-a15: rgba(20, 92, 69, 0.15);
+$pub-primary-a20: rgba(20, 92, 69, 0.2);
+$pub-accent-a05: rgba(30, 122, 92, 0.05);
+$pub-accent-a15: rgba(30, 122, 92, 0.15);
+$pub-accent-a20: rgba(30, 122, 92, 0.2);
+
+$pub-shadow-card: 0 4px 24px rgba(0, 0, 0, 0.2);
+$pub-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+// Header public (fond clair)
+$pub-header-bg: rgba(255, 255, 255, 0.78);
+$pub-header-primary: #00a6b2;
+$pub-header-accent: #5fd9df;
+$pub-header-text: #102a43;
+$pub-header-subtext: #5b7083;
+
+// ============================================================
+// ESPACE ADMIN — Dark Gold
+// ============================================================
+$adm-bg-root: #0a0804;
+$adm-bg-sidebar: #0b0805;
+$adm-bg-card: #120e07;
+$adm-bg-input: rgba(255, 255, 255, 0.04);
+
+$adm-gold: #c9a84c;
+$adm-gold-light: #e8c97a;
+$adm-gold-dark: #8a6c28;
+
+$adm-text-main: #f5f0e8;
+$adm-text-dim: rgba(245, 240, 232, 0.5);
+$adm-text-muted: rgba(245, 240, 232, 0.25);
+$adm-text-faint: rgba(245, 240, 232, 0.2);
+$adm-text-label: rgba(245, 240, 232, 0.32);
+
+$adm-border-10: rgba(201, 168, 76, 0.1);
+$adm-border-12: rgba(201, 168, 76, 0.12);
+$adm-border-25: rgba(201, 168, 76, 0.25);
+$adm-border-40: rgba(201, 168, 76, 0.4);
+
+$adm-icon-bg: rgba(201, 168, 76, 0.07);
+$adm-gold-a22: rgba(201, 168, 76, 0.22);
+$adm-gold-a38: rgba(201, 168, 76, 0.38);
+
+$adm-shadow-sm: 0 2px 12px rgba(201, 168, 76, 0.22);
+$adm-shadow-md: 0 4px 18px rgba(201, 168, 76, 0.38);
+
+// ============================================================
+// TYPOGRAPHIE
+// ============================================================
+$font-sans: "Inter", sans-serif;
+$font-admin: "DM Sans", sans-serif;
+$font-display: "Cormorant Garamond", serif;
+
+$text-xs: 0.75rem;
+$text-sm: 0.8125rem;
+$text-base: 0.9375rem;
+$text-md: 1rem;
+$text-lg: 1.125rem;
+$text-xl: 1.25rem;
+$text-2xl: 1.333rem;
+$text-3xl: 1.777rem;
+$text-4xl: 2.369rem;
+$text-5xl: 3.158rem;
+$text-6xl: 4.21rem;
+
+$leading-tight: 1.1;
+$leading-snug: 1.2;
+$leading-normal: 1.5;
+$leading-relaxed: 1.6;
+
+$font-regular: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+$font-extrabold: 800;
+$font-black: 900;
+
+$max-content: 1200px;
+$max-wide: 1320px;

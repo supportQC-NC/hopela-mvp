@@ -1,0 +1,246 @@
+// ============================================================
+// Header.scss — Hopela
+// Chemin : src/components/layout/Header.scss
+// ============================================================
+
+@use "../../styles/variables" as v;
+
+// ── HEADER ──────────────────────────────────────────────────
+.lp-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 72px;
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 48px;
+
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-bottom: 1px solid rgba(16, 42, 67, 0.08);
+  box-shadow: 0 1px 0 rgba(16, 42, 67, 0.06);
+
+  transition: v.$transition-base;
+
+  &.scrolled {
+    background: #ffffff;
+    box-shadow:
+      0 1px 0 rgba(16, 42, 67, 0.08),
+      0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// ── INNER CONTAINER ─────────────────────────────────────────
+// Centrage du contenu avec largeur max
+.lp-header-inner {
+  width: 100%;
+  max-width: v.$max-wide;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ── LOGO ────────────────────────────────────────────────────
+.lp-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+
+  &-mark {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: v.$transition-base;
+  }
+
+  &:hover &-mark {
+    transform: scale(1.04);
+  }
+
+  &-img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+  }
+
+  &-name {
+    font-size: v.$text-xl;
+    font-weight: v.$font-extrabold;
+    letter-spacing: -0.03em;
+    color: v.$pub-header-text;
+  }
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────
+.lp-nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+
+  a {
+    position: relative;
+    text-decoration: none;
+    font-size: v.$text-base;
+    font-weight: v.$font-semibold;
+    color: v.$pub-header-subtext;
+    transition: color 0.25s ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 2px;
+      background: v.$pub-header-primary;
+      transition: width 0.25s ease;
+    }
+
+    &:hover {
+      color: v.$pub-header-primary;
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ── CTA ─────────────────────────────────────────────────────
+.lp-header-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-ghost {
+  height: 40px;
+  padding: 0 v.$space-5;
+  border-radius: v.$radius-md;
+  border: 1px solid rgba(v.$pub-header-primary, 0.2);
+  background: transparent;
+  color: v.$pub-header-text;
+  font-size: v.$text-sm;
+  font-weight: v.$font-semibold;
+  cursor: pointer;
+  transition: v.$transition-fast;
+
+  &:hover {
+    background: rgba(v.$pub-header-primary, 0.05);
+    border-color: v.$pub-header-primary;
+    color: v.$pub-header-primary;
+  }
+}
+
+.btn-gold {
+  height: 40px;
+  padding: 0 v.$space-5;
+  border: none;
+  border-radius: v.$radius-md;
+  background: v.$pub-header-primary;
+  color: #ffffff;
+  font-size: v.$text-sm;
+  font-weight: v.$font-bold;
+  cursor: pointer;
+  transition: v.$transition-fast;
+
+  &:hover {
+    background: v.$pub-header-accent;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(v.$pub-header-primary, 0.3);
+  }
+}
+
+// ── BURGER ──────────────────────────────────────────────────
+.lp-burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: v.$space-2;
+
+  span {
+    width: 22px;
+    height: 2px;
+    border-radius: v.$radius-full;
+    background: v.$pub-header-text;
+    transition: v.$transition-base;
+  }
+}
+
+// ── MENU MOBILE ─────────────────────────────────────────────
+.lp-mobile-menu {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(16, 42, 67, 0.08);
+  padding: v.$space-4 v.$space-6 v.$space-6;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.lp-mobile-link {
+  padding: 14px 0;
+  text-decoration: none;
+  color: v.$pub-header-text;
+  font-size: v.$text-md;
+  font-weight: v.$font-semibold;
+  border-bottom: 1px solid rgba(16, 42, 67, 0.06);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.lp-mobile-cta {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-3;
+  padding-top: v.$space-4;
+
+  .btn-ghost,
+  .btn-gold {
+    width: 100%;
+    height: 44px;
+    justify-content: center;
+  }
+}
+
+// ── RESPONSIVE ──────────────────────────────────────────────
+@media (max-width: 960px) {
+  .lp-header {
+    padding: 0 v.$space-5;
+  }
+
+  .lp-nav,
+  .lp-header-cta {
+    display: none;
+  }
+
+  .lp-burger {
+    display: flex;
+  }
+}
+
+@media (max-width: v.$bp-sm) {
+  .lp-logo-name {
+    font-size: v.$text-lg;
+  }
+}

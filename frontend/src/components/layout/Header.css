@@ -1,294 +1,207 @@
-/* src/components/layout/Header.css */
-
-/* ── DESIGN SYSTEM REALTIMECOLORS (HEADER) ───────────────────────────────────── */
-:root {
-  /* --- Couleurs --- */
-  /* Fond de la page (le header doit s'y marier) */
-  --bg-main: #1a2d4a;
-
-  /* Fond du Header (Légèrement plus sombre pour la hiérarchie) */
-  --bg-header: #12253f;
-
-  /* Fond Cartes / Menus déroulants */
-  --bg-card: #223a60;
-
-  /* Primaire (Actions, Boutons) */
-  --primary: #145c45;
-
-  /* Accent (Survol, Focus) */
-  --accent: #1e7a5c;
-
-  /* Texte Principal */
-  --text-main: #f5f4f9;
-
-  /* Texte Secondaire */
-  --text-secondary: #cbd5e1;
-
-  /* Bordures */
-  --border-color: #385075;
-
-  /* --- Polices (Inter comme demandé) --- */
-  --font-sans: "Inter", sans-serif;
-  --font-weight-bold: 700;
-  --font-weight-normal: 400;
-}
-
-/* ── CONTAINER HEADER ───────────────────────────────────────────────────────── */
 .lp-header {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  z-index: 200;
-  height: 72px; /* Légèrement plus haut pour un look moderne */
+  width: 100%;
+  height: 72px;
+  z-index: 999;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
-
-  /* Glassmorphism : Fond bleu foncé semi-transparent */
-  background: rgba(18, 37, 63, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-
-  /* Bordure subtile qui s'harmonise avec le bleu */
-  border-bottom: 1px solid rgba(56, 80, 117, 0.4);
-
+  padding: 0 48px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(16, 42, 67, 0.08);
+  box-shadow: 0 1px 0 rgba(16, 42, 67, 0.06);
   transition: all 0.3s ease;
 }
-
 .lp-header.scrolled {
-  /* Plus opaque au scroll pour lisibilité */
-  background: var(--bg-header);
-  border-bottom-color: var(--border-color);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+  box-shadow: 0 1px 0 rgba(16, 42, 67, 0.08), 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
-/* ── LOGO ───────────────────────────────────────────────────────────────────── */
+.lp-header-inner {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .lp-logo {
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  transition: transform 0.2s ease;
 }
-.lp-logo:hover {
-  transform: translateY(-1px);
-}
-
-/* Marque du logo (Cercle ou Image) */
 .lp-logo-mark {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px; /* Coins carrés arrondis modernes */
-  overflow: hidden;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Dégradé Vert si pas d'image */
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  box-shadow: 0 4px 12px rgba(20, 92, 69, 0.3);
-  flex-shrink: 0;
+  transition: all 0.3s ease;
 }
-
-/* Image du logo */
+.lp-logo:hover .lp-logo-mark {
+  transform: scale(1.04);
+}
 .lp-logo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 42px;
+  height: 42px;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
-
-/* Fallback Texte Logo (si pas d'image) */
-.lp-logo-mark-text {
-  font-family: var(--font-sans);
-  font-weight: var(--font-weight-bold);
-  font-size: 20px;
-  color: #ffffff;
-}
-
-/* Nom de la marque */
 .lp-logo-name {
-  font-family: var(--font-sans);
-  font-weight: var(--font-weight-bold);
-  font-size: 22px;
-  color: var(--text-main);
-  letter-spacing: -0.02em; /* Plus serré pour le moderne */
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #102a43;
 }
 
-/* ── NAVIGATION ─────────────────────────────────────────────────────────────── */
 .lp-nav {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 40px;
 }
-
 .lp-nav a {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-decoration: none;
-  letter-spacing: 0.02em;
-  transition: color 0.2s ease;
   position: relative;
-  padding: 4px 0;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #5b7083;
+  transition: color 0.25s ease;
 }
-
-/* Trait de soulignement animé (Vert) */
 .lp-nav a::after {
   content: "";
   position: absolute;
-  bottom: 0;
   left: 0;
-  width: 0;
+  bottom: -4px;
+  width: 0%;
   height: 2px;
-  background: var(--accent);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #00a6b2;
+  transition: width 0.25s ease;
 }
-
 .lp-nav a:hover {
-  color: var(--text-main);
+  color: #00a6b2;
 }
-
 .lp-nav a:hover::after {
   width: 100%;
 }
 
-/* ── ACTIONS (BOUTONS) ─────────────────────────────────────────────────────── */
 .lp-header-cta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* Bouton fantôme (Connexion) */
 .btn-ghost {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid transparent;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.btn-ghost:hover {
-  color: var(--text-main);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Bouton Principal (S'inscrire / Vert) */
-.btn-gold {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #ffffff;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  border: 1px solid rgba(30, 122, 92, 0.3);
-  cursor: pointer;
-  text-decoration: none;
-  padding: 10px 24px;
+  height: 40px;
+  padding: 0 20px;
   border-radius: 8px;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(20, 92, 69, 0.25);
+  border: 1px solid rgba(0, 166, 178, 0.2);
+  background: transparent;
+  color: #102a43;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  background: rgba(0, 166, 178, 0.05);
+  border-color: #00a6b2;
+  color: #00a6b2;
 }
 
+.btn-gold {
+  height: 40px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  background: #00a6b2;
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 .btn-gold:hover {
-  background: linear-gradient(135deg, #12603d, var(--accent));
-  box-shadow: 0 6px 16px rgba(30, 122, 92, 0.4);
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #5fd9df;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 166, 178, 0.3);
 }
 
-/* ── RESPONSIVE & MOBILE ────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .lp-header {
-    padding: 0 24px;
-  }
-  .lp-nav {
-    display: none;
-  }
-  .lp-header-cta {
-    display: none;
-  } /* On cache les boutons desktop */
-}
-
-/* Burger Menu */
 .lp-burger {
   display: none;
   flex-direction: column;
-  gap: 6px;
-  background: none;
+  gap: 5px;
+  background: transparent;
   border: none;
   cursor: pointer;
   padding: 8px;
-  z-index: 201;
 }
 .lp-burger span {
-  width: 24px;
+  width: 22px;
   height: 2px;
-  background: var(--text-main);
-  border-radius: 2px;
-  display: block;
+  border-radius: 9999px;
+  background: #102a43;
   transition: all 0.3s ease;
 }
 
-/* Menu Mobile */
 .lp-mobile-menu {
   position: fixed;
-  top: 72px; /* Hauteur du header */
+  top: 72px;
   left: 0;
   right: 0;
-  /* Fond bleu sombre unifié */
-  background: var(--bg-header);
-  border-bottom: 1px solid var(--border-color);
-  padding: 24px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(16, 42, 67, 0.08);
+  padding: 16px 24px 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  z-index: 200;
-  max-height: calc(100vh - 72px);
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  gap: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .lp-mobile-link {
-  display: block;
-  padding: 16px 0;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text-secondary);
+  padding: 14px 0;
   text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition:
-    color 0.2s,
-    padding-left 0.2s;
+  color: #102a43;
+  font-size: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(16, 42, 67, 0.06);
 }
-.lp-mobile-link:hover {
-  color: var(--accent);
-  padding-left: 8px;
+.lp-mobile-link:last-of-type {
+  border-bottom: none;
 }
 
 .lp-mobile-cta {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 24px;
+  padding-top: 16px;
 }
-.lp-mobile-cta .btn-gold,
-.lp-mobile-cta .btn-ghost {
+.lp-mobile-cta .btn-ghost,
+.lp-mobile-cta .btn-gold {
   width: 100%;
-  text-align: center;
+  height: 44px;
+  justify-content: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 960px) {
+  .lp-header {
+    padding: 0 20px;
+  }
+  .lp-nav,
+  .lp-header-cta {
+    display: none;
+  }
   .lp-burger {
     display: flex;
   }
 }
+@media (max-width: 640px) {
+  .lp-logo-name {
+    font-size: 1.125rem;
+  }
+}/*# sourceMappingURL=Header.css.map */

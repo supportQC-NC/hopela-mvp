@@ -1,0 +1,168 @@
+// ============================================================
+// main.scss — Hopela
+// Chemin : src/styles/main.scss
+//
+// Dans index.js :
+//   import './styles/main.scss';
+//   (supprimer import './index.css')
+//
+// Ce fichier ne fait que 3 choses :
+//   1. Importer les variables SCSS (sans générer de CSS)
+//   2. Écrire le reset + base globale
+//   3. Garder les CSS custom properties pour les .css existants
+// ============================================================
+
+@use "./variables" as v;
+
+// ── RESET ───────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: v.$font-sans;
+  font-weight: v.$font-regular;
+  line-height: v.$leading-normal;
+  background-color: v.$pub-bg-main;
+  color: v.$pub-text-main;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// ── TYPOGRAPHIE DE BASE ─────────────────────────────────────
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: v.$font-sans;
+  font-weight: v.$font-bold;
+  line-height: v.$leading-snug;
+}
+
+h1 {
+  font-size: v.$text-6xl;
+}
+h2 {
+  font-size: v.$text-5xl;
+}
+h3 {
+  font-size: v.$text-4xl;
+}
+h4 {
+  font-size: v.$text-3xl;
+}
+h5 {
+  font-size: v.$text-2xl;
+}
+
+small {
+  font-size: v.$text-xs;
+}
+
+p {
+  line-height: v.$leading-relaxed;
+}
+
+// ── SCROLLBAR ───────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: v.$pub-bg-main;
+}
+
+::-webkit-scrollbar-thumb {
+  background: v.$pub-bg-card;
+  border: 1px solid v.$pub-border;
+  border-radius: 4px;
+
+  &:hover {
+    background: v.$pub-accent;
+  }
+}
+
+::selection {
+  background: v.$pub-accent;
+  color: v.$pub-text-main;
+}
+
+// ── CSS CUSTOM PROPERTIES ───────────────────────────────────
+// Conservées pour compatibilité avec les .css encore en place.
+// À supprimer au fur et à mesure de la migration.
+:root {
+  // Palette publique
+  --bg-main: #{v.$pub-bg-main};
+  --bg-card: #{v.$pub-bg-card};
+  --primary: #{v.$pub-primary};
+  --accent: #{v.$pub-accent};
+  --text-main: #{v.$pub-text-main};
+  --text-secondary: #{v.$pub-text-secondary};
+  --border-color: #{v.$pub-border};
+  --transition: #{v.$transition-smooth};
+  --font-sans: #{v.$font-sans};
+  --radius: #{v.$radius-md};
+
+  // Header public
+  --bg-header: #{v.$pub-header-bg};
+  --primary-dark: #{v.$pub-header-primary};
+
+  // HSL legacy (utilisées dans index.css)
+  --background: 216 47% 80%;
+  --foreground: 252 33% 3%;
+  --card: 216 47% 80%;
+  --card-foreground: 252 33% 3%;
+  --muted: 216 47% 20%;
+  --muted-foreground: 252 33% 70%;
+  --destructive: 0 85% 60%;
+  --border: 216 47% 20%;
+  --input: 216 47% 20%;
+  --ring: 160 61% 40%;
+}
