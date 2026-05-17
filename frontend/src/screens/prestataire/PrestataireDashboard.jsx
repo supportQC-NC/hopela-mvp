@@ -66,6 +66,7 @@ const DesktopTabs = ({ activeTab, setActiveTab }) => (
     {TABS.map(({ key, icon, label }) => (
       <button
         key={key}
+        type="button"
         className={`pd-desktop-tab${activeTab === key ? " active" : ""}`}
         onClick={() => setActiveTab(key)}
       >
@@ -83,17 +84,16 @@ const PrestataireDashboard = () => {
   const { userInfo, updateLoading, updateError, updateSuccess } = useSelector(
     (s) => s.auth,
   );
+
   const { categories, loading: catLoading } = useSelector((s) => s.categorie);
   const { metiers, loading: metLoading } = useSelector((s) => s.metier);
 
   const { isSharing, startTracking, stopTracking } = useGeolocate();
 
-  // ── UI state ──────────────────────────────────────
   const [activeTab, setActiveTab] = useState("disponibilite");
   const [geoError, setGeoError] = useState(null);
   const [trackingLoading, setTrackingLoading] = useState(false);
 
-  // ── Form state ────────────────────────────────────
   const [selectedCategorieId, setSelectedCategorieId] = useState("");
   const [selectedMetierId, setSelectedMetierId] = useState("");
   const [siteWeb, setSiteWeb] = useState("");
@@ -106,32 +106,36 @@ const PrestataireDashboard = () => {
     youtube: "",
   });
 
-  // ── Chargement initial données ────────────────────
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchMetiers());
   }, [dispatch]);
 
-  // ── Pré-remplissage depuis userInfo ───────────────
   useEffect(() => {
     if (!userInfo) return;
-    if (userInfo.categorieId) setSelectedCategorieId(userInfo.categorieId);
-    if (userInfo.metierId) setSelectedMetierId(userInfo.metierId);
-    if (userInfo.siteWeb) setSiteWeb(userInfo.siteWeb);
+
+    setSelectedCategorieId(userInfo.categorieId || "");
+    setSelectedMetierId(userInfo.metierId || "");
+    setSiteWeb(userInfo.siteWeb || "");
+
     if (userInfo.reseauxSociaux) {
-      setReseaux((prev) => ({ ...prev, ...userInfo.reseauxSociaux }));
+      setReseaux((prev) => ({
+        ...prev,
+        ...userInfo.reseauxSociaux,
+      }));
     }
   }, [userInfo]);
 
-  // ── Clear success banner ──────────────────────────
   useEffect(() => {
-    if (updateSuccess) {
-      const t = setTimeout(() => dispatch(clearUpdateSuccess()), 3000);
-      return () => clearTimeout(t);
-    }
+    if (!updateSuccess) return;
+
+    const timer = setTimeout(() => {
+      dispatch(clearUpdateSuccess());
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, [updateSuccess, dispatch]);
 
-  // ── Métiers filtrés par catégorie ─────────────────
   const metiersFiltres = selectedCategorieId
     ? metiers.filter(
         (m) =>
@@ -141,10 +145,8 @@ const PrestataireDashboard = () => {
       )
     : [];
 
-  // Métier sélectionné (pour l'aperçu)
   const metierSelectionne = metiers.find((m) => m._id === selectedMetierId);
 
-  // ── Handlers ──────────────────────────────────────
   const handleCategorieChange = (e) => {
     setSelectedCategorieId(e.target.value);
     setSelectedMetierId("");
@@ -152,24 +154,33 @@ const PrestataireDashboard = () => {
 
   const handleToggleTracking = async () => {
     setTrackingLoading(true);
+
     if (isSharing) {
       await stopTracking();
       setGeoError(null);
     } else {
       const result = await startTracking();
-      if (!result.ok) setGeoError(result.reason);
+
+      if (!result.ok) {
+        setGeoError(result.reason);
+      }
     }
+
     setTrackingLoading(false);
   };
 
   const handleLogout = async () => {
-    if (isSharing) stopTracking();
+    if (isSharing) {
+      stopTracking();
+    }
+
     await dispatch(logoutUser());
     navigate("/");
   };
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
+
     dispatch(
       updateProfile({
         categorieId: selectedCategorieId,
@@ -180,13 +191,8 @@ const PrestataireDashboard = () => {
     );
   };
 
-  const renderStars = (note) =>
-    note ? "★".repeat(Math.floor(note)) + (note % 1 >= 0.5 ? "½" : "") : "—";
-
-  // ── Render ────────────────────────────────────────
   return (
     <div className="pd-root">
-      {/* ── Geo error overlay ── */}
       {geoError && (
         <div className="pd-geo-overlay" onClick={() => setGeoError(null)}>
           <div className="pd-geo-popup" onClick={(e) => e.stopPropagation()}>
@@ -210,14 +216,17 @@ const PrestataireDashboard = () => {
                   <span className="pd-geo-step-num">1.</span>
                   <span>Cliquez sur le cadenas dans la barre d'adresse</span>
                 </div>
+
                 <div className="pd-geo-step">
                   <span className="pd-geo-step-num">2.</span>
                   <span>Sélectionnez les autorisations du site</span>
                 </div>
+
                 <div className="pd-geo-step">
                   <span className="pd-geo-step-num">3.</span>
                   <span>Passez la localisation sur autoriser</span>
                 </div>
+
                 <div className="pd-geo-step">
                   <span className="pd-geo-step-num">4.</span>
                   <span>Rechargez la page et réessayez</span>
@@ -226,6 +235,7 @@ const PrestataireDashboard = () => {
             )}
 
             <button
+              type="button"
               className="pd-geo-btn-primary"
               onClick={() => {
                 setGeoError(null);
@@ -236,6 +246,7 @@ const PrestataireDashboard = () => {
             </button>
 
             <button
+              type="button"
               className="pd-geo-btn-secondary"
               onClick={() => setGeoError(null)}
             >
@@ -245,7 +256,6 @@ const PrestataireDashboard = () => {
         </div>
       )}
 
-      {/* ── Header ── */}
       <header className="pd-header">
         <button
           className="pd-brand"
@@ -257,7 +267,7 @@ const PrestataireDashboard = () => {
           <span className="pd-badge-role">Pro</span>
         </button>
 
-        <button className="pd-logout-btn" onClick={handleLogout}>
+        <button type="button" className="pd-logout-btn" onClick={handleLogout}>
           <span className="pd-logout-full">Déconnexion</span>
           <span className="pd-logout-short">⎋</span>
         </button>
@@ -265,7 +275,6 @@ const PrestataireDashboard = () => {
 
       <DesktopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* ── Main ── */}
       <main className="pd-body">
         <h1 className="pd-welcome">
           Bonjour, <em>{userInfo?.prenom}</em> 👷
@@ -273,95 +282,49 @@ const PrestataireDashboard = () => {
 
         <p className="pd-welcome-sub">
           {activeTab === "disponibilite"
-            ? "Gérez votre disponibilité en temps réel"
-            : "Complétez votre profil pour attirer plus de clients"}
+            ? "Activez ou désactivez votre visibilité sur la carte."
+            : "Complétez votre profil professionnel."}
         </p>
 
-        {/* ════════════ TAB DISPONIBILITÉ ════════════ */}
         {activeTab === "disponibilite" && (
-          <>
-            <section className="pd-status-card">
-              <div
-                className={`pd-status-indicator ${
-                  isSharing ? "online" : "offline"
-                }`}
-              >
-                {isSharing ? "📍" : "💤"}
-              </div>
+          <section className="pd-status-card">
+            <div
+              className={`pd-status-indicator ${
+                isSharing ? "online" : "offline"
+              }`}
+            >
+              {isSharing ? "📍" : "💤"}
+            </div>
 
-              <div className="pd-status-label">
-                {isSharing
-                  ? "Vous êtes visible sur la carte"
-                  : "Vous êtes hors ligne"}
-              </div>
+            <div className="pd-status-label">
+              {isSharing
+                ? "Vous êtes visible sur la carte"
+                : "Vous êtes hors ligne"}
+            </div>
 
-              <p className="pd-status-sub">
-                {isSharing
-                  ? "Votre position est partagée en temps réel. Les clients peuvent vous voir."
-                  : "Activez le partage pour apparaître sur la carte et recevoir des demandes."}
-              </p>
+            <p className="pd-status-sub">
+              {isSharing
+                ? "Votre position est actuellement partagée avec les clients autour de vous."
+                : "Démarrez le partage pour apparaître sur la carte et recevoir des demandes."}
+            </p>
 
-              <button
-                className={`pd-toggle-btn ${isSharing ? "stop" : "start"}`}
-                onClick={handleToggleTracking}
-                disabled={trackingLoading}
-              >
-                {trackingLoading
-                  ? isSharing
-                    ? "⏳ Arrêt en cours..."
-                    : "⏳ Démarrage..."
-                  : isSharing
-                    ? "⏹ Arrêter le partage"
-                    : "▶ Démarrer le partage"}
-              </button>
-            </section>
-
-            <section className="pd-info-grid">
-              <article className="pd-info-card">
-                <div className="pd-info-icon">👤</div>
-                <div className="pd-info-content">
-                  <div className="pd-info-label">Identité</div>
-                  <div className="pd-info-value">
-                    {userInfo?.prenom} {userInfo?.nom}
-                  </div>
-                </div>
-              </article>
-
-              <article className="pd-info-card">
-                <div className="pd-info-icon">🔧</div>
-                <div className="pd-info-content">
-                  <div className="pd-info-label">Métier</div>
-                  <div className="pd-info-value primary">
-                    {userInfo?.metierNom || "Non renseigné"}
-                  </div>
-                </div>
-              </article>
-
-              <article className="pd-info-card">
-                <div className="pd-info-icon">⭐</div>
-                <div className="pd-info-content">
-                  <div className="pd-info-label">Note</div>
-                  <div className="pd-info-value primary">
-                    {renderStars(userInfo?.note)}
-                    {userInfo?.note ? ` (${userInfo.note}/5)` : " —"}
-                  </div>
-                </div>
-              </article>
-
-              <article className="pd-info-card">
-                <div className="pd-info-icon">💬</div>
-                <div className="pd-info-content">
-                  <div className="pd-info-label">Avis</div>
-                  <div className="pd-info-value">
-                    {userInfo?.nbAvis || 0} avis
-                  </div>
-                </div>
-              </article>
-            </section>
-          </>
+            <button
+              type="button"
+              className={`pd-toggle-btn ${isSharing ? "stop" : "start"}`}
+              onClick={handleToggleTracking}
+              disabled={trackingLoading}
+            >
+              {trackingLoading
+                ? isSharing
+                  ? "⏳ Arrêt en cours..."
+                  : "⏳ Démarrage..."
+                : isSharing
+                  ? "⏹ Arrêter le partage"
+                  : "▶ Démarrer le partage"}
+            </button>
+          </section>
         )}
 
-        {/* ════════════ TAB PROFIL ════════════ */}
         {activeTab === "profil" && (
           <form onSubmit={handleSaveProfile}>
             {updateSuccess && (
@@ -369,22 +332,24 @@ const PrestataireDashboard = () => {
                 ✅ Profil mis à jour avec succès !
               </div>
             )}
+
             {updateError && (
               <div className="pd-alert error">⚠️ {updateError}</div>
             )}
 
-            {/* ── Section métier ── */}
             <section className="pd-form-section">
               <div className="pd-form-section-title">Votre métier</div>
+
               <div className="pd-form-section-sub">
-                Sélectionnez votre catégorie puis votre métier
+                Sélectionnez votre catégorie puis votre métier.
               </div>
 
-              {/* Catégorie */}
               <div className="pd-field">
                 <label className="pd-label">Catégorie</label>
+
                 <div className="pd-input-wrap">
                   <span className="pd-input-icon">📂</span>
+
                   {catLoading ? (
                     <div className="pd-select-skeleton" />
                   ) : (
@@ -392,10 +357,14 @@ const PrestataireDashboard = () => {
                       className="pd-select"
                       value={selectedCategorieId}
                       onChange={handleCategorieChange}
+                      required
                     >
-                      <option value="">— Choisir une catégorie —</option>
+                      <option value="" disabled hidden>
+                        Choisir une catégorie
+                      </option>
+
                       {categories
-                        .filter((c) => c.isActive)
+                        .filter((cat) => cat.isActive)
                         .map((cat) => (
                           <option key={cat._id} value={cat._id}>
                             {cat.nom}
@@ -406,35 +375,39 @@ const PrestataireDashboard = () => {
                 </div>
               </div>
 
-              {/* Métier — affiché seulement si une catégorie est choisie */}
               {selectedCategorieId && (
                 <div className="pd-field">
                   <label className="pd-label">Métier</label>
+
                   <div className="pd-input-wrap">
                     <span className="pd-input-icon">🔧</span>
+
                     {metLoading ? (
                       <div className="pd-select-skeleton" />
                     ) : metiersFiltres.length === 0 ? (
                       <span className="pd-no-metier">
-                        Aucun métier disponible pour cette catégorie
+                        Aucun métier disponible pour cette catégorie.
                       </span>
                     ) : (
                       <select
                         className="pd-select"
                         value={selectedMetierId}
                         onChange={(e) => setSelectedMetierId(e.target.value)}
+                        required
                       >
-                        <option value="">— Choisir un métier —</option>
-                        {metiersFiltres.map((m) => (
-                          <option key={m._id} value={m._id}>
-                            {m.nom}
+                        <option value="" disabled hidden>
+                          Choisir un métier
+                        </option>
+
+                        {metiersFiltres.map((metier) => (
+                          <option key={metier._id} value={metier._id}>
+                            {metier.nom}
                           </option>
                         ))}
                       </select>
                     )}
                   </div>
 
-                  {/* Aperçu du métier sélectionné */}
                   {metierSelectionne && (
                     <div className="pd-metier-preview">
                       {metierSelectionne.icone && (
@@ -442,9 +415,11 @@ const PrestataireDashboard = () => {
                           {metierSelectionne.icone}
                         </span>
                       )}
+
                       <span className="pd-metier-preview-nom">
                         {metierSelectionne.nom}
                       </span>
+
                       {metierSelectionne.description && (
                         <p className="pd-metier-preview-desc">
                           {metierSelectionne.description}
@@ -456,19 +431,21 @@ const PrestataireDashboard = () => {
               )}
             </section>
 
-            {/* ── Section infos pro ── */}
             <section className="pd-form-section">
               <div className="pd-form-section-title">
                 Informations professionnelles
               </div>
+
               <div className="pd-form-section-sub">
-                Ces informations apparaissent sur votre profil public
+                Ces informations apparaissent sur votre profil public.
               </div>
 
               <div className="pd-field">
                 <label className="pd-label">Site web</label>
+
                 <div className="pd-input-wrap">
                   <span className="pd-input-icon">🌐</span>
+
                   <input
                     type="url"
                     className="pd-input"
@@ -480,11 +457,11 @@ const PrestataireDashboard = () => {
               </div>
             </section>
 
-            {/* ── Section réseaux sociaux ── */}
             <section className="pd-form-section">
               <div className="pd-form-section-title">Réseaux sociaux</div>
+
               <div className="pd-form-section-sub">
-                Ajoutez vos liens pour que les clients vous retrouvent
+                Ajoutez vos liens pour que les clients vous retrouvent.
               </div>
 
               <div className="pd-social-list">
@@ -493,8 +470,10 @@ const PrestataireDashboard = () => {
                     <label className="pd-label">
                       {icon} {label}
                     </label>
+
                     <div className="pd-input-wrap">
                       <span className="pd-input-icon">{icon}</span>
+
                       <input
                         type="url"
                         className="pd-input"
@@ -525,11 +504,11 @@ const PrestataireDashboard = () => {
         )}
       </main>
 
-      {/* ── Bottom nav mobile ── */}
       <nav className="pd-bottom-nav">
         {TABS.map(({ key, icon, label }) => (
           <button
             key={key}
+            type="button"
             className={`pd-nav-btn${activeTab === key ? " active" : ""}`}
             onClick={() => setActiveTab(key)}
           >
