@@ -5,4 +5,4 @@ username : hopela_db_user
 password :  DUf5aOXpKveTOpJE 
 srv : mongodb+srv://hopela_db_user:DUf5aOXpKveTOpJE@cluster0.sccawwv.mongodb.net/?appName=Cluster0
 
-MDP VPS: 5lUc8OT16B&e6Oaw4@i)
+MDP: 5lUc8OT16B&e6Oaw4@i)

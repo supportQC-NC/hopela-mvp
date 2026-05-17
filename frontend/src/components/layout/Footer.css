@@ -1,42 +1,11 @@
-/* src/components/layout/Footer.css */
-
-/* ── DESIGN SYSTEM REALTIMECOLORS (FOOTER) ───────────────────────────────────── */
-:root {
-  /* --- Fond de page --- */
-  --bg-main: #1a2d4a;
-
-  /* --- Fond du Footer (Légèrement plus foncé pour ancrer la page) --- */
-  --bg-footer: #12253f;
-
-  /* --- Cartes / Éléments --- */
-  --bg-card: #223a60;
-
-  /* --- Actions (Vert Forêt) --- */
-  --primary: #145c45;
-
-  /* --- Accent / Survol (Vert Océan) --- */
-  --accent: #1e7a5c;
-
-  /* --- Textes --- */
-  --text-main: #f5f4f9;
-  --text-secondary: #cbd5e1;
-
-  /* --- Bordures --- */
-  --border-color: #385075;
-
-  /* --- Police Inter --- */
-  --font-sans: "Inter", sans-serif;
-}
-
-/* ── CONTAINER FOOTER ───────────────────────────────────────────────────────── */
 .lp-footer {
-  border-top: 1px solid rgba(56, 80, 117, 0.5); /* Bordure bleue subtile */
-  padding: 80px 48px 48px; /* Plus d'espace pour le moderne */
-  background: var(--bg-footer);
-  color: var(--text-main);
+  background: #12253f;
+  color: #f5f4f9;
+  border-top: 1px solid rgba(56, 80, 117, 0.5);
+  padding: 80px 48px 48px;
+  font-family: "Inter", sans-serif;
 }
 
-/* ── TOP SECTION (Grid) ─────────────────────────────────────────────────────── */
 .lp-footer-top {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1fr;
@@ -44,7 +13,11 @@
   margin-bottom: 64px;
 }
 
-/* ── BRANDING ──────────────────────────────────────────────────────────────── */
+.lp-footer-brand {
+  display: flex;
+  flex-direction: column;
+}
+
 .lp-footer-logo {
   display: flex;
   align-items: center;
@@ -52,75 +25,62 @@
   text-decoration: none;
   margin-bottom: 20px;
 }
-
 .lp-footer-logo-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px; /* Forme moderne arrondie */
-  /* Dégradé Vert Chart */
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 18px;
-  color: #ffffff;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(20, 92, 69, 0.3);
 }
-
+.lp-footer-logo-mark img {
+  width: 42px;
+  height: 42px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
 .lp-footer-logo-name {
-  font-family: var(--font-sans);
-  font-weight: 800; /* Inter Bold */
-  font-size: 22px;
-  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f5f4f9;
   letter-spacing: -0.02em;
 }
 
 .lp-footer-tagline {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  color: #cbd5e1;
   line-height: 1.6;
   font-weight: 400;
   max-width: 260px;
 }
 
-/* ── COLUMNS LINKS ─────────────────────────────────────────────────────────── */
 .lp-footer-col-title {
-  font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent); /* Vert pour les titres de colonnes */
+  color: #1e7a5c;
   margin-bottom: 24px;
 }
 
 .lp-footer-links {
-  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-
 .lp-footer-links a {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  color: #cbd5e1;
   text-decoration: none;
-  transition: all 0.2s ease;
   font-weight: 400;
   display: inline-block;
+  transition: all 0.2s ease;
 }
-
 .lp-footer-links a:hover {
-  color: var(--text-main); /* Blanc au survol */
-  transform: translateX(4px); /* Petit mouvement moderne */
+  color: #f5f4f9;
+  transform: translateX(4px);
 }
 
-/* ── BOTTOM SECTION (Legal) ─────────────────────────────────────────────────── */
 .lp-footer-bottom {
   border-top: 1px solid rgba(56, 80, 117, 0.3);
   padding-top: 32px;
@@ -132,9 +92,8 @@
 }
 
 .lp-footer-copy {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  color: #cbd5e1;
   opacity: 0.7;
   letter-spacing: 0.02em;
 }
@@ -143,57 +102,48 @@
   display: flex;
   gap: 32px;
 }
-
 .lp-footer-legal a {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  color: #cbd5e1;
   opacity: 0.7;
   text-decoration: none;
-  transition: all 0.2s;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
-
 .lp-footer-legal a:hover {
-  color: var(--accent); /* Vert au survol */
+  color: #1e7a5c;
   opacity: 1;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-/* ── RESPONSIVE ────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .lp-footer {
     padding: 64px 24px 32px;
   }
-
   .lp-footer-top {
     grid-template-columns: 1fr 1fr;
     gap: 40px;
   }
-
   .lp-footer-brand {
-    grid-column: 1 / -1;
+    grid-column: 1/-1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding-bottom: 32px;
     margin-bottom: 16px;
   }
 }
-
-@media (max-width: 520px) {
+@media (max-width: 640px) {
   .lp-footer-top {
     grid-template-columns: 1fr;
     gap: 32px;
   }
-
   .lp-footer-bottom {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
-
   .lp-footer-legal {
     flex-direction: column;
     gap: 12px;
   }
-}
+}/*# sourceMappingURL=Footer.css.map */

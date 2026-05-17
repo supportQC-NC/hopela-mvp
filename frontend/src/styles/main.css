@@ -16,7 +16,7 @@ body {
   font-family: "Inter", sans-serif;
   font-weight: 400;
   line-height: 1.5;
-  background-color: #1a2d4a;
+  background: #d3d5d7;
   color: #f5f4f9;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -101,7 +101,7 @@ p {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a2d4a;
+  background: #d3d5d7;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -124,7 +124,7 @@ p {
 }
 
 :root {
-  --bg-main: #1a2d4a;
+  --bg-main: #d3d5d7;
   --bg-card: #223a60;
   --primary: #145c45;
   --accent: #1e7a5c;

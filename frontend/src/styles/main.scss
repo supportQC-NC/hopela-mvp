@@ -33,7 +33,7 @@ body {
   font-family: v.$font-sans;
   font-weight: v.$font-regular;
   line-height: v.$leading-normal;
-  background-color: v.$pub-bg-main;
+  background: v.$pub-bg-main;
   color: v.$pub-text-main;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

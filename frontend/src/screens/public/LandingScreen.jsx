@@ -20,7 +20,7 @@ import {
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import PublicMap from "../../components/map/PublicMap";
-import "./LandingScreen.css";
+import "./LandingScreen.scss";
 
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap";
