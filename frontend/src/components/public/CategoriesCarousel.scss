@@ -2,142 +2,498 @@
 @use "./landingTokens" as t;
 
 .lp-carousel-section {
-  @include t.section-shell;
-  padding-top: 0;
-  min-height: 96vh;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  min-height: 92vh;
+  padding: v.$space-20 0;
+
+  background:
+    radial-gradient(
+      circle at 12% 10%,
+      rgba(0, 166, 178, 0.07),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(255, 70, 90, 0.045),
+      transparent 34%
+    );
+}
+
+.lp-carousel-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(rgba(3, 18, 29, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(3, 18, 29, 0.02) 1px, transparent 1px);
+
+  background-size: 72px 72px;
+  pointer-events: none;
+}
+
+.lp-carousel-header {
+  position: relative;
+  z-index: 3;
+
+  width: min(100% - 40px, v.$max-wide);
+  margin: 0 auto v.$space-10;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: v.$space-6;
 }
 
 .lp-eyebrow {
   @include t.eyebrow;
 }
+
 .lp-section-title {
   @include t.title;
+
+  em {
+    color: t.$lp-primary;
+    font-style: normal;
+  }
 }
+
 .lp-section-sub {
   @include t.subtitle;
 }
 
-.lp-carousel-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: v.$space-8;
-  flex-wrap: wrap;
-  gap: v.$space-5;
-}
-
 .lp-carousel-intro {
-  max-width: 600px;
+  max-width: 720px;
 }
 
 .lp-carousel-arrows {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .lp-arrow {
-  width: 40px;
-  height: 40px;
-  border-radius: v.$radius-md;
-  border: 1px solid t.$lp-border-md;
-  background: t.$lp-bg-card;
+  width: 46px;
+  height: 46px;
+
+  border-radius: v.$radius-full;
+  border: 1px solid rgba(0, 166, 178, 0.18);
+
+  background: rgba(255, 255, 255, 0.72);
   color: t.$lp-text;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
-  transition: v.$transition-smooth;
+
+  box-shadow:
+    0 14px 28px rgba(3, 18, 29, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
 
   &:hover:not(.lp-arrow--disabled) {
     background: t.$lp-primary;
     border-color: t.$lp-primary;
     color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow:
+      0 22px 42px rgba(0, 166, 178, 0.24),
+      0 10px 20px rgba(3, 18, 29, 0.1);
   }
 
-  &--disabled {
-    opacity: 0.3;
+  &--disabled,
+  &:disabled {
+    opacity: 0.35;
     cursor: not-allowed;
+    box-shadow: none;
   }
 }
 
 .lp-carousel-track {
+  position: relative;
+  z-index: 2;
+
+  width: min(100% - 40px, v.$max-wide);
+  margin: 0 auto;
+
   display: flex;
   gap: v.$space-6;
+
   overflow-x: auto;
+  overflow-y: visible;
+
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   scrollbar-width: none;
-  padding: 10px 4px 30px;
-  margin: 0 -4px;
+
+  padding: 24px 0 74px;
+
+  background: transparent;
 
   &::-webkit-scrollbar {
     display: none;
   }
 }
 
+.lp-carousel-section::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 70%;
+
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.65) 3%,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0) 90%,
+    rgba(255, 255, 255, 0.65) 97%,
+    rgba(255, 255, 255, 0.92) 100%
+  );
+}
+
 .lp-cat-card {
-  flex: 0 0 300px;
-  min-width: 300px;
+  position: relative;
+
+  flex: 0 0 330px;
+  min-width: 330px;
+  min-height: 360px;
+
   scroll-snap-align: start;
-  background: t.$lp-bg-card;
-  border: 1px solid t.$lp-border;
-  border-radius: v.$radius-lg;
-  padding: v.$space-8;
-  cursor: pointer;
+
+  padding: 34px;
+
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: v.$space-5;
-  transition: v.$transition-smooth;
-  box-shadow: t.$lp-shadow;
 
-  &:hover {
-    border-color: t.$lp-primary;
-    transform: translateY(-5px);
-    box-shadow: t.$lp-shadow-hover;
+  cursor: pointer;
+
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.68) 0%,
+    rgba(255, 255, 255, 0.54) 52%,
+    rgba(235, 249, 251, 0.42) 100%
+  );
+
+  box-shadow:
+    0 26px 64px rgba(3, 18, 29, 0.1),
+    0 10px 26px rgba(0, 166, 178, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  overflow: hidden;
+
+  animation: cardReveal 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--delay);
+
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+      radial-gradient(
+        circle at 18% 16%,
+        rgba(0, 166, 178, 0.14),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 92% 92%,
+        rgba(255, 70, 90, 0.08),
+        transparent 34%
+      );
+
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
   }
 
-  @media (min-width: v.$bp-lg) {
-    flex: 0 0 320px;
+  &::after {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 30px;
+    right: 30px;
+
+    height: 4px;
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, t.$lp-primary, rgba(255, 70, 90, 0.58));
+
+    transform: scaleX(0);
+    transform-origin: left;
+
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-10px);
+
+    border-color: rgba(0, 166, 178, 0.28);
+
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.72) 54%,
+      rgba(235, 249, 251, 0.62) 100%
+    );
+
+    box-shadow:
+      0 42px 90px rgba(3, 18, 29, 0.16),
+      0 18px 42px rgba(0, 166, 178, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    outline: none;
+
+    &::before {
+      opacity: 1;
+    }
+
+    &::after {
+      transform: scaleX(1);
+    }
+
+    .lp-cat-icon {
+      transform: translateY(-4px) scale(1.08) rotate(-2deg);
+      background: t.$lp-primary;
+      color: #ffffff;
+      box-shadow:
+        0 22px 44px rgba(0, 166, 178, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .lp-cat-nom {
+      color: t.$lp-primary;
+    }
+
+    .lp-cat-link {
+      transform: translateX(3px);
+    }
+
+    .lp-cat-link span {
+      transform: translateX(6px);
+    }
+  }
+}
+
+.lp-cat-top,
+.lp-cat-body,
+.lp-cat-link {
+  position: relative;
+  z-index: 1;
+}
+
+.lp-cat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .lp-cat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: v.$radius-lg;
-  background: rgba(0, 166, 178, 0.08);
+  width: 66px;
+  height: 66px;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(0, 166, 178, 0.12),
+    rgba(0, 166, 178, 0.05)
+  );
+
   color: t.$lp-primary;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  box-shadow:
+    0 14px 30px rgba(0, 166, 178, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.lp-cat-number {
+  font-size: 13px;
+  font-weight: v.$font-bold;
+  letter-spacing: 0.12em;
+  color: rgba(3, 18, 29, 0.28);
 }
 
 .lp-cat-nom {
-  font-size: v.$text-2xl;
+  margin-bottom: 12px;
+
+  font-size: clamp(23px, 2vw, 30px);
+  line-height: 1.06;
+
   font-weight: v.$font-bold;
+  letter-spacing: -0.045em;
+
   color: t.$lp-text;
+
+  transition: color 0.3s ease;
 }
 
 .lp-cat-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+
   font-size: v.$text-base;
+  line-height: 1.72;
+
   color: t.$lp-text-sub;
-  line-height: v.$leading-relaxed;
-  flex: 1;
 }
 
 .lp-cat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  width: fit-content;
+
   font-size: v.$text-sm;
   font-weight: v.$font-bold;
+
   color: t.$lp-primary;
+
   text-transform: uppercase;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  letter-spacing: 0.09em;
+
+  transition: transform 0.3s ease;
+
+  span {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
 }
 
 .lp-carousel-loading {
-  max-width: v.$max-content;
+  position: relative;
+  z-index: 2;
+
+  width: min(100% - 40px, v.$max-wide);
   margin: 0 auto;
-  padding: v.$space-10 v.$space-5;
+  padding: v.$space-10 0;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
   color: t.$lp-text-sub;
+  font-weight: v.$font-semibold;
+
+  span {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: t.$lp-primary;
+    animation: loadingPulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-34px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes loadingPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.35;
+    transform: scale(0.72);
+  }
+}
+
+@media (max-width: v.$bp-md) {
+  .lp-carousel-section {
+    min-height: auto;
+    padding-top: v.$space-10;
+    padding-bottom: v.$space-10;
+  }
+
+  .lp-carousel-header {
+    align-items: flex-start;
+    margin-bottom: v.$space-8;
+  }
+
+  .lp-carousel-arrows {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .lp-cat-card {
+    flex-basis: 285px;
+    min-width: 285px;
+    min-height: 320px;
+    padding: 26px;
+    border-radius: 28px;
+  }
+}
+
+@media (max-width: v.$bp-sm) {
+  .lp-carousel-header,
+  .lp-carousel-track,
+  .lp-carousel-loading {
+    width: min(100% - 28px, v.$max-wide);
+  }
+
+  .lp-carousel-track {
+    gap: v.$space-4;
+  }
+
+  .lp-cat-card {
+    flex-basis: 82vw;
+    min-width: 82vw;
+  }
 }

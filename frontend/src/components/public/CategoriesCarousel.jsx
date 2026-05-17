@@ -8,6 +8,7 @@ import "./CategoriesCarousel.scss";
 const CategoriesCarousel = () => {
   const navigate = useNavigate();
   const trackRef = useRef(null);
+
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -18,15 +19,16 @@ const CategoriesCarousel = () => {
     fetch(`${API_URL}/api/categories`)
       .then((r) => r.json())
       .then((d) => setCats(Array.isArray(d) ? d : []))
-      .catch(() => {})
+      .catch(() => setCats([]))
       .finally(() => setLoading(false));
   }, []);
 
   const checkScroll = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 10);
-    setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 10);
+
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 8);
   }, []);
 
   useEffect(() => {
@@ -35,6 +37,7 @@ const CategoriesCarousel = () => {
 
     el.addEventListener("scroll", checkScroll, { passive: true });
     window.addEventListener("resize", checkScroll);
+
     checkScroll();
 
     return () => {
@@ -44,32 +47,46 @@ const CategoriesCarousel = () => {
   }, [cats, checkScroll]);
 
   useEffect(() => {
-    if (isPaused || loading) return undefined;
+    if (isPaused || loading || cats.length <= 3) return undefined;
 
     const interval = setInterval(() => {
       const el = trackRef.current;
       if (!el) return;
 
-      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const nextScroll = el.scrollLeft + 340;
+
+      if (nextScroll >= maxScroll - 10) {
         el.scrollTo({ left: 0, behavior: "smooth" });
       } else {
-        el.scrollBy({ left: 300, behavior: "smooth" });
+        el.scrollTo({ left: nextScroll, behavior: "smooth" });
       }
-    }, 1500);
+    }, 4200);
 
     return () => clearInterval(interval);
-  }, [isPaused, loading]);
+  }, [isPaused, loading, cats.length]);
 
   const scroll = (dir) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * 300, behavior: "smooth" });
+
+    el.scrollBy({
+      left: dir * 360,
+      behavior: "smooth",
+    });
+  };
+
+  const openCategory = (id) => {
+    navigate(`/services/categories/${id}`);
   };
 
   if (loading) {
     return (
-      <section className="lp-carousel-section">
-        <div className="lp-carousel-loading">Chargement des catégories…</div>
+      <section className="lp-carousel-section" id="categories">
+        <div className="lp-carousel-loading">
+          <span />
+          Chargement des catégories…
+        </div>
       </section>
     );
   }
@@ -79,11 +96,15 @@ const CategoriesCarousel = () => {
       <div className="lp-carousel-header">
         <div className="lp-carousel-intro">
           <div className="lp-eyebrow">Nos services</div>
+
           <h2 className="lp-section-title">
             Explorez nos <em>catégories</em>
           </h2>
+
           <p className="lp-section-sub">
-            Un large éventail de métiers disponibles pour répondre à tous vos besoins au quotidien.
+            Trouvez rapidement le bon professionnel pour vos besoins du
+            quotidien, avec des services clairs, accessibles et organisés par
+            métier.
           </p>
         </div>
 
@@ -92,15 +113,18 @@ const CategoriesCarousel = () => {
             type="button"
             className={`lp-arrow${!canScrollLeft ? " lp-arrow--disabled" : ""}`}
             onClick={() => scroll(-1)}
-            aria-label="Précédent"
+            disabled={!canScrollLeft}
+            aria-label="Catégories précédentes"
           >
             <ChevronLeft size={20} />
           </button>
+
           <button
             type="button"
             className={`lp-arrow${!canScrollRight ? " lp-arrow--disabled" : ""}`}
             onClick={() => scroll(1)}
-            aria-label="Suivant"
+            disabled={!canScrollRight}
+            aria-label="Catégories suivantes"
           >
             <ChevronRight size={20} />
           </button>
@@ -112,22 +136,40 @@ const CategoriesCarousel = () => {
         ref={trackRef}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
       >
-        {cats.map((cat) => (
+        {cats.map((cat, index) => (
           <article
             key={cat._id}
             className="lp-cat-card"
-            onClick={() => navigate(`/services/categories/${cat._id}`)}
-            onKeyDown={(e) => e.key === "Enter" && navigate(`/services/categories/${cat._id}`)}
+            style={{ "--delay": `${index * 70}ms` }}
+            onClick={() => openCategory(cat._id)}
+            onKeyDown={(e) => e.key === "Enter" && openCategory(cat._id)}
             role="button"
             tabIndex={0}
           >
-            <div className="lp-cat-icon">
-              <CatIcon icone={cat.icone} size={28} />
+            <div className="lp-cat-top">
+              <div className="lp-cat-icon">
+                <CatIcon icone={cat.icone} size={28} />
+              </div>
+
+              <span className="lp-cat-number">
+                {String(index + 1).padStart(2, "0")}
+              </span>
             </div>
-            <h3 className="lp-cat-nom">{cat.nom}</h3>
-            {cat.description && <p className="lp-cat-desc">{cat.description}</p>}
-            <div className="lp-cat-link">Découvrir <span>→</span></div>
+
+            <div className="lp-cat-body">
+              <h3 className="lp-cat-nom">{cat.nom}</h3>
+
+              {cat.description && (
+                <p className="lp-cat-desc">{cat.description}</p>
+              )}
+            </div>
+
+            <div className="lp-cat-link">
+              Découvrir <span>→</span>
+            </div>
           </article>
         ))}
       </div>
