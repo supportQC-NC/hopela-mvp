@@ -11,6 +11,9 @@ import {
   clearUpdateSuccess,
 } from "../../slices/authSlice";
 
+import { fetchCategories } from "../../slices/categorieSlice";
+import { fetchMetiers } from "../../slices/metierSlice";
+
 import useGeolocate from "../../hooks/UseGeoLocate";
 import "./PrestataireDashboard.scss";
 
@@ -74,39 +77,81 @@ const DesktopTabs = ({ activeTab, setActiveTab }) => (
 );
 
 const PrestataireDashboard = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { userInfo, updateLoading, updateError, updateSuccess } = useSelector(
     (s) => s.auth,
   );
+  const { categories, loading: catLoading } = useSelector((s) => s.categorie);
+  const { metiers, loading: metLoading } = useSelector((s) => s.metier);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { isSharing, startTracking, stopTracking } = useGeolocate();
 
+  // ── UI state ──────────────────────────────────────
   const [activeTab, setActiveTab] = useState("disponibilite");
   const [geoError, setGeoError] = useState(null);
   const [trackingLoading, setTrackingLoading] = useState(false);
 
-  const [metier, setMetier] = useState(userInfo?.metier || "");
-  const [siteWeb, setSiteWeb] = useState(userInfo?.siteWeb || "");
+  // ── Form state ────────────────────────────────────
+  const [selectedCategorieId, setSelectedCategorieId] = useState("");
+  const [selectedMetierId, setSelectedMetierId] = useState("");
+  const [siteWeb, setSiteWeb] = useState("");
   const [reseaux, setReseaux] = useState({
-    facebook: userInfo?.reseauxSociaux?.facebook || "",
-    instagram: userInfo?.reseauxSociaux?.instagram || "",
-    twitter: userInfo?.reseauxSociaux?.twitter || "",
-    tiktok: userInfo?.reseauxSociaux?.tiktok || "",
-    linkedin: userInfo?.reseauxSociaux?.linkedin || "",
-    youtube: userInfo?.reseauxSociaux?.youtube || "",
+    facebook: "",
+    instagram: "",
+    twitter: "",
+    tiktok: "",
+    linkedin: "",
+    youtube: "",
   });
 
+  // ── Chargement initial données ────────────────────
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchMetiers());
+  }, [dispatch]);
+
+  // ── Pré-remplissage depuis userInfo ───────────────
+  useEffect(() => {
+    if (!userInfo) return;
+    if (userInfo.categorieId) setSelectedCategorieId(userInfo.categorieId);
+    if (userInfo.metierId) setSelectedMetierId(userInfo.metierId);
+    if (userInfo.siteWeb) setSiteWeb(userInfo.siteWeb);
+    if (userInfo.reseauxSociaux) {
+      setReseaux((prev) => ({ ...prev, ...userInfo.reseauxSociaux }));
+    }
+  }, [userInfo]);
+
+  // ── Clear success banner ──────────────────────────
   useEffect(() => {
     if (updateSuccess) {
-      const timer = setTimeout(() => dispatch(clearUpdateSuccess()), 3000);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => dispatch(clearUpdateSuccess()), 3000);
+      return () => clearTimeout(t);
     }
   }, [updateSuccess, dispatch]);
 
+  // ── Métiers filtrés par catégorie ─────────────────
+  const metiersFiltres = selectedCategorieId
+    ? metiers.filter(
+        (m) =>
+          m.isActive &&
+          (m.categorieId === selectedCategorieId ||
+            m.categorie?._id === selectedCategorieId),
+      )
+    : [];
+
+  // Métier sélectionné (pour l'aperçu)
+  const metierSelectionne = metiers.find((m) => m._id === selectedMetierId);
+
+  // ── Handlers ──────────────────────────────────────
+  const handleCategorieChange = (e) => {
+    setSelectedCategorieId(e.target.value);
+    setSelectedMetierId("");
+  };
+
   const handleToggleTracking = async () => {
     setTrackingLoading(true);
-
     if (isSharing) {
       await stopTracking();
       setGeoError(null);
@@ -114,7 +159,6 @@ const PrestataireDashboard = () => {
       const result = await startTracking();
       if (!result.ok) setGeoError(result.reason);
     }
-
     setTrackingLoading(false);
   };
 
@@ -126,14 +170,23 @@ const PrestataireDashboard = () => {
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
-    dispatch(updateProfile({ metier, siteWeb, reseauxSociaux: reseaux }));
+    dispatch(
+      updateProfile({
+        categorieId: selectedCategorieId,
+        metierId: selectedMetierId,
+        siteWeb,
+        reseauxSociaux: reseaux,
+      }),
+    );
   };
 
   const renderStars = (note) =>
     note ? "★".repeat(Math.floor(note)) + (note % 1 >= 0.5 ? "½" : "") : "—";
 
+  // ── Render ────────────────────────────────────────
   return (
     <div className="pd-root">
+      {/* ── Geo error overlay ── */}
       {geoError && (
         <div className="pd-geo-overlay" onClick={() => setGeoError(null)}>
           <div className="pd-geo-popup" onClick={(e) => e.stopPropagation()}>
@@ -192,6 +245,7 @@ const PrestataireDashboard = () => {
         </div>
       )}
 
+      {/* ── Header ── */}
       <header className="pd-header">
         <button
           className="pd-brand"
@@ -211,6 +265,7 @@ const PrestataireDashboard = () => {
 
       <DesktopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
+      {/* ── Main ── */}
       <main className="pd-body">
         <h1 className="pd-welcome">
           Bonjour, <em>{userInfo?.prenom}</em> 👷
@@ -222,6 +277,7 @@ const PrestataireDashboard = () => {
             : "Complétez votre profil pour attirer plus de clients"}
         </p>
 
+        {/* ════════════ TAB DISPONIBILITÉ ════════════ */}
         {activeTab === "disponibilite" && (
           <>
             <section className="pd-status-card">
@@ -276,7 +332,7 @@ const PrestataireDashboard = () => {
                 <div className="pd-info-content">
                   <div className="pd-info-label">Métier</div>
                   <div className="pd-info-value primary">
-                    {userInfo?.metier || "Non renseigné"}
+                    {userInfo?.metierNom || "Non renseigné"}
                   </div>
                 </div>
               </article>
@@ -305,6 +361,7 @@ const PrestataireDashboard = () => {
           </>
         )}
 
+        {/* ════════════ TAB PROFIL ════════════ */}
         {activeTab === "profil" && (
           <form onSubmit={handleSaveProfile}>
             {updateSuccess && (
@@ -312,31 +369,100 @@ const PrestataireDashboard = () => {
                 ✅ Profil mis à jour avec succès !
               </div>
             )}
-
             {updateError && (
               <div className="pd-alert error">⚠️ {updateError}</div>
             )}
 
+            {/* ── Section métier ── */}
+            <section className="pd-form-section">
+              <div className="pd-form-section-title">Votre métier</div>
+              <div className="pd-form-section-sub">
+                Sélectionnez votre catégorie puis votre métier
+              </div>
+
+              {/* Catégorie */}
+              <div className="pd-field">
+                <label className="pd-label">Catégorie</label>
+                <div className="pd-input-wrap">
+                  <span className="pd-input-icon">📂</span>
+                  {catLoading ? (
+                    <div className="pd-select-skeleton" />
+                  ) : (
+                    <select
+                      className="pd-select"
+                      value={selectedCategorieId}
+                      onChange={handleCategorieChange}
+                    >
+                      <option value="">— Choisir une catégorie —</option>
+                      {categories
+                        .filter((c) => c.isActive)
+                        .map((cat) => (
+                          <option key={cat._id} value={cat._id}>
+                            {cat.nom}
+                          </option>
+                        ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+
+              {/* Métier — affiché seulement si une catégorie est choisie */}
+              {selectedCategorieId && (
+                <div className="pd-field">
+                  <label className="pd-label">Métier</label>
+                  <div className="pd-input-wrap">
+                    <span className="pd-input-icon">🔧</span>
+                    {metLoading ? (
+                      <div className="pd-select-skeleton" />
+                    ) : metiersFiltres.length === 0 ? (
+                      <span className="pd-no-metier">
+                        Aucun métier disponible pour cette catégorie
+                      </span>
+                    ) : (
+                      <select
+                        className="pd-select"
+                        value={selectedMetierId}
+                        onChange={(e) => setSelectedMetierId(e.target.value)}
+                      >
+                        <option value="">— Choisir un métier —</option>
+                        {metiersFiltres.map((m) => (
+                          <option key={m._id} value={m._id}>
+                            {m.nom}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  {/* Aperçu du métier sélectionné */}
+                  {metierSelectionne && (
+                    <div className="pd-metier-preview">
+                      {metierSelectionne.icone && (
+                        <span className="pd-metier-preview-icon">
+                          {metierSelectionne.icone}
+                        </span>
+                      )}
+                      <span className="pd-metier-preview-nom">
+                        {metierSelectionne.nom}
+                      </span>
+                      {metierSelectionne.description && (
+                        <p className="pd-metier-preview-desc">
+                          {metierSelectionne.description}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+
+            {/* ── Section infos pro ── */}
             <section className="pd-form-section">
               <div className="pd-form-section-title">
                 Informations professionnelles
               </div>
               <div className="pd-form-section-sub">
                 Ces informations apparaissent sur votre profil public
-              </div>
-
-              <div className="pd-field">
-                <label className="pd-label">Métier / Spécialité</label>
-                <div className="pd-input-wrap">
-                  <span className="pd-input-icon">🔧</span>
-                  <input
-                    type="text"
-                    className="pd-input"
-                    placeholder="Ex: Électricien, Plombier, Jardinier..."
-                    value={metier}
-                    onChange={(e) => setMetier(e.target.value)}
-                  />
-                </div>
               </div>
 
               <div className="pd-field">
@@ -354,6 +480,7 @@ const PrestataireDashboard = () => {
               </div>
             </section>
 
+            {/* ── Section réseaux sociaux ── */}
             <section className="pd-form-section">
               <div className="pd-form-section-title">Réseaux sociaux</div>
               <div className="pd-form-section-sub">
@@ -398,6 +525,7 @@ const PrestataireDashboard = () => {
         )}
       </main>
 
+      {/* ── Bottom nav mobile ── */}
       <nav className="pd-bottom-nav">
         {TABS.map(({ key, icon, label }) => (
           <button
