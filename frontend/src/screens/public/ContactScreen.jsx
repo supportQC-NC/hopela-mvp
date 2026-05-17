@@ -68,16 +68,12 @@ const ContactScreen = () => {
               <span>Support Hopela</span>
             </div>
 
-            <h1>
-              Contactez notre
-              <br />
-              <em>équipe locale.</em>
-            </h1>
+            <h1>contacter notre équipe</h1>
 
             <p>
               Une question sur votre compte, une inscription prestataire ou le
               fonctionnement de la plateforme ? Envoyez-nous votre demande, nous
-              vous répondons clairement et rapidement.
+              vous répondonsrapidement.
             </p>
 
             <div
@@ -86,7 +82,7 @@ const ContactScreen = () => {
             >
               <span>Réponse 24–48h ouvrées</span>
               <span>Compte non requis</span>
-              <span>Support Nouvelle-Calédonie</span>
+              <span>Support Hopela</span>
             </div>
           </div>
         </section>

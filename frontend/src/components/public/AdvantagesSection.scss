@@ -2,66 +2,255 @@
 @use "./landingTokens" as t;
 
 .lp-avantages-section {
-  background: t.$lp-bg-alt;
-  padding: v.$space-20 v.$space-5;
-  min-height: 96vh;
+  position: relative;
+  overflow: hidden;
+  min-height: 92vh;
+  padding: v.$space-20 0;
+
+  background:
+    radial-gradient(
+      circle at 14% 12%,
+      rgba(0, 166, 178, 0.09),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 88% 20%,
+      rgba(255, 70, 90, 0.055),
+      transparent 32%
+    );
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(3, 18, 29, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(3, 18, 29, 0.018) 1px, transparent 1px);
+    background-size: 72px 72px;
+    pointer-events: none;
+  }
 }
 
 .lp-avantages-inner {
-  max-width: v.$max-content;
+  position: relative;
+  z-index: 1;
+  width: min(100% - 40px, v.$max-wide);
   margin: 0 auto;
 }
 
 .lp-eyebrow {
   @include t.eyebrow;
 }
+
 .lp-section-title {
   @include t.title;
+
+  em {
+    color: t.$lp-primary;
+    font-style: italic;
+  }
 }
 
 .lp-avantages-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: v.$space-6;
-  margin-top: v.$space-8;
+  margin-top: v.$space-10;
 }
 
 .lp-av-card {
-  background: t.$lp-bg-card;
-  border: 1px solid t.$lp-border;
-  border-radius: v.$radius-xl;
-  padding: v.$space-8;
-  transition: v.$transition-smooth;
-  box-shadow: t.$lp-shadow;
+  position: relative;
+  overflow: hidden;
+  min-height: 320px;
+  padding: 36px;
+  border-radius: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(255, 255, 255, 0.54) 52%,
+    rgba(235, 249, 251, 0.42)
+  );
+
+  box-shadow:
+    0 30px 80px rgba(3, 18, 29, 0.12),
+    0 12px 30px rgba(0, 166, 178, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  isolation: isolate;
+
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.38s ease,
+    box-shadow 0.38s ease,
+    background 0.38s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+
+    background:
+      radial-gradient(
+        circle at 18% 16%,
+        rgba(0, 166, 178, 0.18),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 92% 90%,
+        rgba(255, 70, 90, 0.11),
+        transparent 34%
+      );
+
+    opacity: 0.55;
+    transition:
+      opacity 0.38s ease,
+      transform 0.38s ease;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 34px;
+    right: 34px;
+    height: 4px;
+    border-radius: v.$radius-full;
+    background: linear-gradient(90deg, t.$lp-primary, rgba(255, 70, 90, 0.6));
+    transform: scaleX(0.22);
+    transform-origin: left;
+    opacity: 0.55;
+    transition:
+      transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.38s ease;
+  }
 
   &:hover {
-    border-color: t.$lp-primary;
-    transform: translateY(-3px);
-    box-shadow: t.$lp-shadow-hover;
+    transform: translateY(-12px);
+    border-color: rgba(0, 166, 178, 0.32);
+
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.74) 52%,
+      rgba(235, 249, 251, 0.66)
+    );
+
+    box-shadow:
+      0 48px 110px rgba(3, 18, 29, 0.18),
+      0 22px 52px rgba(0, 166, 178, 0.13),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+
+    &::before {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+
+    &::after {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+
+    .lp-av-icon {
+      transform: translateY(-5px) scale(1.08) rotate(-2deg);
+      background: t.$lp-primary;
+      color: #ffffff;
+      box-shadow:
+        0 24px 48px rgba(0, 166, 178, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.24);
+    }
+
+    .lp-av-titre {
+      color: t.$lp-primary;
+    }
   }
 }
 
 .lp-av-bar {
-  height: 4px;
-  width: 40px;
-  border-radius: 2px;
-  margin-bottom: v.$space-5;
+  display: none;
 }
 
 .lp-av-icon {
+  position: relative;
+  z-index: 1;
+
+  width: 68px;
+  height: 68px;
+  padding: 19px;
+  margin-bottom: v.$space-6;
+
+  border-radius: 26px;
+
   color: t.$lp-primary;
+  background: linear-gradient(
+    145deg,
+    rgba(0, 166, 178, 0.14),
+    rgba(0, 166, 178, 0.055)
+  );
+
+  box-shadow:
+    0 16px 34px rgba(0, 166, 178, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.38s ease,
+    color 0.38s ease,
+    box-shadow 0.38s ease;
 }
 
 .lp-av-titre {
-  font-size: v.$text-xl;
-  font-weight: v.$font-bold;
+  position: relative;
+  z-index: 1;
+  margin: 0 0 v.$space-3;
   color: t.$lp-text;
-  margin-bottom: v.$space-3;
-  margin-top: v.$space-5;
+  font-size: clamp(23px, 2vw, 30px);
+  line-height: 1.06;
+  font-weight: v.$font-bold;
+  letter-spacing: -0.045em;
+  transition: color 0.3s ease;
 }
 
 .lp-av-desc {
-  font-size: v.$text-base;
+  position: relative;
+  z-index: 1;
+  margin: 0;
   color: t.$lp-text-sub;
-  line-height: v.$leading-relaxed;
+  font-size: v.$text-base;
+  line-height: 1.72;
+}
+
+@media (max-width: v.$bp-md) {
+  .lp-avantages-section {
+    min-height: auto;
+    padding-top: v.$space-10;
+    padding-bottom: v.$space-10;
+  }
+
+  .lp-avantages-grid {
+    margin-top: v.$space-8;
+  }
+
+  .lp-av-card {
+    min-height: auto;
+    padding: 30px;
+    border-radius: 32px;
+  }
+}
+
+@media (max-width: v.$bp-sm) {
+  .lp-avantages-inner {
+    width: min(100% - 28px, v.$max-wide);
+  }
+
+  .lp-avantages-grid {
+    grid-template-columns: 1fr;
+    gap: v.$space-4;
+  }
 }
