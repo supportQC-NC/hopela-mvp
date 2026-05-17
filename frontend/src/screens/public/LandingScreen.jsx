@@ -421,6 +421,47 @@ const LandingScreen = () => {
     <div style={{ background: "var(--dark)", minHeight: "100vh" }}>
       <Header />
 
+      {/* ══ HERO ══ */}
+      <section className="lp-hero" id="accueil">
+        <div className="lp-hero-bg" />
+        <div className="lp-hero-content">
+          <div className="lp-eyebrow fade-up">
+            <span className="lp-eyebrow-text">Nouvelle-Calédonie</span>
+          </div>
+          <h1 className="fade-up-1">
+            Trouvez votre
+            <br />
+            <em>prestataire</em> idéal
+          </h1>
+          <p className="lp-hero-sub fade-up-2">
+            La première plateforme de mise en relation géolocalisée en temps
+            réel. Simple, rapide et sécurisé pour tous vos besoins.
+          </p>
+          <div className="lp-hero-actions fade-up-3">
+            <button className="btn-primary" onClick={() => navigate("/login")}>
+              Trouver un prestataire
+            </button>
+            <button
+              className="btn-secondary"
+              onClick={() => navigate("/login")}
+            >
+              Devenir prestataire
+            </button>
+          </div>
+
+          {prestatairesEnLigne !== null && (
+            <div className="lp-hero-badge fade-up-4">
+              <span className="lp-live-dot" />
+              <span>
+                <strong>{prestatairesEnLigne}</strong> prestataire
+                {prestatairesEnLigne > 1 && "s"} connecté
+                {prestatairesEnLigne > 1 && "s"}
+              </span>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ══ CARTE ══ */}
       <section className="lp-map-section" id="carte">
         <div className="lp-map-header">
