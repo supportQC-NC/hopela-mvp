@@ -1,45 +1,82 @@
-@use "../../styles/variables" as v;
-@use "../../components/public/landingTokens" as t;
+// src/screens/user/UserDashboard.scss
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOKENS
+// ─────────────────────────────────────────────────────────────────────────────
+
+$teal:        #00a6b2;
+$teal-light:  #5fd9df;
+$navy:        #102a43;
+$muted:       #5b7083;
+$red:         #ff465a;
+$red-dark:    #d64255;
+$green:       #108f52;
+$blue:        #1a6fc4;
+$white:       #ffffff;
+
+$card-bg:     linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.56) 52%, rgba(235,249,251,.42));
+$card-border: 1px solid rgba(255,255,255,.72);
+$card-shadow: 0 22px 54px rgba(3,18,29,.09), 0 8px 22px rgba(0,166,178,.04), inset 0 1px 0 rgba(255,255,255,.8);
+$card-radius: 30px;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANIMATIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0);    }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.08); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RACINE
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(
-      circle at 12% 10%,
-      rgba(0, 166, 178, 0.07),
-      transparent 36%
-    ),
-    radial-gradient(
-      circle at 88% 12%,
-      rgba(255, 70, 90, 0.045),
-      transparent 34%
-    ),
-    #ffffff;
-  color: t.$lp-text;
+    radial-gradient(circle at 12% 10%, rgba($teal, .07), transparent 36%),
+    radial-gradient(circle at 88% 12%, rgba($red,  .045), transparent 34%),
+    $white;
+  color: $navy;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HEADER
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-header {
   position: sticky;
   top: 0;
   z-index: 200;
   height: 66px;
-  padding: 0 v.$space-4;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: v.$space-3;
-  background: rgba(255, 255, 255, 0.94);
+  gap: 12px;
+  background: rgba($white, .94);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(16, 42, 67, 0.08);
-  box-shadow: 0 14px 34px rgba(3, 18, 29, 0.08);
+  border-bottom: 1px solid rgba($navy, .08);
+  box-shadow: 0 14px 34px rgba(3,18,29,.08);
 }
 
 .ud-brand {
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: v.$space-3;
+  gap: 12px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -54,10 +91,10 @@
 }
 
 .ud-logo-name {
-  color: t.$lp-text;
-  font-size: v.$text-xl;
-  font-weight: v.$font-extrabold;
-  letter-spacing: -0.04em;
+  color: $navy;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
   white-space: nowrap;
 }
 
@@ -65,30 +102,30 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: v.$space-2;
+  gap: 8px;
 }
 
 .ud-user-pill {
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: v.$space-2;
+  gap: 8px;
   padding: 5px 10px 5px 5px;
-  border-radius: v.$radius-full;
-  background: rgba(0, 166, 178, 0.07);
-  border: 1px solid rgba(0, 166, 178, 0.14);
+  border-radius: 9999px;
+  background: rgba($teal, .07);
+  border: 1px solid rgba($teal, .14);
 }
 
 .ud-avatar {
   width: 34px;
   height: 34px;
-  border-radius: v.$radius-full;
+  border-radius: 9999px;
   display: grid;
   place-items: center;
-  background: t.$lp-primary;
-  color: #ffffff;
+  background: $teal;
+  color: $white;
   font-size: 12px;
-  font-weight: v.$font-bold;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
@@ -97,9 +134,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: t.$lp-text;
-  font-size: v.$text-sm;
-  font-weight: v.$font-bold;
+  color: $navy;
+  font-size: .8125rem;
+  font-weight: 700;
 }
 
 .ud-logout {
@@ -107,30 +144,78 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 70, 90, 0.18);
-  background: rgba(255, 70, 90, 0.06);
-  color: #d64255;
-  border-radius: v.$radius-full;
-  padding: 0 v.$space-4;
+  border: 1px solid rgba($red, .18);
+  background: rgba($red, .06);
+  color: $red-dark;
+  border-radius: 9999px;
+  padding: 0 16px;
   cursor: pointer;
-  font-size: v.$text-sm;
-  font-weight: v.$font-bold;
-  transition: v.$transition-base;
+  font-size: .8125rem;
+  font-weight: 700;
+  transition: all .3s ease;
 
-  &:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 70, 90, 0.1);
-  }
+  &:hover { transform: translateY(-2px); background: rgba($red, .1); }
 }
 
-.ud-logout-short {
-  display: none;
+.ud-logout-short { display: none; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BANNIERES
+// ─────────────────────────────────────────────────────────────────────────────
+
+.ud-geo-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(255,193,7,.08);
+  border-bottom: 1px solid rgba(255,193,7,.18);
 }
+
+.ud-geo-banner-text {
+  flex: 1;
+  color: #9a6b00;
+  font-size: .8125rem;
+  line-height: 1.5;
+
+  strong, span { display: block; }
+  strong { color: #805600; }
+}
+
+.ud-geo-banner-btn,
+.ud-geo-banner-close {
+  border: none;
+  border-radius: 9999px;
+  padding: 8px 12px;
+  background: rgba(255,193,7,.14);
+  color: #805600;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.ud-success-banner {
+  padding: 12px 20px;
+  background: rgba($green, .08);
+  border-bottom: 1px solid rgba($green, .18);
+  color: darken($green, 5%);
+  font-size: .875rem;
+  font-weight: 700;
+  text-align: center;
+  animation: fadeIn .3s ease;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LAYOUT CONTENU
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-content {
   min-height: calc(100vh - 66px);
   padding-bottom: 86px;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ONGLET CARTE
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-map-tab {
   height: calc(100vh - 66px - 86px);
@@ -141,37 +226,66 @@
 }
 
 .ud-map-wrap {
+  position: relative;
   height: 55%;
   min-height: 280px;
   flex-shrink: 0;
 }
 
+// ── FAB Publier un besoin ──
+.ud-fab-demande {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 9999px;
+  background: $navy;
+  color: $white;
+  font-size: .875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 16px 40px rgba($navy, .3);
+  transition: all .3s cubic-bezier(.25,.8,.25,1);
+
+  &:hover {
+    transform: translateY(-3px);
+    background: darken($navy, 4%);
+    box-shadow: 0 24px 56px rgba($navy, .38);
+  }
+
+  &:active { transform: translateY(-1px); }
+}
+
+.ud-fab-icon { font-size: 1.125rem; }
+
+// ── Panel prestataires ──
 .ud-presta-panel {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  border-top: 1px solid rgba(16, 42, 67, 0.08);
+  border-top: 1px solid rgba($navy, .08);
   background:
-    radial-gradient(
-      circle at 12% 10%,
-      rgba(0, 166, 178, 0.06),
-      transparent 36%
-    ),
-    #ffffff;
+    radial-gradient(circle at 12% 10%, rgba($teal, .06), transparent 36%),
+    $white;
 }
 
 .ud-presta-title {
-  width: min(100% - 40px, v.$max-wide);
+  width: min(100% - 40px, 1320px);
   margin: 0 auto;
-  padding: v.$space-5 0 v.$space-3;
+  padding: 20px 0 12px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: v.$space-2;
-  color: t.$lp-text-sub;
+  gap: 8px;
+  color: $muted;
   font-size: 11px;
-  font-weight: v.$font-bold;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
 
   strong {
@@ -180,84 +294,42 @@
     justify-content: center;
     min-width: 26px;
     height: 22px;
-    border-radius: v.$radius-full;
-    background: rgba(0, 166, 178, 0.1);
-    border: 1px solid rgba(0, 166, 178, 0.18);
-    color: t.$lp-primary;
+    border-radius: 9999px;
+    background: rgba($teal, .1);
+    border: 1px solid rgba($teal, .18);
+    color: $teal;
   }
 }
 
-.ud-filter-chip,
-.ud-rayon-chip,
-.ud-metier-chip,
-.ud-loc-default-badge,
-.ud-badge-role {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  border-radius: v.$radius-full;
-  padding: 5px 10px;
-  background: rgba(0, 166, 178, 0.08);
-  border: 1px solid rgba(0, 166, 178, 0.16);
-  color: t.$lp-primary;
-  font-size: 10px;
-  font-weight: v.$font-bold;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.ud-filter-chip {
-  cursor: pointer;
-}
-
 .ud-presta-list {
-  width: min(100% - 40px, v.$max-wide);
-  margin: 0 auto v.$space-8;
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto 32px;
   display: grid;
-  gap: v.$space-4;
-}
-
-.ud-presta-card,
-.ud-rayon-card,
-.ud-loc-card,
-.ud-profile-card,
-.ud-empty,
-.ud-empty-presta {
-  position: relative;
-  overflow: hidden;
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.72),
-    rgba(255, 255, 255, 0.56) 52%,
-    rgba(235, 249, 251, 0.42)
-  );
-  box-shadow:
-    0 22px 54px rgba(3, 18, 29, 0.09),
-    0 8px 22px rgba(0, 166, 178, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  gap: 16px;
 }
 
 .ud-presta-card {
-  padding: v.$space-4;
+  padding: 16px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: v.$space-4;
+  gap: 16px;
+  border-radius: $card-radius;
+  border: $card-border;
+  background: $card-bg;
+  box-shadow: $card-shadow;
 }
 
-.ud-presta-avatar,
-.ud-loc-icon {
+.ud-presta-avatar {
   width: 48px;
   height: 48px;
   flex: 0 0 48px;
   border-radius: 18px;
   display: grid;
   place-items: center;
-  background: rgba(0, 166, 178, 0.1);
-  border: 1px solid rgba(0, 166, 178, 0.14);
-  color: t.$lp-primary;
+  background: rgba($teal, .1);
+  border: 1px solid rgba($teal, .14);
+  color: $teal;
 }
 
 .ud-presta-info {
@@ -265,70 +337,232 @@
 
   h3 {
     margin: 0 0 5px;
-    color: t.$lp-text;
-    font-size: v.$text-md;
-    font-weight: v.$font-bold;
+    color: $navy;
+    font-size: 1rem;
+    font-weight: 700;
   }
 
   p {
     margin: 5px 0 0;
-    color: t.$lp-text-sub;
-    font-size: v.$text-xs;
+    color: $muted;
+    font-size: .75rem;
   }
 }
 
 .ud-presta-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: v.$space-2;
-  color: t.$lp-text-sub;
-  font-size: v.$text-sm;
+  gap: 8px;
+  color: $muted;
+  font-size: .8125rem;
 }
 
-.ud-call-btn,
-.ud-rayon-save,
-.ud-btn-save {
+// ─────────────────────────────────────────────────────────────────────────────
+// ONGLET MES DEMANDES
+// ─────────────────────────────────────────────────────────────────────────────
+
+.ud-demandes-toolbar {
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ud-demande-new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
   border: none;
-  border-radius: v.$radius-full;
-  background: t.$lp-primary;
-  color: #ffffff;
-  font-weight: v.$font-bold;
+  border-radius: 9999px;
+  background: $navy;
+  color: $white;
+  font-size: .9375rem;
+  font-weight: 700;
   cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 16px 34px rgba(0, 166, 178, 0.24);
-  transition: v.$transition-base;
+  box-shadow: 0 16px 40px rgba($navy, .22);
+  transition: all .3s ease;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    background: v.$pub-header-accent;
+    box-shadow: 0 24px 52px rgba($navy, .3);
   }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: .45;
     cursor: not-allowed;
   }
 }
 
-.ud-call-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 38px;
-  padding: 0 v.$space-4;
-  font-size: v.$text-sm;
+.ud-demande-limit-hint {
+  color: $muted;
+  font-size: .8125rem;
 }
 
-.ud-call-btn--ghost {
-  background: rgba(0, 166, 178, 0.08);
-  color: t.$lp-primary;
-  box-shadow: none;
-  border: 1px solid rgba(0, 166, 178, 0.18);
+.ud-demande-list {
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
 }
+
+// ── Card demande ──
+.ud-demande-card {
+  padding: 20px 24px;
+  border-radius: $card-radius;
+  border: $card-border;
+  background: $card-bg;
+  box-shadow: $card-shadow;
+  transition: all .3s cubic-bezier(.25,.8,.25,1);
+
+  &:hover { transform: translateY(-4px); box-shadow: 0 36px 84px rgba(3,18,29,.14); }
+
+  // Accent couleur selon statut
+  &--green { border-left: 4px solid $green; }
+  &--grey  { border-left: 4px solid $muted; }
+  &--red   { border-left: 4px solid $red;   }
+  &--blue  { border-left: 4px solid $blue;  }
+}
+
+.ud-demande-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ud-demande-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+// Badge statut
+.ud-demande-statut {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+
+  &--green { background: rgba($green, .1); color: $green;  border: 1px solid rgba($green, .2); }
+  &--grey  { background: rgba($muted, .1); color: $muted;  border: 1px solid rgba($muted, .2); }
+  &--red   { background: rgba($red,   .1); color: $red-dark; border: 1px solid rgba($red, .2); }
+  &--blue  { background: rgba($blue,  .1); color: $blue;   border: 1px solid rgba($blue, .2); }
+}
+
+.ud-demande-expire {
+  color: $muted;
+  font-size: .75rem;
+  font-style: italic;
+}
+
+.ud-demande-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ud-demande-tag {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba($teal, .08);
+  border: 1px solid rgba($teal, .16);
+  color: $teal;
+  font-size: 11px;
+  font-weight: 700;
+
+  &--metier {
+    background: rgba($navy, .06);
+    border-color: rgba($navy, .12);
+    color: $navy;
+  }
+}
+
+.ud-demande-desc {
+  margin: 0 0 12px;
+  color: $navy;
+  font-size: .9375rem;
+  line-height: 1.55;
+  font-style: italic;
+}
+
+.ud-demande-loc {
+  margin-bottom: 8px;
+  color: $muted;
+  font-size: .8125rem;
+}
+
+.ud-demande-dates {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: $muted;
+  font-size: .75rem;
+  margin-bottom: 16px;
+}
+
+.ud-demande-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ud-demande-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 9999px;
+  font-size: .8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all .25s ease;
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+
+  &--cloturer {
+    background: rgba($green, .1);
+    color: $green;
+    border: 1px solid rgba($green, .22);
+
+    &:hover:not(:disabled) {
+      background: $green;
+      color: $white;
+      transform: translateY(-2px);
+    }
+  }
+
+  &--annuler {
+    background: rgba($red, .08);
+    color: $red-dark;
+    border: 1px solid rgba($red, .2);
+
+    &:hover:not(:disabled) {
+      background: $red;
+      color: $white;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ONGLET ADRESSES — commun
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-page-section,
 .ud-profile-wrap {
   position: relative;
-  padding: v.$space-8 0 v.$space-20;
+  padding: 32px 0 80px;
 }
 
 .ud-section,
@@ -338,69 +572,70 @@
 .ud-profile-wrap,
 .ud-empty,
 .ud-empty-presta {
-  width: min(100% - 40px, v.$max-wide);
-  margin-left: auto;
+  width: min(100% - 40px, 1320px);
+  margin-left:  auto;
   margin-right: auto;
 }
 
 .ud-section-title {
-  color: t.$lp-text;
+  color: $navy;
   font-size: clamp(34px, 5vw, 56px);
-  line-height: 0.96;
-  font-weight: v.$font-black;
-  letter-spacing: -0.065em;
-  margin-bottom: v.$space-3;
+  line-height: .96;
+  font-weight: 900;
+  letter-spacing: -.065em;
+  margin-bottom: 12px;
 
-  em {
-    color: t.$lp-primary;
-    font-style: italic;
-  }
+  em { color: $teal; font-style: italic; }
 }
 
 .ud-section-sub {
-  color: t.$lp-text-sub;
-  font-size: v.$text-base;
+  color: $muted;
+  font-size: .9375rem;
   line-height: 1.7;
-  margin-bottom: v.$space-6;
+  margin-bottom: 24px;
 }
 
 .ud-rayon-card {
-  margin-top: v.$space-5;
-  margin-bottom: v.$space-5;
-  padding: v.$space-6;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 24px;
+  border-radius: $card-radius;
+  border: $card-border;
+  background: $card-bg;
+  box-shadow: $card-shadow;
 }
 
 .ud-rayon-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: v.$space-4;
-  margin-bottom: v.$space-4;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .ud-rayon-label {
-  color: t.$lp-text-sub;
+  color: $muted;
   font-size: 11px;
-  font-weight: v.$font-bold;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
 }
 
 .ud-rayon-value {
-  color: t.$lp-primary;
-  font-size: v.$text-2xl;
-  font-weight: v.$font-black;
+  color: $teal;
+  font-size: 1.333rem;
+  font-weight: 900;
 }
 
 .ud-rayon-slider {
   width: 100%;
   height: 5px;
   appearance: none;
-  border-radius: v.$radius-full;
+  border-radius: 9999px;
   background: linear-gradient(
     to right,
-    t.$lp-primary calc(var(--pct, 50%)),
-    rgba(0, 166, 178, 0.14) calc(var(--pct, 50%))
+    $teal calc(var(--pct, 50%)),
+    rgba($teal, .14) calc(var(--pct, 50%))
   );
   outline: none;
   cursor: pointer;
@@ -409,222 +644,265 @@
     appearance: none;
     width: 20px;
     height: 20px;
-    border-radius: v.$radius-full;
-    background: t.$lp-primary;
-    border: 3px solid #ffffff;
-    box-shadow: 0 8px 18px rgba(0, 166, 178, 0.3);
+    border-radius: 9999px;
+    background: $teal;
+    border: 3px solid $white;
+    box-shadow: 0 8px 18px rgba($teal, .3);
   }
 }
 
 .ud-rayon-actions {
   display: flex;
-  gap: v.$space-3;
-  margin-top: v.$space-4;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .ud-rayon-save {
   width: 100%;
-  padding: 12px v.$space-5;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 9999px;
+  background: $teal;
+  color: $white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 16px 34px rgba($teal, .24);
+  transition: all .3s ease;
+
+  &:hover:not(:disabled) { transform: translateY(-2px); background: $teal-light; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
 }
 
 .ud-rayon-hint {
-  margin-top: v.$space-3;
+  margin-top: 12px;
   text-align: center;
-  color: t.$lp-text-sub;
-  font-size: v.$text-sm;
+  color: $muted;
+  font-size: .8125rem;
 }
 
 .ud-loc-list {
   display: grid;
-  gap: v.$space-4;
+  gap: 16px;
 }
 
 .ud-loc-card {
-  padding: v.$space-5;
+  padding: 20px;
   display: flex;
   align-items: flex-start;
-  gap: v.$space-4;
-  transition: v.$transition-smooth;
+  gap: 16px;
+  border-radius: $card-radius;
+  border: $card-border;
+  background: $card-bg;
+  box-shadow: $card-shadow;
+  transition: all .3s cubic-bezier(.25,.8,.25,1);
 
   &.is-default,
-  &.ud-loc-card--gps {
-    border-color: rgba(0, 166, 178, 0.26);
-  }
+  &.ud-loc-card--gps { border-color: rgba($teal, .26); }
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow:
-      0 36px 84px rgba(3, 18, 29, 0.14),
-      0 16px 38px rgba(0, 166, 178, 0.09);
+    box-shadow: 0 36px 84px rgba(3,18,29,.14), 0 16px 38px rgba($teal, .09);
   }
 }
 
-.ud-loc-info {
-  flex: 1;
-  min-width: 0;
+.ud-loc-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: rgba($teal, .1);
+  border: 1px solid rgba($teal, .14);
+  color: $teal;
 }
+
+.ud-loc-info { flex: 1; min-width: 0; }
 
 .ud-loc-name-row {
   display: flex;
   align-items: center;
-  gap: v.$space-2;
+  gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 4px;
 }
 
-.ud-loc-name {
-  color: t.$lp-text;
-  font-weight: v.$font-bold;
-}
-
-.ud-loc-default-badge.is-active {
-  color: #108f52;
-  background: rgba(16, 143, 82, 0.08);
-  border-color: rgba(16, 143, 82, 0.16);
-}
+.ud-loc-name { color: $navy; font-weight: 700; }
 
 .ud-loc-addr,
 .ud-loc-coords,
 .ud-info-label,
 .ud-profile-card-sub {
-  color: t.$lp-text-sub;
-  font-size: v.$text-sm;
+  color: $muted;
+  font-size: .8125rem;
   line-height: 1.5;
 }
 
 .ud-loc-actions {
   display: flex;
-  gap: v.$space-2;
+  gap: 8px;
 }
 
 .ud-loc-btn {
   width: 36px;
   height: 36px;
-  border-radius: v.$radius-full;
-  border: 1px solid rgba(0, 166, 178, 0.16);
-  background: rgba(255, 255, 255, 0.58);
+  border-radius: 9999px;
+  border: 1px solid rgba($teal, .16);
+  background: rgba($white, .58);
   cursor: pointer;
-  transition: v.$transition-base;
+  transition: all .3s ease;
 
-  &:hover {
-    background: rgba(0, 166, 178, 0.09);
-    transform: translateY(-2px);
-  }
-
-  &.danger:hover {
-    background: rgba(255, 70, 90, 0.08);
-    border-color: rgba(255, 70, 90, 0.24);
-  }
+  &:hover { background: rgba($teal, .09); transform: translateY(-2px); }
+  &.danger:hover { background: rgba($red, .08); border-color: rgba($red, .24); }
 }
 
 .ud-add-btn {
-  margin-top: v.$space-5;
-  padding: v.$space-5;
+  margin-top: 20px;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: v.$space-2;
+  gap: 8px;
   border-radius: 26px;
-  border: 1px dashed rgba(0, 166, 178, 0.28);
-  background: rgba(0, 166, 178, 0.04);
-  color: t.$lp-primary;
-  font-weight: v.$font-bold;
+  border: 1px dashed rgba($teal, .28);
+  background: rgba($teal, .04);
+  color: $teal;
+  font-weight: 700;
   cursor: pointer;
-  transition: v.$transition-base;
+  transition: all .3s ease;
 
-  &:hover {
-    background: rgba(0, 166, 178, 0.08);
-    transform: translateY(-2px);
-  }
+  &:hover { background: rgba($teal, .08); transform: translateY(-2px); }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ONGLET PROFIL
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-profile-wrap {
   display: grid;
-  gap: v.$space-5;
+  gap: 20px;
 }
 
 .ud-profile-card {
-  padding: v.$space-6;
+  padding: 24px;
+  border-radius: $card-radius;
+  border: $card-border;
+  background: $card-bg;
+  box-shadow: $card-shadow;
 }
 
 .ud-profile-card-title {
-  color: t.$lp-primary;
-  font-size: v.$text-lg;
-  font-weight: v.$font-bold;
-  margin-bottom: v.$space-2;
+  color: $teal;
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 .ud-info-row {
   display: flex;
   align-items: center;
-  gap: v.$space-4;
-  margin-bottom: v.$space-3;
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
-.ud-info-label {
-  width: 90px;
-  flex-shrink: 0;
-}
+.ud-info-label { width: 90px; flex-shrink: 0; }
 
 .ud-info-value {
-  color: t.$lp-text;
-  font-weight: v.$font-semibold;
+  color: $navy;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 
-.ud-geo-banner {
-  display: flex;
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED — BADGES & CHIPS
+// ─────────────────────────────────────────────────────────────────────────────
+
+.ud-filter-chip,
+.ud-rayon-chip,
+.ud-loc-default-badge,
+.ud-badge-role {
+  display: inline-flex;
   align-items: center;
-  gap: v.$space-3;
-  padding: v.$space-3 v.$space-5;
-  background: rgba(255, 193, 7, 0.08);
-  border-bottom: 1px solid rgba(255, 193, 7, 0.18);
+  width: fit-content;
+  border-radius: 9999px;
+  padding: 5px 10px;
+  background: rgba($teal, .08);
+  border: 1px solid rgba($teal, .16);
+  color: $teal;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
 }
 
-.ud-geo-banner-text {
-  flex: 1;
-  color: #9a6b00;
-  font-size: v.$text-sm;
-  line-height: 1.5;
+.ud-filter-chip { cursor: pointer; }
 
-  strong,
-  span {
-    display: block;
-  }
-
-  strong {
-    color: #805600;
-  }
+.ud-loc-default-badge.is-active {
+  color: $green;
+  background: rgba($green, .08);
+  border-color: rgba($green, .16);
 }
 
-.ud-geo-banner-btn,
-.ud-geo-banner-close {
-  border: none;
-  border-radius: v.$radius-full;
-  padding: 8px 12px;
-  background: rgba(255, 193, 7, 0.14);
-  color: #805600;
-  cursor: pointer;
-  font-weight: v.$font-bold;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED — ÉTATS VIDES
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-empty,
 .ud-empty-presta {
-  padding: v.$space-8;
+  padding: 32px;
   text-align: center;
-  color: t.$lp-text-sub;
+  color: $muted;
+  border-radius: $card-radius;
+  border: $card-border;
+  background: $card-bg;
+  box-shadow: $card-shadow;
 
-  span {
-    display: block;
-    margin-top: v.$space-2;
-    font-size: v.$text-sm;
-  }
+  span { display: block; margin-top: 8px; font-size: .8125rem; }
 }
 
 .ud-empty-icon {
   font-size: 34px;
-  margin-bottom: v.$space-3;
+  margin-bottom: 12px;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED — BOUTONS D'ACTION (call, save)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.ud-call-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: .8125rem;
+  border: none;
+  border-radius: 9999px;
+  background: $teal;
+  color: $white;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 16px 34px rgba($teal, .24);
+  transition: all .3s ease;
+
+  &:hover { transform: translateY(-2px); background: $teal-light; }
+  &--ghost {
+    background: rgba($teal, .08);
+    color: $teal;
+    box-shadow: none;
+    border: 1px solid rgba($teal, .18);
+  }
+}
+
+.ud-no-contact {
+  color: $muted;
+  font-size: .8125rem;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BOTTOM SHEET — formulaire (adresse & demande)
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-form-overlay {
   position: fixed;
@@ -633,130 +911,181 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(3, 18, 29, 0.55);
+  background: rgba(3,18,29,.55);
   backdrop-filter: blur(8px);
 }
 
 .ud-form-sheet {
   width: min(100%, 620px);
-  padding: v.$space-6 v.$space-5 v.$space-10;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 24px 20px 40px;
   border-radius: 34px 34px 0 0;
-  background: #ffffff;
-  box-shadow: 0 -30px 80px rgba(3, 18, 29, 0.2);
-  animation: slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  background: $white;
+  box-shadow: 0 -30px 80px rgba(3,18,29,.2);
+  animation: slideUp .28s cubic-bezier(.22,1,.36,1);
+
+  &--demande { width: min(100%, 680px); }
 }
 
 .ud-form-handle {
   width: 42px;
   height: 4px;
-  border-radius: v.$radius-full;
-  background: rgba(16, 42, 67, 0.16);
-  margin: 0 auto v.$space-5;
+  border-radius: 9999px;
+  background: rgba($navy, .16);
+  margin: 0 auto 20px;
 }
 
 .ud-form-title {
-  color: t.$lp-text;
-  font-size: v.$text-xl;
-  font-weight: v.$font-bold;
-  margin-bottom: v.$space-5;
+  color: $navy;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ud-form-subtitle {
+  color: $muted;
+  font-size: .8125rem;
+  margin-bottom: 20px;
 }
 
 .ud-field {
-  margin-bottom: v.$space-4;
+  margin-bottom: 16px;
 }
 
 .ud-label {
   display: block;
-  margin-bottom: v.$space-2;
-  color: t.$lp-text-sub;
+  margin-bottom: 8px;
+  color: $muted;
   font-size: 11px;
-  font-weight: v.$font-bold;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
 }
 
 .ud-input {
   width: 100%;
-  border: 1px solid rgba(16, 42, 67, 0.1);
-  border-radius: v.$radius-xl;
+  border: 1px solid rgba($navy, .1);
+  border-radius: 16px;
   padding: 13px 14px;
-  color: t.$lp-text;
-  background: rgba(0, 166, 178, 0.035);
+  color: $navy;
+  background: rgba($teal, .035);
   outline: none;
-  font-size: v.$text-base;
+  font-size: .9375rem;
+  font-family: inherit;
+  box-sizing: border-box;
 
   &:focus {
-    border-color: rgba(0, 166, 178, 0.4);
-    box-shadow: 0 0 0 4px rgba(0, 166, 178, 0.08);
+    border-color: rgba($teal, .4);
+    box-shadow: 0 0 0 4px rgba($teal, .08);
   }
+}
+
+.ud-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.ud-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235b7083' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.ud-field-hint {
+  margin-top: 6px;
+  color: $muted;
+  font-size: .75rem;
+}
+
+.ud-coords-preview {
+  margin-top: 6px;
+  color: $teal;
+  font-size: .75rem;
+  font-weight: 600;
 }
 
 .ud-row {
   display: flex;
-  gap: v.$space-3;
+  gap: 12px;
 
-  .ud-field {
-    flex: 1;
-  }
+  .ud-field { flex: 1; }
 }
 
 .ud-checkbox-row {
   display: flex;
   align-items: center;
-  gap: v.$space-3;
-  margin-bottom: v.$space-4;
+  gap: 12px;
+  margin-bottom: 16px;
   cursor: pointer;
 
-  input {
-    accent-color: t.$lp-primary;
-  }
+  input { accent-color: $teal; }
 }
 
-.ud-checkbox-label {
-  color: t.$lp-text-sub;
-}
-
-.ud-gps-btn,
-.ud-btn-cancel {
-  width: 100%;
-  border-radius: v.$radius-full;
-  padding: 12px;
-  cursor: pointer;
-  font-weight: v.$font-bold;
-  transition: v.$transition-base;
-}
+.ud-checkbox-label { color: $muted; }
 
 .ud-gps-btn {
-  border: 1px solid rgba(0, 166, 178, 0.18);
-  background: rgba(0, 166, 178, 0.06);
-  color: t.$lp-primary;
-  margin-bottom: v.$space-4;
+  width: 100%;
+  border-radius: 9999px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all .3s ease;
+  border: 1px solid rgba($teal, .18);
+  background: rgba($teal, .06);
+  color: $teal;
+  margin-bottom: 16px;
 }
 
 .ud-form-actions {
   display: flex;
-  gap: v.$space-3;
+  gap: 12px;
+  margin-top: 4px;
 }
 
 .ud-btn-cancel {
-  border: 1px solid rgba(16, 42, 67, 0.1);
+  width: 100%;
+  border-radius: 9999px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all .3s ease;
+  border: 1px solid rgba($navy, .1);
   background: transparent;
-  color: t.$lp-text-sub;
+  color: $muted;
 }
 
 .ud-btn-save {
   flex: 2;
   padding: 12px;
+  border: none;
+  border-radius: 9999px;
+  background: $teal;
+  color: $white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 16px 34px rgba($teal, .24);
+  transition: all .3s ease;
+
+  &:hover:not(:disabled) { transform: translateY(-2px); background: $teal-light; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
 }
 
 .ud-error {
-  padding: v.$space-3;
-  margin-bottom: v.$space-4;
-  border-radius: v.$radius-xl;
-  color: #d64255;
-  background: rgba(255, 70, 90, 0.08);
-  border: 1px solid rgba(255, 70, 90, 0.18);
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  color: $red-dark;
+  background: rgba($red, .08);
+  border: 1px solid rgba($red, .18);
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BOTTOM NAV
+// ─────────────────────────────────────────────────────────────────────────────
 
 .ud-bottom-nav {
   position: fixed;
@@ -766,11 +1095,11 @@
   z-index: 200;
   height: 66px;
   display: flex;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba($white, .92);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(16, 42, 67, 0.08);
-  border-radius: v.$radius-full;
-  box-shadow: 0 22px 52px rgba(3, 18, 29, 0.14);
+  border: 1px solid rgba($navy, .08);
+  border-radius: 9999px;
+  box-shadow: 0 22px 52px rgba(3,18,29,.14);
   overflow: hidden;
 }
 
@@ -778,7 +1107,7 @@
   flex: 1;
   border: none;
   background: transparent;
-  color: t.$lp-text-sub;
+  color: $muted;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -786,99 +1115,76 @@
   justify-content: center;
   gap: 3px;
   font-size: 11px;
-  font-weight: v.$font-bold;
-  transition: v.$transition-base;
-
-  span:first-child {
-    font-size: 20px;
-  }
+  font-weight: 700;
+  transition: all .3s ease;
 
   &.active {
-    color: t.$lp-primary;
-    background: rgba(0, 166, 178, 0.08);
+    color: $teal;
+    background: rgba($teal, .08);
   }
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-
-  to {
-    transform: translateY(0);
-  }
+.ud-nav-icon-wrap {
+  position: relative;
+  font-size: 20px;
+  line-height: 1;
 }
 
-@media (max-width: v.$bp-md) {
+.ud-nav-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  background: $red;
+  color: $white;
+  font-size: 9px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  border: 2px solid $white;
+  animation: pulse 2s infinite;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESPONSIVE
+// ─────────────────────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
   .ud-map-tab {
     height: auto;
     min-height: calc(100vh - 66px - 86px);
     overflow: visible;
   }
 
-  .ud-map-wrap {
-    height: 52vh;
-    min-height: 320px;
-  }
+  .ud-map-wrap { height: 52vh; min-height: 320px; }
+
+  .ud-fab-demande .ud-fab-label { display: none; }
+  .ud-fab-demande { padding: 14px; border-radius: 9999px; }
+  .ud-fab-icon { font-size: 1.375rem; }
 }
 
-@media (max-width: v.$bp-sm) {
-  .ud-header {
-    height: 62px;
-    padding: 0 v.$space-3;
-  }
-
-  .ud-logo-img {
-    width: 36px;
-    height: 36px;
-  }
-
-  .ud-logo-name {
-    font-size: v.$text-lg;
-  }
-
-  .ud-user-pill {
-    padding: 4px;
-  }
-
-  .ud-user-name {
-    display: none;
-  }
-
-  .ud-avatar {
-    width: 32px;
-    height: 32px;
-    font-size: 11px;
-  }
+@media (max-width: 640px) {
+  .ud-header { height: 62px; padding: 0 12px; }
+  .ud-logo-img { width: 36px; height: 36px; }
+  .ud-logo-name { font-size: 1.125rem; }
+  .ud-user-pill { padding: 4px; }
+  .ud-user-name { display: none; }
+  .ud-avatar { width: 32px; height: 32px; font-size: 11px; }
 
   .ud-logout {
     width: 38px;
     height: 38px;
     padding: 0;
   }
+  .ud-logout-full { display: none; }
+  .ud-logout-short { display: inline; font-size: 18px; line-height: 1; }
 
-  .ud-logout-full {
-    display: none;
-  }
-
-  .ud-logout-short {
-    display: inline;
-    font-size: 18px;
-    line-height: 1;
-  }
-
-  .ud-content {
-    padding-bottom: 80px;
-  }
-
-  .ud-map-wrap {
-    height: 48vh;
-    min-height: 300px;
-  }
-
-  .ud-presta-panel {
-    overflow: visible;
-  }
+  .ud-content { padding-bottom: 80px; }
+  .ud-map-wrap { height: 48vh; min-height: 300px; }
+  .ud-presta-panel { overflow: visible; }
 
   .ud-section,
   .ud-rayon-card,
@@ -888,32 +1194,28 @@
   .ud-empty,
   .ud-empty-presta,
   .ud-presta-title,
-  .ud-presta-list {
+  .ud-presta-list,
+  .ud-demande-list,
+  .ud-demandes-toolbar {
     width: calc(100% - 28px);
   }
 
   .ud-presta-card {
     grid-template-columns: auto 1fr;
   }
-
   .ud-presta-actions {
     grid-column: 1 / -1;
-
-    .ud-call-btn {
-      width: 100%;
-    }
+    .ud-call-btn { width: 100%; }
   }
 
   .ud-loc-card,
   .ud-form-actions,
-  .ud-row {
-    flex-direction: column;
-  }
+  .ud-row { flex-direction: column; }
+  .ud-loc-actions { width: 100%; justify-content: flex-start; }
 
-  .ud-loc-actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
+  .ud-demande-card-header { flex-direction: column; }
+  .ud-demande-actions { flex-direction: column; }
+  .ud-demande-btn { justify-content: center; }
 
   .ud-bottom-nav {
     left: 10px;

@@ -20,7 +20,8 @@ import serviceRoutes   from "./routes/serviceRoutes.js";
 import uploadRoutes    from "./routes/uploadRoutes.js";
 import photoRoutes     from "./routes/photoRoutes.js";
 import contactRoutes   from "./routes/contactRoutes.js";
-
+import demandeRoutes   from "./routes/demandeRoutes.js";
+console.log("✅ demandeRoutes chargé:", typeof demandeRoutes);
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 const PORT = process.env.PORT || 5000;
@@ -127,6 +128,7 @@ app.use("/api/services",   serviceRoutes);
 app.use("/api/upload",     uploadRoutes);
 app.use("/api/photos",     photoRoutes);
 app.use("/api/contact",    contactRoutes);
+app.use("/api/demandes",   demandeRoutes);
 
 // ==========================================
 // ERROR MIDDLEWARES
