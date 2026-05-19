@@ -8,7 +8,6 @@ import User         from "../models/UserModel.js";
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Passe automatiquement en "expiree" les demandes actives dont expireAt est dépassé.
-// Appelé en amont de toute lecture afin que les statuts soient toujours cohérents.
 const expireDemandes = async () => {
   await Demande.updateMany(
     { statut: "active", expireAt: { $lt: new Date() } },
@@ -16,7 +15,7 @@ const expireDemandes = async () => {
   );
 };
 
-// Projection de base renvoyée dans les listes (populate inclus)
+// Populate de base renvoyé dans toutes les listes
 const populateBase = (query) =>
   query
     .populate("client",    "nom prenom email telephoneContact")
@@ -29,18 +28,51 @@ const populateBase = (query) =>
 // Accès : user connecté (role "user" uniquement)
 // ─────────────────────────────────────────────────────────────────────────────
 export const creerDemande = asyncHandler(async (req, res) => {
-  const { description, categorie, metier, telephoneContact, longitude, latitude, adresse } = req.body;
+  const {
+    description,
+    categorie,
+    metier,
+    telephoneContact,
+    longitude,
+    latitude,
+    adresse,
+  } = req.body;
 
-  // ── Validation rôle ──────────────────────────────
+  // ── Validation rôle ──────────────────────────────────
   if (req.user.role !== "user") {
     res.status(403);
     throw new Error("Seuls les clients peuvent publier une demande de besoin");
   }
 
-  // ── Limite : max 5 demandes actives simultanées ──
+  // ── Champs obligatoires ──────────────────────────────
+  if (!description?.trim()) {
+    res.status(400);
+    throw new Error("La description est requise");
+  }
+
+  if (!metier) {
+    res.status(400);
+    throw new Error("Le métier est requis");
+  }
+
+  if (!telephoneContact?.trim()) {
+    res.status(400);
+    throw new Error("Le numéro de téléphone est requis");
+  }
+
+  // ── Validation coordonnées ───────────────────────────
+  const lng = parseFloat(longitude);
+  const lat = parseFloat(latitude);
+
+  if (isNaN(lng) || isNaN(lat)) {
+    res.status(400);
+    throw new Error("Les coordonnées (longitude, latitude) sont invalides");
+  }
+
+  // ── Limite : max 5 demandes actives simultanées ──────
   const nbActives = await Demande.countDocuments({
-    client: req.user._id,
-    statut: "active",
+    client:   req.user._id,
+    statut:   "active",
     expireAt: { $gt: new Date() },
   });
 
@@ -52,30 +84,29 @@ export const creerDemande = asyncHandler(async (req, res) => {
     );
   }
 
-  // ── Validation coordonnées ───────────────────────
-  const lng = parseFloat(longitude);
-  const lat = parseFloat(latitude);
-
-  if (isNaN(lng) || isNaN(lat)) {
-    res.status(400);
-    throw new Error("Les coordonnées (longitude, latitude) sont invalides");
-  }
-
-  // ── Création ─────────────────────────────────────
-  const demande = await Demande.create({
+  // ── Création ─────────────────────────────────────────
+  // categorie est null si non fournie (champ optionnel dans le schéma)
+  const payload = {
     client:           req.user._id,
-    description:      description?.trim(),
-    categorie,
+    description:      description.trim(),
     metier,
-    telephoneContact: telephoneContact?.trim(),
+    telephoneContact: telephoneContact.trim(),
     location: {
       type:        "Point",
       coordinates: [lng, lat],
       adresse:     adresse?.trim() || null,
     },
-    // statut "active" et expireAt calculés automatiquement par le hook pre-save
-  });
+    // expireAt calculé par le hook pre-save async
+  };
 
+  // N'injecte categorie que si elle est fournie et non vide
+  if (categorie && categorie !== "") {
+    payload.categorie = categorie;
+  }
+
+  const demande = await Demande.create(payload);
+
+  // Populate avant réponse
   const populated = await populateBase(Demande.findById(demande._id));
 
   res.status(201).json(populated);
@@ -109,13 +140,12 @@ export const annulerDemande = asyncHandler(async (req, res) => {
     throw new Error("Demande introuvable");
   }
 
-  // Seul le client propriétaire peut annuler sa demande
   if (demande.client.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error("Non autorisé : cette demande ne vous appartient pas");
   }
 
-  if (!["active"].includes(demande.statut)) {
+  if (demande.statut !== "active") {
     res.status(400);
     throw new Error(`Impossible d'annuler une demande au statut "${demande.statut}"`);
   }
@@ -127,7 +157,7 @@ export const annulerDemande = asyncHandler(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CLIENT — CLÔTURER UNE DEMANDE (besoin satisfait)
+// CLIENT — CLÔTURER UNE DEMANDE
 // PATCH /api/demandes/:id/cloturer
 // Accès : user connecté, propriétaire de la demande
 // ─────────────────────────────────────────────────────────────────────────────
@@ -144,7 +174,7 @@ export const cloturerDemande = asyncHandler(async (req, res) => {
     throw new Error("Non autorisé : cette demande ne vous appartient pas");
   }
 
-  if (!["active"].includes(demande.statut)) {
+  if (demande.statut !== "active") {
     res.status(400);
     throw new Error(`Impossible de clôturer une demande au statut "${demande.statut}"`);
   }
@@ -156,7 +186,7 @@ export const cloturerDemande = asyncHandler(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PRESTATAIRE — DEMANDES ACTIVES POUR SON MÉTIER (liste triée par distance)
+// PRESTATAIRE — LISTE TRIÉE PAR DISTANCE
 // GET /api/demandes/prestataire/liste
 // Accès : prestataire connecté et validé
 // ─────────────────────────────────────────────────────────────────────────────
@@ -173,21 +203,16 @@ export const getDemandesPrestataire = asyncHandler(async (req, res) => {
     throw new Error("Votre compte n'est pas encore validé");
   }
 
-  // Un prestataire peut exercer plusieurs métiers
   const metierIds = req.user.metiers;
 
   if (!metierIds || metierIds.length === 0) {
     return res.json([]);
   }
 
-  // Position actuelle du prestataire (pour le tri par distance)
   const [lng, lat] = req.user.location?.coordinates || [0, 0];
-
-  // Tri par distance croissante grâce à $geoNear (agrégation)
-  // Si le prestataire n'a pas de position connue, on trie par date de création.
-  let demandes;
-
   const hasPosition = lng !== 0 || lat !== 0;
+
+  let demandes;
 
   if (hasPosition) {
     demandes = await Demande.aggregate([
@@ -203,7 +228,6 @@ export const getDemandesPrestataire = asyncHandler(async (req, res) => {
           },
         },
       },
-      // Populate manuel après aggregate (aggregate ne supporte pas .populate)
       {
         $lookup: {
           from:         "users",
@@ -221,7 +245,8 @@ export const getDemandesPrestataire = asyncHandler(async (req, res) => {
           as:           "categorie",
         },
       },
-      { $unwind: "$categorie" },
+      // unwind avec preserveNullAndEmptyArrays car categorie est optionnelle
+      { $unwind: { path: "$categorie", preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
           from:         "metiers",
@@ -231,30 +256,29 @@ export const getDemandesPrestataire = asyncHandler(async (req, res) => {
         },
       },
       { $unwind: "$metier" },
-      // Ne pas exposer les données sensibles du client
       {
         $project: {
-          description:      1,
-          telephoneContact: 1,
-          location:         1,
-          statut:           1,
-          expireAt:         1,
-          createdAt:        1,
-          distanceMetres:   1,
-          "client._id":     1,
-          "client.nom":     1,
-          "client.prenom":  1,
-          "categorie._id":  1,
-          "categorie.nom":  1,
-          "categorie.icone":1,
-          "metier._id":     1,
-          "metier.nom":     1,
-          "metier.icone":   1,
+          description:       1,
+          telephoneContact:  1,
+          location:          1,
+          statut:            1,
+          expireAt:          1,
+          createdAt:         1,
+          distanceMetres:    1,
+          "client._id":      1,
+          "client.nom":      1,
+          "client.prenom":   1,
+          "categorie._id":   1,
+          "categorie.nom":   1,
+          "categorie.icone": 1,
+          "metier._id":      1,
+          "metier.nom":      1,
+          "metier.icone":    1,
         },
       },
     ]);
   } else {
-    // Pas de position — tri chronologique inversé, sans distance
+    // Pas de position — tri chronologique
     demandes = await populateBase(
       Demande.find({
         metier:   { $in: metierIds },
@@ -268,10 +292,8 @@ export const getDemandesPrestataire = asyncHandler(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PRESTATAIRE — DEMANDES ACTIVES SUR LA CARTE (coordonnées uniquement)
+// PRESTATAIRE — MARQUEURS CARTE
 // GET /api/demandes/prestataire/carte
-// Accès : prestataire connecté et validé
-// Renvoie uniquement les champs nécessaires à l'affichage des marqueurs Mapbox
 // ─────────────────────────────────────────────────────────────────────────────
 export const getDemandesCarte = asyncHandler(async (req, res) => {
   await expireDemandes();
@@ -298,14 +320,7 @@ export const getDemandesCarte = asyncHandler(async (req, res) => {
       statut:   "active",
       expireAt: { $gt: new Date() },
     },
-    // Projection légère — juste ce qu'il faut pour placer les marqueurs
-    {
-      location:    1,
-      description: 1,
-      expireAt:    1,
-      metier:      1,
-      categorie:   1,
-    }
+    { location: 1, description: 1, expireAt: 1, metier: 1, categorie: 1 }
   )
     .populate("metier",    "nom icone")
     .populate("categorie", "nom icone");
@@ -314,10 +329,8 @@ export const getDemandesCarte = asyncHandler(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ADMIN — TOUTES LES DEMANDES (avec filtres optionnels)
+// ADMIN — TOUTES LES DEMANDES
 // GET /api/demandes/admin
-// Query params : statut, metier, categorie, client, page, limit
-// Accès : admin
 // ─────────────────────────────────────────────────────────────────────────────
 export const getAllDemandesAdmin = asyncHandler(async (req, res) => {
   await expireDemandes();
@@ -358,7 +371,6 @@ export const getAllDemandesAdmin = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // ADMIN — SUPPRIMER UNE DEMANDE
 // DELETE /api/demandes/admin/:id
-// Accès : admin
 // ─────────────────────────────────────────────────────────────────────────────
 export const supprimerDemandeAdmin = asyncHandler(async (req, res) => {
   const demande = await Demande.findById(req.params.id);
@@ -374,10 +386,8 @@ export const supprimerDemandeAdmin = asyncHandler(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ADMIN — MODIFIER LE STATUT D'UNE DEMANDE
+// ADMIN — MODIFIER LE STATUT
 // PATCH /api/demandes/admin/:id/statut
-// Body : { statut }
-// Accès : admin
 // ─────────────────────────────────────────────────────────────────────────────
 export const modifierStatutAdmin = asyncHandler(async (req, res) => {
   const { statut } = req.body;

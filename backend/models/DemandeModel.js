@@ -20,11 +20,13 @@ const demandeSchema = new mongoose.Schema(
     },
 
     // ── Ciblage métier ───────────────────────────────
+    // categorie est facultative — sert uniquement à filtrer les métiers côté front.
+    // Seul le métier est obligatoire pour le ciblage prestataire.
     categorie: {
-      type:     mongoose.Schema.Types.ObjectId,
-      ref:      "Categorie",
-      required: [true, "La catégorie est requise"],
-      index:    true,
+      type:  mongoose.Schema.Types.ObjectId,
+      ref:   "Categorie",
+      index: true,
+      default: null,
     },
     metier: {
       type:     mongoose.Schema.Types.ObjectId,
@@ -33,9 +35,7 @@ const demandeSchema = new mongoose.Schema(
       index:    true,
     },
 
-    // ── Contact client (saisi/confirmé à la création) ─
-    // Stocké dans le document pour garder la valeur au moment de la demande,
-    // indépendamment des modifications ultérieures du profil du client.
+    // ── Contact client ───────────────────────────────
     telephoneContact: {
       type:     String,
       required: [true, "Le numéro de téléphone est requis"],
@@ -43,7 +43,6 @@ const demandeSchema = new mongoose.Schema(
     },
 
     // ── Localisation de la demande ───────────────────
-    // Point géographique positionné par le client sur la carte.
     location: {
       type: {
         type:    String,
@@ -51,7 +50,6 @@ const demandeSchema = new mongoose.Schema(
         default: "Point",
       },
       coordinates: {
-        // [longitude, latitude] — convention GeoJSON
         type:     [Number],
         required: [true, "Les coordonnées sont requises"],
         validate: {
@@ -63,7 +61,6 @@ const demandeSchema = new mongoose.Schema(
         },
       },
       adresse: {
-        // Adresse humaine facultative (géocodage inversé côté front)
         type:    String,
         trim:    true,
         default: null,
@@ -78,8 +75,6 @@ const demandeSchema = new mongoose.Schema(
       index:   true,
     },
 
-    // Calculé à la création : createdAt + 48h
-    // Utilisé par les requêtes pour filtrer les demandes encore valides.
     expireAt: {
       type:  Date,
       index: true,
@@ -88,27 +83,23 @@ const demandeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ── Index géospatial ─────────────────────────────────
-// Obligatoire pour les requêtes $near / $geoWithin sur les coordonnées.
+// ── Index géospatial ──────────────────────────────────
 demandeSchema.index({ location: "2dsphere" });
 
-// ── Index composés fréquents ─────────────────────────
-// Prestataire cherchant les demandes actives pour son métier, triées par distance
+// ── Index composés ────────────────────────────────────
 demandeSchema.index({ metier: 1, statut: 1 });
-// Admin : toutes les demandes d'un client
 demandeSchema.index({ client: 1, statut: 1 });
 
-// ── Hook pre-save : calcul automatique de expireAt ───
-// expireAt = createdAt + 48h (uniquement à la création, jamais recalculé)
-demandeSchema.pre("save", function (next) {
+// ── Hook pre-save : calcul de expireAt ───────────────
+// Utilise une fonction async sans next() — pattern recommandé avec Mongoose 6+
+demandeSchema.pre("save", async function () {
   if (this.isNew) {
     const now = this.createdAt || new Date();
     this.expireAt = new Date(now.getTime() + 48 * 60 * 60 * 1000);
   }
-  next();
 });
 
-// ── Méthode virtuelle : demande encore valide ? ───────
+// ── Virtual ───────────────────────────────────────────
 demandeSchema.virtual("isExpired").get(function () {
   return this.expireAt && new Date() > this.expireAt;
 });
