@@ -1,105 +1,98 @@
 // src/screens/NotFoundScreen.jsx
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
-const CSS = `
-  .nf-root {
-    min-height: 100vh;
-    background: #0a0804;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Sans', sans-serif;
-    position: relative; overflow: hidden;
-  }
-  .nf-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 50% 60% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
-  }
-  .nf-grid {
-    position: absolute; inset: 0; opacity: 0.03;
-    background-image:
-      linear-gradient(rgba(201,168,76,0.8) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201,168,76,0.8) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-  .nf-content {
-    position: relative; z-index: 1;
-    text-align: center; padding: 48px 24px;
-  }
-  .nf-404 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(100px, 20vw, 180px);
-    font-weight: 700; line-height: 1;
-    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.4));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
-    animation: nfFloat 4s ease-in-out infinite;
-  }
-  @keyframes nfFloat {
-    0%,100% { transform: translateY(0); }
-    50%      { transform: translateY(-12px); }
-  }
-  .nf-emoji { font-size: 48px; margin-bottom: 24px; display: block; }
-  .nf-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(24px, 4vw, 40px); font-weight: 700;
-    color: #f5f0e8; letter-spacing: -0.3px; margin-bottom: 12px;
-  }
-  .nf-title em { font-style: italic; color: #c9a84c; }
-  .nf-sub {
-    font-size: 15px; color: rgba(245,240,232,0.4);
-    font-weight: 300; line-height: 1.7;
-    max-width: 380px; margin: 0 auto 40px;
-  }
-  .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .nf-btn-primary {
-    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: #0a0804; background: linear-gradient(135deg, #c9a84c, #e8c97a);
-    border: none; cursor: pointer; padding: 14px 32px; border-radius: 8px;
-    transition: all 0.25s; box-shadow: 0 4px 20px rgba(201,168,76,0.25);
-  }
-  .nf-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.4); }
-  .nf-btn-ghost {
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    color: rgba(245,240,232,0.5); background: none;
-    border: 1px solid rgba(201,168,76,0.15); cursor: pointer;
-    padding: 14px 28px; border-radius: 8px; transition: all 0.25s;
-  }
-  .nf-btn-ghost:hover { border-color: rgba(201,168,76,0.4); color: #f5f0e8; }
-`;
+import logo from "../logo.png";
+import "./NotFoundScreen.scss";
 
 const NotFoundScreen = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!document.getElementById("nf-css")) {
-      const s = document.createElement("style"); s.id = "nf-css"; s.textContent = CSS;
-      document.head.appendChild(s);
-    }
-  }, []);
-
   return (
     <div className="nf-root">
-      <div className="nf-bg" />
-      <div className="nf-grid" />
+
+      {/* ── Arrière-plan décoratif ── */}
+      <div className="nf-bg">
+        <div className="nf-bg__grid" />
+        <div className="nf-bg__orb nf-bg__orb--one"  />
+        <div className="nf-bg__orb nf-bg__orb--two"  />
+        <div className="nf-bg__orb nf-bg__orb--three"/>
+        <div className="nf-bg__bubble nf-bg__bubble--a"/>
+        <div className="nf-bg__bubble nf-bg__bubble--b"/>
+        <div className="nf-bg__bubble nf-bg__bubble--c"/>
+        <div className="nf-bg__bubble nf-bg__bubble--d"/>
+        <div className="nf-bg__dot nf-bg__dot--a"/>
+        <div className="nf-bg__dot nf-bg__dot--b"/>
+        <div className="nf-bg__dot nf-bg__dot--c"/>
+      </div>
+
+      {/* ── Logo Hopela ── */}
+      <div className="nf-logo">
+        <img src={logo} alt="Hopela" />
+      </div>
+
+      {/* ── Contenu ── */}
       <div className="nf-content">
-        <div className="nf-404">404</div>
-        <span className="nf-emoji">🗺️</span>
-        <h1 className="nf-title">Page <em>introuvable</em></h1>
+
+        {/* Badge */}
+        <div className="nf-badge">
+          <span className="nf-badge__dot" />
+          Erreur 404
+        </div>
+
+        {/* Gros 404 */}
+        <div className="nf-number">404</div>
+
+        {/* Divider animé */}
+        <div className="nf-divider">
+          <span className="nf-divider__line" />
+          <span className="nf-divider__emoji">🚀</span>
+          <span className="nf-divider__line" />
+        </div>
+
+        {/* Titre jeu de mots */}
+        <h1 className="nf-title">
+          <span className="nf-title__hop">Hop là&nbsp;!</span>
+          {" "}Cette page s'est envolée
+        </h1>
+
+        {/* Description */}
         <p className="nf-sub">
-          Cette page n'existe pas ou a été déplacée.
-          Retournez à l'accueil pour trouver votre prestataire.
+          On dirait que cette page a décollé sans prévenir.
+          Pas de panique — sur <strong>Hopela</strong>, on trouve
+          toujours la bonne adresse.
         </p>
+
+        {/* Info */}
+        <div className="nf-info">
+          <span className="nf-info__icon">💡</span>
+          <span>
+            L'URL saisie est incorrecte ou la page a été déplacée.
+            Utilisez les boutons ci-dessous pour reprendre votre navigation.
+          </span>
+        </div>
+
+        {/* Boutons */}
         <div className="nf-actions">
-          <button className="nf-btn-primary" onClick={() => navigate("/")}>
-            Retour à l'accueil
+          <button
+            className="nf-btn nf-btn--primary"
+            onClick={() => navigate("/")}
+          >
+            🏠 Retour à l'accueil
           </button>
-          <button className="nf-btn-ghost" onClick={() => navigate(-1)}>
+          <button
+            className="nf-btn nf-btn--ghost"
+            onClick={() => navigate(-1)}
+          >
             ← Page précédente
           </button>
         </div>
+
+        {/* Dots */}
+        <div className="nf-dots">
+          <span className="nf-dots__item nf-dots__item--active" />
+          <span className="nf-dots__item nf-dots__item--md"     />
+          <span className="nf-dots__item nf-dots__item--sm"     />
+        </div>
+
       </div>
     </div>
   );

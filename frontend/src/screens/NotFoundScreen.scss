@@ -1,0 +1,435 @@
+// src/screens/NotFoundScreen.scss
+@use '../styles/variables' as v;
+
+// ── Tokens locaux ──────────────────────────────────────────────
+$nf-primary      : #00a6b2;
+$nf-primary-soft : rgba(0, 166, 178, 0.08);
+$nf-primary-mid  : rgba(0, 166, 178, 0.20);
+$nf-text         : #102a43;
+$nf-sub          : #5b7083;
+$nf-bg-from      : #f0fafb;
+$nf-bg-to        : #eef9f9;
+$nf-border       : rgba(16, 42, 67, 0.08);
+$nf-white        : #ffffff;
+
+// ── Root ───────────────────────────────────────────────────────
+.nf-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, $nf-bg-from 0%, #f7faf9 55%, $nf-bg-to 100%);
+  font-family: v.$font-sans;
+  color: $nf-text;
+  position: relative;
+  overflow: hidden;
+  padding: v.$space-6;
+}
+
+// ── Background déco ────────────────────────────────────────────
+.nf-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  &__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 166, 178, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 166, 178, 0.04) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  &__orb {
+    position: absolute;
+    border-radius: 50%;
+    background: $nf-primary;
+    filter: blur(130px);
+
+    &--one {
+      top: -12%;
+      left: -10%;
+      width: 480px;
+      height: 480px;
+      opacity: 0.10;
+      animation: nfFloat 9s ease-in-out infinite;
+    }
+
+    &--two {
+      bottom: -14%;
+      right: -8%;
+      width: 520px;
+      height: 520px;
+      opacity: 0.07;
+      animation: nfFloat 12s ease-in-out infinite reverse;
+    }
+
+    &--three {
+      top: 38%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      opacity: 0.04;
+      animation: nfFloat 7s ease-in-out infinite 2s;
+    }
+  }
+
+  &__bubble {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid $nf-primary-mid;
+    animation: nfSpin linear infinite;
+
+    &--a {
+      top: 16%;
+      right: 12%;
+      width: 70px;
+      height: 70px;
+      animation-duration: 18s;
+      opacity: 0.45;
+    }
+
+    &--b {
+      bottom: 20%;
+      left: 9%;
+      width: 48px;
+      height: 48px;
+      animation-duration: 24s;
+      animation-direction: reverse;
+      opacity: 0.35;
+    }
+
+    &--c {
+      top: 60%;
+      right: 20%;
+      width: 30px;
+      height: 30px;
+      animation-duration: 14s;
+      opacity: 0.30;
+    }
+
+    &--d {
+      top: 30%;
+      left: 16%;
+      width: 20px;
+      height: 20px;
+      animation-duration: 20s;
+      animation-direction: reverse;
+      opacity: 0.25;
+    }
+  }
+
+  // Petits points flottants
+  &__dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $nf-primary;
+    animation: nfFloat ease-in-out infinite;
+
+    &--a {
+      top: 24%;
+      left: 22%;
+      opacity: 0.30;
+      animation-duration: 6s;
+    }
+
+    &--b {
+      top: 72%;
+      right: 28%;
+      opacity: 0.25;
+      animation-duration: 8s;
+      animation-delay: 1s;
+    }
+
+    &--c {
+      top: 44%;
+      right: 10%;
+      opacity: 0.20;
+      animation-duration: 7s;
+      animation-delay: 2s;
+    }
+  }
+}
+
+// ── Logo ───────────────────────────────────────────────────────
+.nf-logo {
+  position: relative;
+  z-index: 1;
+  margin-bottom: v.$space-12;
+  animation: nfFadeDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  img {
+    height: 44px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 2px 12px rgba(0, 166, 178, 0.18));
+  }
+}
+
+// ── Contenu principal ──────────────────────────────────────────
+.nf-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 560px;
+  animation: nfFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+// ── Badge eyebrow ──────────────────────────────────────────────
+.nf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 16px;
+  border-radius: v.$radius-full;
+  background: $nf-primary-soft;
+  border: 1px solid $nf-primary-mid;
+  color: $nf-primary;
+  font-size: v.$text-xs;
+  font-weight: v.$font-bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: v.$space-8;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $nf-primary;
+    flex-shrink: 0;
+    animation: nfPulse 1.8s ease-in-out infinite;
+  }
+}
+
+// ── Numéro 404 ─────────────────────────────────────────────────
+.nf-number {
+  font-size: clamp(96px, 20vw, 160px);
+  font-weight: v.$font-black;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: transparent;
+  background: linear-gradient(
+    140deg,
+    rgba(0, 166, 178, 0.18) 0%,
+    rgba(0, 166, 178, 0.60) 50%,
+    rgba(95, 217, 223, 0.38) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  margin-bottom: v.$space-4;
+  animation: nfFloat 5s ease-in-out infinite;
+  user-select: none;
+}
+
+// ── Divider ────────────────────────────────────────────────────
+.nf-divider {
+  display: flex;
+  align-items: center;
+  gap: v.$space-4;
+  max-width: 300px;
+  margin: 0 auto v.$space-6;
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 166, 178, 0.22), transparent);
+  }
+
+  &__emoji {
+    font-size: 24px;
+    animation: nfBounce 2.6s ease-in-out infinite;
+    display: block;
+  }
+}
+
+// ── Titre ──────────────────────────────────────────────────────
+.nf-title {
+  font-size: clamp(v.$text-2xl, 5vw, v.$text-4xl);
+  font-weight: v.$font-extrabold;
+  letter-spacing: -0.03em;
+  line-height: v.$leading-tight;
+  color: $nf-text;
+  margin-bottom: v.$space-4;
+
+  &__hop {
+    color: $nf-primary;
+    font-style: italic;
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 1px;
+      width: 100%;
+      height: 9px;
+      background: rgba(0, 166, 178, 0.13);
+      border-radius: v.$radius-sm;
+      transform: skewX(-5deg);
+      z-index: -1;
+    }
+  }
+}
+
+// ── Sous-titre ─────────────────────────────────────────────────
+.nf-sub {
+  font-size: v.$text-base;
+  color: $nf-sub;
+  font-weight: v.$font-regular;
+  line-height: v.$leading-relaxed;
+  max-width: 400px;
+  margin: 0 auto v.$space-8;
+
+  strong {
+    color: $nf-primary;
+    font-weight: v.$font-semibold;
+  }
+}
+
+// ── Info box ───────────────────────────────────────────────────
+.nf-info {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: v.$space-2;
+  padding: 12px 18px;
+  border-radius: v.$radius-lg;
+  background: $nf-primary-soft;
+  border: 1px solid rgba(0, 166, 178, 0.16);
+  color: $nf-sub;
+  font-size: v.$text-sm;
+  font-weight: v.$font-medium;
+  line-height: v.$leading-relaxed;
+  margin-bottom: v.$space-10;
+  text-align: left;
+
+  &__icon {
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+// ── Actions ────────────────────────────────────────────────────
+.nf-actions {
+  display: flex;
+  gap: v.$space-3;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: v.$space-10;
+}
+
+.nf-btn {
+  font-family: v.$font-sans;
+  cursor: pointer;
+  border-radius: v.$radius-md;
+  display: inline-flex;
+  align-items: center;
+  gap: v.$space-2;
+  transition: v.$transition-smooth;
+  white-space: nowrap;
+
+  &--primary {
+    font-size: v.$text-xs;
+    font-weight: v.$font-bold;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: $nf-white;
+    background: $nf-primary;
+    border: 1px solid $nf-primary;
+    padding: 14px 28px;
+    box-shadow: 0 4px 18px rgba(0, 166, 178, 0.28);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 166, 178, 0.42);
+      background: #009aa6;
+      border-color: #009aa6;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &--ghost {
+    font-size: v.$text-sm;
+    font-weight: v.$font-semibold;
+    color: $nf-sub;
+    background: rgba(255, 255, 255, 0.70);
+    border: 1px solid $nf-border;
+    padding: 14px 22px;
+    backdrop-filter: blur(6px);
+
+    &:hover {
+      border-color: rgba(0, 166, 178, 0.32);
+      color: $nf-primary;
+      background: $nf-primary-soft;
+    }
+  }
+}
+
+// ── Dots décoratifs ────────────────────────────────────────────
+.nf-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: v.$space-2;
+
+  &__item {
+    height: 7px;
+    border-radius: v.$radius-full;
+    transition: v.$transition-base;
+
+    &--active {
+      width: 28px;
+      background: $nf-primary;
+    }
+
+    &--md {
+      width: 7px;
+      background: rgba(0, 166, 178, 0.25);
+    }
+
+    &--sm {
+      width: 7px;
+      background: rgba(0, 166, 178, 0.14);
+    }
+  }
+}
+
+// ── Keyframes ──────────────────────────────────────────────────
+@keyframes nfFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes nfFadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes nfFloat {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-14px); }
+}
+
+@keyframes nfBounce {
+  0%, 100% { transform: translateY(0)    rotate(-4deg); }
+  50%       { transform: translateY(-7px) rotate(4deg);  }
+}
+
+@keyframes nfSpin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes nfPulse {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%       { opacity: 0.4; transform: scale(0.65); }
+}

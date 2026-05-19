@@ -1,0 +1,331 @@
+// src/screens/public/CGVScreen.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ──────────────────────────────────────────────
+$cgv-gold        : v.$adm-gold;
+$cgv-gold-light  : v.$adm-gold-light;
+$cgv-gold-dim    : v.$adm-border-10;
+$cgv-border      : v.$adm-border-12;
+$cgv-dark        : v.$adm-bg-root;
+$cgv-dark-2      : v.$adm-bg-sidebar;
+$cgv-dark-3      : v.$adm-bg-card;
+$cgv-cream       : v.$adm-text-main;
+$cgv-cream-dim   : v.$adm-text-dim;
+
+// ── Reset local ────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// ── Page ───────────────────────────────────────────────────────
+.cgv-page {
+  background: $cgv-dark;
+  min-height: 100vh;
+  color: $cgv-cream;
+  overflow-x: hidden;
+  font-family: v.$font-admin;
+}
+
+// ═══════════════════════════════════════
+// HERO
+// ═══════════════════════════════════════
+.cgv-hero {
+  min-height: 62vh;
+  padding: 140px v.$space-12 80px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+
+  @media (max-width: v.$bp-md) {
+    padding: 120px v.$space-6 70px;
+  }
+}
+
+.cgv-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 70% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 90%, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+}
+
+.cgv-hero-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image:
+    linear-gradient($cgv-border 1px, transparent 1px),
+    linear-gradient(90deg, $cgv-border 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.cgv-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+}
+
+// ── Eyebrow ────────────────────────────────────────────────────
+.cgv-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: v.$space-6;
+
+  &__line {
+    width: 28px;
+    height: 1px;
+    background: $cgv-gold;
+  }
+
+  &__text {
+    font-size: v.$text-xs;
+    font-weight: v.$font-semibold;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: $cgv-gold;
+  }
+}
+
+// ── H1 ─────────────────────────────────────────────────────────
+.cgv-hero__title {
+  font-family: v.$font-display;
+  font-size: clamp(56px, 8vw, 92px);
+  line-height: 0.95;
+  letter-spacing: -2px;
+  margin-bottom: v.$space-6;
+  color: $cgv-cream;
+
+  @media (max-width: 520px) {
+    line-height: 1.02;
+  }
+
+  em {
+    font-style: italic;
+    background: linear-gradient(90deg, $cgv-gold, $cgv-gold-light, $cgv-gold);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.cgv-hero__sub {
+  font-size: 17px;
+  line-height: 1.9;
+  color: $cgv-cream-dim;
+  font-weight: v.$font-regular;
+  max-width: 580px;
+}
+
+// ── Badge ──────────────────────────────────────────────────────
+.cgv-badge {
+  margin-top: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: v.$radius-full;
+  background: rgba(201, 168, 76, 0.07);
+  border: 1px solid $cgv-border;
+  font-size: v.$text-xs;
+  color: $cgv-cream-dim;
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $cgv-gold;
+  }
+}
+
+// ═══════════════════════════════════════
+// CONTENT
+// ═══════════════════════════════════════
+.cgv-content {
+  max-width: v.$max-content;
+  margin: 0 auto;
+  padding: v.$space-10 v.$space-12 120px;
+
+  @media (max-width: v.$bp-md) {
+    padding: v.$space-5 v.$space-6 80px;
+  }
+}
+
+// ── Intro ──────────────────────────────────────────────────────
+.cgv-intro {
+  margin-bottom: 72px;
+  max-width: 760px;
+
+  &__title {
+    font-family: v.$font-display;
+    font-size: clamp(36px, 4vw, 56px);
+    margin-bottom: v.$space-4;
+    line-height: v.$leading-snug;
+
+    em {
+      color: $cgv-gold;
+      font-style: italic;
+    }
+  }
+
+  &__text {
+    color: $cgv-cream-dim;
+    line-height: 1.9;
+    font-size: v.$text-base;
+    font-weight: v.$font-regular;
+  }
+}
+
+// ── Grid ───────────────────────────────────────────────────────
+.cgv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: v.$space-6;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ═══════════════════════════════════════
+// CARDS
+// ═══════════════════════════════════════
+.cgv-card {
+  position: relative;
+  background: rgba(17, 14, 8, 0.88);
+  border: 1px solid $cgv-border;
+  border-radius: v.$radius-3xl;
+  padding: 42px 34px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: v.$transition-smooth;
+
+  @media (max-width: 520px) {
+    padding: v.$space-8 v.$space-6;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(201, 168, 76, 0.34);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.40),
+      0 0 0 1px rgba(201, 168, 76, 0.08);
+  }
+
+  &__number {
+    font-family: v.$font-display;
+    font-size: 72px;
+    font-weight: v.$font-bold;
+    line-height: 1;
+    margin-bottom: v.$space-5;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.22), rgba(201, 168, 76, 0.05));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__title {
+    font-family: v.$font-display;
+    font-size: 28px;
+    font-weight: v.$font-bold;
+    margin-bottom: v.$space-4;
+    color: $cgv-cream;
+
+    @media (max-width: 520px) {
+      font-size: v.$text-xl;
+    }
+  }
+
+  &__text {
+    font-size: v.$text-sm;
+    line-height: 1.9;
+    color: $cgv-cream-dim;
+    font-weight: v.$font-regular;
+  }
+}
+
+// ═══════════════════════════════════════
+// CTA
+// ═══════════════════════════════════════
+.cgv-cta {
+  margin: 0 v.$space-8 100px;
+  padding: 90px v.$space-12;
+  border-radius: 28px;
+  background: linear-gradient(135deg, $cgv-dark-2, $cgv-dark-3);
+  border: 1px solid $cgv-border;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+
+  @media (max-width: 900px) {
+    margin: 0 v.$space-4 70px;
+    padding: 60px v.$space-6;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 80% at 50% 120%, rgba(201, 168, 76, 0.10), transparent);
+  }
+
+  &__title {
+    position: relative;
+    font-family: v.$font-display;
+    font-size: clamp(40px, 5vw, 70px);
+    line-height: v.$leading-tight;
+    margin-bottom: v.$space-5;
+
+    em {
+      color: $cgv-gold;
+      font-style: italic;
+    }
+  }
+
+  &__text {
+    position: relative;
+    max-width: 680px;
+    margin: 0 auto v.$space-10;
+    color: $cgv-cream-dim;
+    line-height: 1.8;
+    font-size: v.$text-base;
+  }
+}
+
+// ── Bouton ─────────────────────────────────────────────────────
+.cgv-btn {
+  position: relative;
+  border: none;
+  background: linear-gradient(135deg, $cgv-gold, $cgv-gold-light);
+  color: $cgv-dark;
+  font-family: v.$font-admin;
+  font-weight: v.$font-bold;
+  font-size: v.$text-xs;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 18px 34px;
+  border-radius: v.$radius-md;
+  cursor: pointer;
+  transition: v.$transition-smooth;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(201, 168, 76, 0.35);
+  }
+}
+
+// ═══════════════════════════════════════
+// ANIMATIONS
+// ═══════════════════════════════════════
+@keyframes cgvFadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.fade-up   { animation: cgvFadeUp 0.7s ease both;          }
+.fade-up-1 { animation: cgvFadeUp 0.7s 0.1s ease both;     }
+.fade-up-2 { animation: cgvFadeUp 0.7s 0.2s ease both;     }
+.fade-up-3 { animation: cgvFadeUp 0.7s 0.3s ease both;     }

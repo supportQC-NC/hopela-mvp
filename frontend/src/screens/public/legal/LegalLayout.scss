@@ -1,0 +1,376 @@
+// src/screens/public/legal/LegalLayout.scss
+@use '../../../styles/variables' as v;
+
+// ── Tokens ─────────────────────────────────────────────────────
+$lg-primary      : #00a6b2;
+$lg-primary-soft : rgba(0, 166, 178, 0.08);
+$lg-primary-mid  : rgba(0, 166, 178, 0.22);
+$lg-text         : #102a43;
+$lg-sub          : #5b7083;
+$lg-bg-from      : #f0fafb;
+$lg-bg-to        : #eef9f9;
+$lg-border       : rgba(16, 42, 67, 0.08);
+$lg-white        : #ffffff;
+
+// ══════════════════════════════════════════════════════════════
+// ROOT
+// ══════════════════════════════════════════════════════════════
+.legal-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, $lg-bg-from 0%, #f7faf9 55%, $lg-bg-to 100%);
+  font-family: v.$font-sans;
+  color: $lg-text;
+  position: relative;
+  overflow-x: hidden;
+}
+
+// ══════════════════════════════════════════════════════════════
+// HERO PHOTO
+// ══════════════════════════════════════════════════════════════
+.legal-hero {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    filter: brightness(0.45) saturate(0.8);
+  }
+
+  // Overlay dégradé teal
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 166, 178, 0.18) 0%,
+      rgba(16, 42, 67, 0.55) 60%,
+      rgba(16, 42, 67, 0.80) 100%
+    );
+  }
+
+  // Grille subtile par-dessus
+  &__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: v.$space-4;
+    padding: 0 v.$space-6;
+    animation: lgFadeDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+// Logo dans le hero
+.legal-logo {
+  img {
+    height: 100px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
+  }
+}
+
+// Badge eyebrow
+.legal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: v.$space-2;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  border-radius: v.$radius-full;
+  padding: 6px 16px;
+  font-size: v.$text-xs;
+  font-weight: v.$font-semibold;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.90);
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $lg-primary;
+    animation: lgPulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+}
+
+// Titre hero
+.legal-hero-title {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: v.$font-extrabold;
+  line-height: 1.15;
+  color: $lg-white;
+  margin: 0;
+
+  span {
+    font-style: italic;
+    color: $lg-primary;
+  }
+}
+
+// Date
+.legal-hero-date {
+  font-size: v.$text-sm;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+// ══════════════════════════════════════════════════════════════
+// NAV TABS — barre sticky sous le hero
+// ══════════════════════════════════════════════════════════════
+.legal-nav-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid $lg-border;
+  box-shadow: 0 2px 16px rgba(16, 42, 67, 0.06);
+}
+
+.legal-nav {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: v.$space-1;
+  padding: v.$space-3 v.$space-6;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  &__link {
+    flex-shrink: 0;
+    font-size: v.$text-sm;
+    font-weight: v.$font-semibold;
+    color: $lg-sub;
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: v.$radius-full;
+    border: 1px solid transparent;
+    transition: v.$transition-smooth;
+    white-space: nowrap;
+
+    &:hover {
+      color: $lg-primary;
+      background: $lg-primary-soft;
+      border-color: $lg-primary-mid;
+    }
+
+    &--active {
+      color: $lg-white;
+      background: $lg-primary;
+      border-color: $lg-primary;
+      box-shadow: 0 4px 14px rgba(0, 166, 178, 0.30);
+
+      &:hover {
+        color: $lg-white;
+        background: #009aa6;
+        border-color: #009aa6;
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// BODY CONTENU
+// ══════════════════════════════════════════════════════════════
+.legal-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+  padding: v.$space-12 v.$space-6 v.$space-12;
+
+  animation: lgFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+
+  // Intro paragraph
+  > p:first-child {
+    font-size: v.$text-md;
+    color: $lg-sub;
+    line-height: 1.75;
+    margin-bottom: v.$space-10;
+    padding: v.$space-5 v.$space-6;
+    background: $lg-primary-soft;
+    border-left: 3px solid $lg-primary;
+    border-radius: 0 v.$radius-md v.$radius-md 0;
+  }
+
+  h2 {
+    font-size: v.$text-xl;
+    font-weight: v.$font-bold;
+    color: $lg-text;
+    margin: v.$space-10 0 v.$space-4;
+    padding-left: v.$space-4;
+    border-left: 3px solid $lg-primary;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: v.$text-md;
+    font-weight: v.$font-semibold;
+    color: $lg-primary;
+    margin: v.$space-6 0 v.$space-2;
+  }
+
+  p {
+    font-size: v.$text-sm;
+    color: $lg-sub;
+    line-height: 1.8;
+    margin-bottom: v.$space-4;
+  }
+
+  ul, ol {
+    padding-left: v.$space-5;
+    margin-bottom: v.$space-4;
+
+    li {
+      font-size: v.$text-sm;
+      color: $lg-sub;
+      line-height: 1.8;
+      margin-bottom: v.$space-2;
+
+      &::marker {
+        color: $lg-primary;
+      }
+    }
+  }
+
+  a {
+    color: $lg-primary;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: v.$transition-base;
+
+    &:hover { opacity: 0.75; }
+  }
+
+  strong {
+    color: $lg-text;
+    font-weight: v.$font-semibold;
+  }
+
+  // Tables
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: v.$space-6 0;
+    border-radius: v.$radius-md;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(16, 42, 67, 0.06);
+
+    thead {
+      background: $lg-primary;
+
+      th {
+        font-size: v.$text-xs;
+        font-weight: v.$font-bold;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: $lg-white;
+        padding: 12px 16px;
+        text-align: left;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $lg-border;
+        transition: background v.$transition-base;
+
+        &:last-child { border-bottom: none; }
+        &:hover { background: $lg-primary-soft; }
+      }
+
+      td {
+        font-size: v.$text-sm;
+        color: $lg-sub;
+        padding: 12px 16px;
+        line-height: 1.6;
+
+        &:first-child {
+          font-weight: v.$font-semibold;
+          color: $lg-primary;
+        }
+      }
+    }
+  }
+
+  // Section cards
+  .legal-section {
+    background: $lg-white;
+    border: 1px solid $lg-border;
+    border-radius: v.$radius-lg;
+    padding: v.$space-6 v.$space-8;
+    margin-bottom: v.$space-6;
+    box-shadow: 0 2px 12px rgba(16, 42, 67, 0.04);
+    transition: box-shadow v.$transition-smooth;
+
+    &:hover {
+      box-shadow: 0 6px 24px rgba(0, 166, 178, 0.08);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// FOOTER LEGAL
+// ══════════════════════════════════════════════════════════════
+.legal-footer {
+  text-align: center;
+  padding: v.$space-8 v.$space-6;
+  border-top: 1px solid $lg-border;
+  font-size: v.$text-xs;
+  color: rgba($lg-sub, 0.6);
+
+  a {
+    color: $lg-primary;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// KEYFRAMES
+// ══════════════════════════════════════════════════════════════
+@keyframes lgFadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes lgFadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes lgPulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.4; transform: scale(0.65); }
+}
