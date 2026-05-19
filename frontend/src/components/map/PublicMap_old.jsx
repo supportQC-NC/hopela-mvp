@@ -23,20 +23,11 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const MAP_STYLES = [
   {
-    id: "plan",
-    label: "🗺️ Plan",
-    url: "mapbox://styles/mapbox/streets-v12",
-    pitch: 0,
-    terrain: false,
-    bearing: 0,
-  },
-  {
     id: "nuit",
     label: "🌙 Nuit",
     url: "mapbox://styles/mapbox/dark-v11",
     pitch: 45,
     terrain: false,
-    bearing: -10,
   },
   {
     id: "satellite",
@@ -44,7 +35,13 @@ const MAP_STYLES = [
     url: "mapbox://styles/mapbox/satellite-streets-v12",
     pitch: 60,
     terrain: true,
-    bearing: -15,
+  },
+  {
+    id: "plan",
+    label: "🗺️ Plan",
+    url: "mapbox://styles/mapbox/streets-v12",
+    pitch: 0,
+    terrain: false,
   },
   {
     id: "relief",
@@ -52,7 +49,6 @@ const MAP_STYLES = [
     url: "mapbox://styles/mapbox/outdoors-v12",
     pitch: 60,
     terrain: true,
-    bearing: -10,
   },
 ];
 
@@ -230,7 +226,7 @@ const PublicMap = ({
   };
 
   const [selected, setSelected] = useState(null);
-  const [styleId, setStyleId] = useState("plan");
+  const [styleId, setStyleId] = useState("nuit");
   const [showRayonCtrl, setShowRayonCtrl] = useState(false);
   const [showSrcPicker, setShowSrcPicker] = useState(false);
   const [rayonLocal, setRayonLocal] = useState(rayon != null ? rayon : 10);
@@ -239,8 +235,8 @@ const PublicMap = ({
     longitude: 166.458,
     latitude: -22.272,
     zoom: 11.5,
-    pitch: 0,
-    bearing: 0,
+    pitch: 45,
+    bearing: -10,
   });
 
   const mapRef = useRef(null);
@@ -332,8 +328,8 @@ const PublicMap = ({
     setSelected(null);
     setViewState((v) => ({
       ...v,
-      pitch: st?.pitch ?? 0,
-      bearing: st?.bearing ?? 0,
+      pitch: st.pitch,
+      bearing: newId === "satellite" ? -15 : -10,
     }));
   };
 
@@ -344,8 +340,7 @@ const PublicMap = ({
       longitude: pos.longitude,
       latitude: pos.latitude,
       zoom: 12,
-      pitch: currentStyle?.pitch ?? 0,
-      bearing: currentStyle?.bearing ?? 0,
+      pitch: currentStyle.pitch,
     }));
   };
 
