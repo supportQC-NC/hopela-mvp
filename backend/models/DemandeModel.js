@@ -95,7 +95,7 @@ demandeSchema.index({ client: 1, statut: 1 });
 demandeSchema.pre("save", async function () {
   if (this.isNew) {
     const now = this.createdAt || new Date();
-    this.expireAt = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+    this.expireAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   }
 });
 
