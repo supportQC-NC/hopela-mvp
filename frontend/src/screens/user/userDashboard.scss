@@ -12,6 +12,7 @@ $red:         #ff465a;
 $red-dark:    #d64255;
 $green:       #108f52;
 $blue:        #1a6fc4;
+$orange:      #f59e0b;
 $white:       #ffffff;
 
 $card-bg:     linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.56) 52%, rgba(235,249,251,.42));
@@ -25,17 +26,32 @@ $card-radius: 30px;
 
 @keyframes slideUp {
   from { transform: translateY(100%); }
-  to   { transform: translateY(0);    }
+  to   { transform: translateY(0); }
+}
+
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1);    }
+  0%, 100% { transform: scale(1); }
   50%       { transform: scale(1.08); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+@keyframes pulseUrgent {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .6; }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -43,6 +59,7 @@ $card-radius: 30px;
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud {
+  position: relative;
   min-height: 100vh;
   overflow-x: hidden;
   background:
@@ -50,6 +67,20 @@ $card-radius: 30px;
     radial-gradient(circle at 88% 12%, rgba($red,  .045), transparent 34%),
     $white;
   color: $navy;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba($navy, .018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba($navy, .018) 1px, transparent 1px);
+    background-size: 72px 72px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * { position: relative; z-index: 1; }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -74,86 +105,39 @@ $card-radius: 30px;
 
 .ud-brand {
   min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
+  display: inline-flex; align-items: center; gap: 12px;
+  border: none; background: transparent; cursor: pointer; padding: 0;
 }
 
-.ud-logo-img {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
+.ud-logo-img  { width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; }
+.ud-logo-name { color: $navy; font-size: 1.25rem; font-weight: 800; letter-spacing: -.04em; white-space: nowrap; }
 
-.ud-logo-name {
-  color: $navy;
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -.04em;
-  white-space: nowrap;
-}
-
-.ud-header-right {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.ud-header-right { min-width: 0; display: flex; align-items: center; gap: 8px; }
 
 .ud-user-pill {
   min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 10px 5px 5px;
-  border-radius: 9999px;
-  background: rgba($teal, .07);
-  border: 1px solid rgba($teal, .14);
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 5px; border-radius: 9999px;
+  background: rgba($teal, .07); border: 1px solid rgba($teal, .14);
 }
 
 .ud-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 9999px;
-  display: grid;
-  place-items: center;
-  background: $teal;
-  color: $white;
-  font-size: 12px;
-  font-weight: 700;
-  flex-shrink: 0;
+  width: 34px; height: 34px; border-radius: 9999px;
+  display: grid; place-items: center;
+  background: $teal; color: $white; font-size: 12px; font-weight: 700; flex-shrink: 0;
 }
 
 .ud-user-name {
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: $navy;
-  font-size: .8125rem;
-  font-weight: 700;
+  max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: $navy; font-size: .8125rem; font-weight: 700;
 }
 
 .ud-logout {
   height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba($red, .18);
-  background: rgba($red, .06);
-  color: $red-dark;
-  border-radius: 9999px;
-  padding: 0 16px;
-  cursor: pointer;
-  font-size: .8125rem;
-  font-weight: 700;
-  transition: all .3s ease;
-
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid rgba($red, .18); background: rgba($red, .06);
+  color: $red-dark; border-radius: 9999px; padding: 0 16px;
+  cursor: pointer; font-size: .8125rem; font-weight: 700; transition: all .3s ease;
   &:hover { transform: translateY(-2px); background: rgba($red, .1); }
 }
 
@@ -161,46 +145,52 @@ $card-radius: 30px;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BANNIERES
+// ✅ FIX 1 — sticky sous le header, jamais sous la map
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-geo-banner {
+  // Colle sous le header et reste au-dessus de tout le contenu dont la map
+  position: sticky;
+  top: 66px;
+  z-index: 150;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 20px;
-  background: rgba(255,193,7,.08);
-  border-bottom: 1px solid rgba(255,193,7,.18);
+  padding: 10px 16px;
+  background: rgba(255,240,160,.96);
+  border-bottom: 1px solid rgba(255,193,7,.3);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(255,193,7,.14);
 }
 
 .ud-geo-banner-text {
-  flex: 1;
-  color: #9a6b00;
-  font-size: .8125rem;
-  line-height: 1.5;
-
+  flex: 1; color: #805600; font-size: .8125rem; line-height: 1.5;
   strong, span { display: block; }
-  strong { color: #805600; }
+  strong { font-weight: 800; }
+  span   { opacity: .85; font-size: .75rem; }
 }
 
 .ud-geo-banner-btn,
 .ud-geo-banner-close {
-  border: none;
-  border-radius: 9999px;
-  padding: 8px 12px;
-  background: rgba(255,193,7,.14);
-  color: #805600;
-  cursor: pointer;
-  font-weight: 700;
+  border: none; border-radius: 9999px; padding: 7px 12px;
+  background: rgba(180,120,0,.12); color: #805600;
+  cursor: pointer; font-weight: 700; font-size: .8125rem;
+  transition: background .2s ease;
+  &:hover { background: rgba(180,120,0,.2); }
 }
 
+.ud-geo-banner-icon { font-size: 18px; }
+
 .ud-success-banner {
+  position: sticky;
+  top: 66px;
+  z-index: 150;
   padding: 12px 20px;
-  background: rgba($green, .08);
-  border-bottom: 1px solid rgba($green, .18);
-  color: darken($green, 5%);
-  font-size: .875rem;
-  font-weight: 700;
-  text-align: center;
+  background: rgba(220,250,235,.97);
+  border-bottom: 1px solid rgba($green, .22);
+  color: darken($green, 8%);
+  font-size: .875rem; font-weight: 700; text-align: center;
+  backdrop-filter: blur(8px);
   animation: fadeIn .3s ease;
 }
 
@@ -214,147 +204,139 @@ $card-radius: 30px;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SKELETON LOADERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+$shimmer-base:  rgba($navy, .06);
+$shimmer-light: rgba($navy, .12);
+
+.ud-skeleton-list {
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.ud-skeleton-card {
+  padding: 20px;
+  border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+%shimmer {
+  border-radius: 8px;
+  background: linear-gradient(90deg, $shimmer-base 0%, $shimmer-light 40%, $shimmer-base 80%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.ud-skeleton-line {
+  @extend %shimmer;
+  height: 14px;
+  &--short  { width: 35%; }
+  &--medium { width: 60%; }
+  &--long   { width: 85%; }
+  &--full   { width: 100%; }
+  &--thick  { height: 20px; }
+  &--avatar { width: 48px; height: 48px; border-radius: 18px; flex-shrink: 0; }
+}
+
+.ud-skeleton-presta {
+  display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;
+  .ud-skeleton-presta-info { display: flex; flex-direction: column; gap: 8px; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // ONGLET CARTE
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-map-tab {
   height: calc(100vh - 66px - 86px);
   min-height: 560px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: tabFadeIn .22s cubic-bezier(.22,1,.36,1) both;
 }
 
-.ud-map-wrap {
-  position: relative;
-  height: 55%;
-  min-height: 280px;
-  flex-shrink: 0;
-}
+.ud-map-wrap { position: relative; height: 55%; min-height: 280px; flex-shrink: 0; }
 
-// ── FAB Publier un besoin ──
 .ud-fab-demande {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  z-index: 10;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 9999px;
-  background: $navy;
-  color: $white;
-  font-size: .875rem;
-  font-weight: 700;
-  cursor: pointer;
+  position: absolute; bottom: 16px; right: 16px; z-index: 10;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border: none; border-radius: 9999px;
+  background: $navy; color: $white; font-size: .875rem; font-weight: 700; cursor: pointer;
   box-shadow: 0 16px 40px rgba($navy, .3);
   transition: all .3s cubic-bezier(.25,.8,.25,1);
-
-  &:hover {
-    transform: translateY(-3px);
-    background: darken($navy, 4%);
-    box-shadow: 0 24px 56px rgba($navy, .38);
-  }
-
+  &:hover  { transform: translateY(-3px); background: darken($navy, 4%); box-shadow: 0 24px 56px rgba($navy, .38); }
   &:active { transform: translateY(-1px); }
 }
 
 .ud-fab-icon { font-size: 1.125rem; }
 
-// ── Panel prestataires ──
 .ud-presta-panel {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+  flex: 1; min-height: 0; overflow-y: auto;
   border-top: 1px solid rgba($navy, .08);
-  background:
-    radial-gradient(circle at 12% 10%, rgba($teal, .06), transparent 36%),
-    $white;
+  background: radial-gradient(circle at 12% 10%, rgba($teal, .06), transparent 36%), $white;
+  // ✅ FIX 2 — empêche le scroll horizontal à l'intérieur du panel
+  overflow-x: hidden;
 }
 
 .ud-presta-title {
-  width: min(100% - 40px, 1320px);
+  width: min(100% - 32px, 1320px);
   margin: 0 auto;
-  padding: 20px 0 12px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: $muted;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  padding: 16px 0 10px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  color: $muted; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
 
   strong {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 26px;
-    height: 22px;
-    border-radius: 9999px;
-    background: rgba($teal, .1);
-    border: 1px solid rgba($teal, .18);
-    color: $teal;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 26px; height: 22px; border-radius: 9999px;
+    background: rgba($teal, .1); border: 1px solid rgba($teal, .18); color: $teal;
   }
 }
 
 .ud-presta-list {
-  width: min(100% - 40px, 1320px);
-  margin: 0 auto 32px;
-  display: grid;
-  gap: 16px;
+  width: min(100% - 32px, 1320px);
+  margin: 0 auto 24px;
+  display: grid; gap: 12px;
 }
 
+// ✅ FIX 2 — card prestataire : layout flex colonne sur mobile
+// Plus de 3 colonnes qui débordent sur petit écran
 .ud-presta-card {
-  padding: 16px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
+}
+
+// Ligne du haut : avatar + infos
+.ud-presta-card-top {
+  display: flex;
   align-items: center;
-  gap: 16px;
-  border-radius: $card-radius;
-  border: $card-border;
-  background: $card-bg;
-  box-shadow: $card-shadow;
+  gap: 14px;
 }
 
 .ud-presta-avatar {
-  width: 48px;
-  height: 48px;
-  flex: 0 0 48px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  background: rgba($teal, .1);
-  border: 1px solid rgba($teal, .14);
-  color: $teal;
+  width: 44px; height: 44px; flex: 0 0 44px;
+  border-radius: 16px; display: grid; place-items: center; font-size: 20px;
+  background: rgba($teal, .1); border: 1px solid rgba($teal, .14); color: $teal;
 }
 
 .ud-presta-info {
-  min-width: 0;
-
-  h3 {
-    margin: 0 0 5px;
-    color: $navy;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-
-  p {
-    margin: 5px 0 0;
-    color: $muted;
-    font-size: .75rem;
-  }
+  flex: 1; min-width: 0;
+  h3 { margin: 0 0 4px; color: $navy; font-size: .9375rem; font-weight: 700; }
+  p  { margin: 4px 0 0; color: $muted; font-size: .75rem; }
 }
 
 .ud-presta-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: $muted;
-  font-size: .8125rem;
+  display: flex; flex-wrap: wrap; gap: 6px;
+  color: $muted; font-size: .8125rem;
+}
+
+// Ligne du bas : bouton pleine largeur
+.ud-presta-actions {
+  .ud-call-btn { width: 100%; justify-content: center; }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -364,787 +346,363 @@ $card-radius: 30px;
 .ud-demandes-toolbar {
   width: min(100% - 40px, 1320px);
   margin: 0 auto 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
 }
 
 .ud-demande-new-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
-  border: none;
-  border-radius: 9999px;
-  background: $navy;
-  color: $white;
-  font-size: .9375rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 16px 40px rgba($navy, .22);
-  transition: all .3s ease;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 24px 52px rgba($navy, .3);
-  }
-
-  &:disabled {
-    opacity: .45;
-    cursor: not-allowed;
-  }
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border: none; border-radius: 9999px;
+  background: $navy; color: $white; font-size: .9375rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 16px 40px rgba($navy, .22); transition: all .3s ease;
+  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 24px 52px rgba($navy, .3); }
+  &:disabled { opacity: .45; cursor: not-allowed; }
 }
 
-.ud-demande-limit-hint {
-  color: $muted;
-  font-size: .8125rem;
-}
+.ud-demande-limit-hint { color: $muted; font-size: .8125rem; }
 
 .ud-demande-list {
   width: min(100% - 40px, 1320px);
-  margin: 0 auto;
-  display: grid;
-  gap: 20px;
+  margin: 0 auto; display: grid; gap: 20px;
 }
 
-// ── Card demande ──
 .ud-demande-card {
   padding: 20px 24px;
-  border-radius: $card-radius;
-  border: $card-border;
-  background: $card-bg;
-  box-shadow: $card-shadow;
+  border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
   transition: all .3s cubic-bezier(.25,.8,.25,1);
-
   &:hover { transform: translateY(-4px); box-shadow: 0 36px 84px rgba(3,18,29,.14); }
-
-  // Accent couleur selon statut
-  &--green { border-left: 4px solid $green; }
-  &--grey  { border-left: 4px solid $muted; }
-  &--red   { border-left: 4px solid $red;   }
-  &--blue  { border-left: 4px solid $blue;  }
+  &--green  { border-left: 4px solid $green; }
+  &--grey   { border-left: 4px solid $muted; }
+  &--blue   { border-left: 4px solid $blue;  }
+  &--red    { border-left: 4px solid $red; background: linear-gradient(145deg, rgba($red,.03), rgba(255,255,255,.56) 52%, rgba(235,249,251,.42)); }
+  &--urgent { border-left: 4px solid $orange; background: linear-gradient(145deg, rgba($orange,.04), rgba(255,255,255,.56) 52%, rgba(235,249,251,.42)); }
 }
 
 .ud-demande-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
+  display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap;
+  gap: 8px; margin-bottom: 12px;
 }
 
-.ud-demande-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+.ud-demande-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-// Badge statut
 .ud-demande-statut {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-
-  &--green { background: rgba($green, .1); color: $green;  border: 1px solid rgba($green, .2); }
-  &--grey  { background: rgba($muted, .1); color: $muted;  border: 1px solid rgba($muted, .2); }
-  &--red   { background: rgba($red,   .1); color: $red-dark; border: 1px solid rgba($red, .2); }
-  &--blue  { background: rgba($blue,  .1); color: $blue;   border: 1px solid rgba($blue, .2); }
+  display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  &--green  { background: rgba($green,  .1); color: $green;    border: 1px solid rgba($green,  .2); }
+  &--grey   { background: rgba($muted,  .1); color: $muted;    border: 1px solid rgba($muted,  .2); }
+  &--red    { background: rgba($red,    .1); color: $red-dark; border: 1px solid rgba($red,    .2); }
+  &--blue   { background: rgba($blue,   .1); color: $blue;     border: 1px solid rgba($blue,   .2); }
+  &--urgent { background: rgba($orange, .12); color: darken($orange, 15%); border: 1px solid rgba($orange, .3); animation: pulseUrgent 1.8s ease-in-out infinite; }
 }
 
 .ud-demande-expire {
-  color: $muted;
-  font-size: .75rem;
-  font-style: italic;
+  color: $muted; font-size: .75rem; font-style: italic;
+  &--urgent  { color: darken($orange, 12%); font-weight: 700; font-style: normal; }
+  &--critical { color: $red-dark; font-weight: 800; font-style: normal; animation: pulseUrgent 1.4s ease-in-out infinite; }
 }
 
-.ud-demande-tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
+.ud-demande-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .ud-demande-tag {
-  padding: 4px 10px;
-  border-radius: 9999px;
-  background: rgba($teal, .08);
-  border: 1px solid rgba($teal, .16);
-  color: $teal;
-  font-size: 11px;
-  font-weight: 700;
-
-  &--metier {
-    background: rgba($navy, .06);
-    border-color: rgba($navy, .12);
-    color: $navy;
-  }
+  padding: 4px 10px; border-radius: 9999px;
+  background: rgba($teal, .08); border: 1px solid rgba($teal, .16); color: $teal;
+  font-size: 11px; font-weight: 700;
+  &--metier { background: rgba($navy, .06); border-color: rgba($navy, .12); color: $navy; }
 }
 
-.ud-demande-desc {
-  margin: 0 0 12px;
-  color: $navy;
-  font-size: .9375rem;
-  line-height: 1.55;
-  font-style: italic;
-}
-
-.ud-demande-loc {
-  margin-bottom: 8px;
-  color: $muted;
-  font-size: .8125rem;
-}
-
-.ud-demande-dates {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  color: $muted;
-  font-size: .75rem;
-  margin-bottom: 16px;
-}
-
-.ud-demande-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.ud-demande-desc  { margin: 0 0 12px; color: $navy; font-size: .9375rem; line-height: 1.55; font-style: italic; }
+.ud-demande-loc   { margin-bottom: 8px; color: $muted; font-size: .8125rem; }
+.ud-demande-dates { display: flex; gap: 16px; flex-wrap: wrap; color: $muted; font-size: .75rem; margin-bottom: 16px; }
+.ud-demande-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
 .ud-demande-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  border-radius: 9999px;
-  font-size: .8125rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: all .25s ease;
-
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 9999px; font-size: .8125rem; font-weight: 700;
+  cursor: pointer; border: none; transition: all .25s ease;
   &:disabled { opacity: .5; cursor: not-allowed; }
-
-  &--cloturer {
-    background: rgba($green, .1);
-    color: $green;
-    border: 1px solid rgba($green, .22);
-
-    &:hover:not(:disabled) {
-      background: $green;
-      color: $white;
-      transform: translateY(-2px);
-    }
-  }
-
-  &--annuler {
-    background: rgba($red, .08);
-    color: $red-dark;
-    border: 1px solid rgba($red, .2);
-
-    &:hover:not(:disabled) {
-      background: $red;
-      color: $white;
-      transform: translateY(-2px);
-    }
-  }
+  &--cloturer { background: rgba($green, .1); color: $green; border: 1px solid rgba($green, .22); &:hover:not(:disabled) { background: $green; color: $white; transform: translateY(-2px); } }
+  &--annuler  { background: rgba($red, .1); color: $red-dark; border: 1px solid rgba($red, .26); font-weight: 800; &:hover:not(:disabled) { background: $red; color: $white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba($red, .28); } }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ONGLET ADRESSES — commun
+// PAGES SECTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
-.ud-page-section,
+.ud-page-section {
+  position: relative; padding: 32px 0 80px;
+  animation: tabFadeIn .22s cubic-bezier(.22,1,.36,1) both;
+}
+
 .ud-profile-wrap {
-  position: relative;
-  padding: 32px 0 80px;
+  position: relative; padding: 32px 0 80px; display: grid; gap: 20px;
+  animation: tabFadeIn .22s cubic-bezier(.22,1,.36,1) both;
 }
 
 .ud-section,
 .ud-rayon-card,
 .ud-loc-list,
 .ud-add-btn,
-.ud-profile-wrap,
 .ud-empty,
 .ud-empty-presta {
   width: min(100% - 40px, 1320px);
-  margin-left:  auto;
-  margin-right: auto;
+  margin-left: auto; margin-right: auto;
 }
 
 .ud-section-title {
-  color: $navy;
-  font-size: clamp(34px, 5vw, 56px);
-  line-height: .96;
-  font-weight: 900;
-  letter-spacing: -.065em;
-  margin-bottom: 12px;
-
+  color: $navy; font-size: clamp(34px, 5vw, 56px); line-height: .96;
+  font-weight: 900; letter-spacing: -.065em; margin-bottom: 12px;
   em { color: $teal; font-style: italic; }
 }
 
-.ud-section-sub {
-  color: $muted;
-  font-size: .9375rem;
-  line-height: 1.7;
-  margin-bottom: 24px;
-}
+.ud-section-sub { color: $muted; font-size: .9375rem; line-height: 1.7; margin-bottom: 24px; }
 
 .ud-rayon-card {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding: 24px;
-  border-radius: $card-radius;
-  border: $card-border;
-  background: $card-bg;
-  box-shadow: $card-shadow;
+  margin-top: 20px; margin-bottom: 20px; padding: 24px;
+  border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
 }
 
-.ud-rayon-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.ud-rayon-label {
-  color: $muted;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-
-.ud-rayon-value {
-  color: $teal;
-  font-size: 1.333rem;
-  font-weight: 900;
-}
+.ud-rayon-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.ud-rayon-label { color: $muted; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.ud-rayon-value { color: $teal; font-size: 1.333rem; font-weight: 900; }
 
 .ud-rayon-slider {
-  width: 100%;
-  height: 5px;
-  appearance: none;
-  border-radius: 9999px;
-  background: linear-gradient(
-    to right,
-    $teal calc(var(--pct, 50%)),
-    rgba($teal, .14) calc(var(--pct, 50%))
-  );
-  outline: none;
-  cursor: pointer;
-
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 9999px;
-    background: $teal;
-    border: 3px solid $white;
-    box-shadow: 0 8px 18px rgba($teal, .3);
-  }
+  width: 100%; height: 5px; appearance: none; border-radius: 9999px;
+  background: linear-gradient(to right, $teal calc(var(--pct, 50%)), rgba($teal, .14) calc(var(--pct, 50%)));
+  outline: none; cursor: pointer;
+  &::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 9999px; background: $teal; border: 3px solid $white; box-shadow: 0 8px 18px rgba($teal, .3); }
 }
 
-.ud-rayon-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-}
+.ud-rayon-actions { display: flex; gap: 12px; margin-top: 16px; }
 
 .ud-rayon-save {
-  width: 100%;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 9999px;
-  background: $teal;
-  color: $white;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 16px 34px rgba($teal, .24);
-  transition: all .3s ease;
-
+  width: 100%; padding: 12px 20px; border: none; border-radius: 9999px;
+  background: $teal; color: $white; font-weight: 700; cursor: pointer;
+  box-shadow: 0 16px 34px rgba($teal, .24); transition: all .3s ease;
   &:hover:not(:disabled) { transform: translateY(-2px); background: $teal-light; }
   &:disabled { opacity: .5; cursor: not-allowed; }
 }
 
-.ud-rayon-hint {
-  margin-top: 12px;
-  text-align: center;
-  color: $muted;
-  font-size: .8125rem;
-}
+.ud-rayon-hint { margin-top: 12px; text-align: center; color: $muted; font-size: .8125rem; }
 
-.ud-loc-list {
-  display: grid;
-  gap: 16px;
-}
+.ud-loc-list { display: grid; gap: 16px; }
 
 .ud-loc-card {
-  padding: 20px;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  border-radius: $card-radius;
-  border: $card-border;
-  background: $card-bg;
-  box-shadow: $card-shadow;
+  padding: 16px; display: flex; align-items: flex-start; gap: 14px;
+  border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
   transition: all .3s cubic-bezier(.25,.8,.25,1);
-
-  &.is-default,
-  &.ud-loc-card--gps { border-color: rgba($teal, .26); }
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 36px 84px rgba(3,18,29,.14), 0 16px 38px rgba($teal, .09);
-  }
+  &.is-default, &.ud-loc-card--gps { border-color: rgba($teal, .26); }
+  &:hover { transform: translateY(-4px); box-shadow: 0 36px 84px rgba(3,18,29,.14), 0 16px 38px rgba($teal, .09); }
 }
 
 .ud-loc-icon {
-  width: 48px;
-  height: 48px;
-  flex: 0 0 48px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  background: rgba($teal, .1);
-  border: 1px solid rgba($teal, .14);
-  color: $teal;
+  width: 44px; height: 44px; flex: 0 0 44px; border-radius: 16px;
+  display: grid; place-items: center; font-size: 20px;
+  background: rgba($teal, .1); border: 1px solid rgba($teal, .14); color: $teal;
 }
 
-.ud-loc-info { flex: 1; min-width: 0; }
-
-.ud-loc-name-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
-.ud-loc-name { color: $navy; font-weight: 700; }
-
-.ud-loc-addr,
-.ud-loc-coords,
-.ud-info-label,
-.ud-profile-card-sub {
-  color: $muted;
-  font-size: .8125rem;
-  line-height: 1.5;
-}
-
-.ud-loc-actions {
-  display: flex;
-  gap: 8px;
-}
+.ud-loc-info    { flex: 1; min-width: 0; }
+.ud-loc-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.ud-loc-name    { color: $navy; font-weight: 700; }
+.ud-loc-addr, .ud-loc-coords { color: $muted; font-size: .8125rem; line-height: 1.5; }
+.ud-loc-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
 .ud-loc-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 9999px;
-  border: 1px solid rgba($teal, .16);
-  background: rgba($white, .58);
-  cursor: pointer;
-  transition: all .3s ease;
-
+  width: 34px; height: 34px; border-radius: 9999px;
+  border: 1px solid rgba($teal, .16); background: rgba($white, .58); cursor: pointer;
+  transition: all .3s ease; font-size: 15px;
+  display: grid; place-items: center;
   &:hover { background: rgba($teal, .09); transform: translateY(-2px); }
   &.danger:hover { background: rgba($red, .08); border-color: rgba($red, .24); }
 }
 
 .ud-add-btn {
-  margin-top: 20px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 26px;
-  border: 1px dashed rgba($teal, .28);
-  background: rgba($teal, .04);
-  color: $teal;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .3s ease;
-
+  margin-top: 20px; padding: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 26px; border: 1px dashed rgba($teal, .28); background: rgba($teal, .04);
+  color: $teal; font-weight: 700; cursor: pointer; transition: all .3s ease;
   &:hover { background: rgba($teal, .08); transform: translateY(-2px); }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ONGLET PROFIL
+// PROFIL
 // ─────────────────────────────────────────────────────────────────────────────
-
-.ud-profile-wrap {
-  display: grid;
-  gap: 20px;
-}
 
 .ud-profile-card {
-  padding: 24px;
-  border-radius: $card-radius;
-  border: $card-border;
-  background: $card-bg;
-  box-shadow: $card-shadow;
+  width: min(100% - 40px, 1320px); margin: 0 auto;
+  padding: 24px; border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
 }
 
-.ud-profile-card-title {
-  color: $teal;
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
+.ud-profile-card-title { color: $teal; font-size: 1.125rem; font-weight: 700; margin-bottom: 8px; }
+.ud-profile-card-sub   { color: $muted; font-size: .8125rem; line-height: 1.5; }
 
-.ud-info-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.ud-info-label { width: 90px; flex-shrink: 0; }
-
-.ud-info-value {
-  color: $navy;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
+.ud-info-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.ud-info-label { width: 90px; flex-shrink: 0; color: $muted; font-size: .8125rem; }
+.ud-info-value { color: $navy; font-weight: 600; overflow-wrap: anywhere; }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SHARED — BADGES & CHIPS
+// BADGES & CHIPS
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-filter-chip,
 .ud-rayon-chip,
 .ud-loc-default-badge,
 .ud-badge-role {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  border-radius: 9999px;
-  padding: 5px 10px;
-  background: rgba($teal, .08);
-  border: 1px solid rgba($teal, .16);
-  color: $teal;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .08em;
+  display: inline-flex; align-items: center; width: fit-content;
+  border-radius: 9999px; padding: 5px 10px;
+  background: rgba($teal, .08); border: 1px solid rgba($teal, .16);
+  color: $teal; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
 }
 
 .ud-filter-chip { cursor: pointer; }
-
-.ud-loc-default-badge.is-active {
-  color: $green;
-  background: rgba($green, .08);
-  border-color: rgba($green, .16);
-}
+.ud-loc-default-badge.is-active { color: $green; background: rgba($green, .08); border-color: rgba($green, .16); }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SHARED — ÉTATS VIDES
+// ÉTATS VIDES
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-empty,
 .ud-empty-presta {
-  padding: 32px;
-  text-align: center;
-  color: $muted;
-  border-radius: $card-radius;
-  border: $card-border;
-  background: $card-bg;
-  box-shadow: $card-shadow;
-
+  padding: 32px; text-align: center; color: $muted;
+  border-radius: $card-radius; border: $card-border; background: $card-bg; box-shadow: $card-shadow;
   span { display: block; margin-top: 8px; font-size: .8125rem; }
 }
 
-.ud-empty-icon {
-  font-size: 34px;
-  margin-bottom: 12px;
-}
+.ud-empty-icon { font-size: 34px; margin-bottom: 12px; }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SHARED — BOUTONS D'ACTION (call, save)
+// BOUTONS
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-call-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 38px;
-  padding: 0 16px;
-  font-size: .8125rem;
-  border: none;
-  border-radius: 9999px;
-  background: $teal;
-  color: $white;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 16px 34px rgba($teal, .24);
-  transition: all .3s ease;
-
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 38px; padding: 0 16px; font-size: .8125rem;
+  border: none; border-radius: 9999px; background: $teal; color: $white;
+  font-weight: 700; cursor: pointer; text-decoration: none;
+  box-shadow: 0 12px 28px rgba($teal, .22); transition: all .3s ease;
   &:hover { transform: translateY(-2px); background: $teal-light; }
-  &--ghost {
-    background: rgba($teal, .08);
-    color: $teal;
-    box-shadow: none;
-    border: 1px solid rgba($teal, .18);
-  }
+  &--ghost { background: rgba($teal, .08); color: $teal; box-shadow: none; border: 1px solid rgba($teal, .18); }
 }
 
-.ud-no-contact {
-  color: $muted;
-  font-size: .8125rem;
-}
+.ud-no-contact { color: $muted; font-size: .8125rem; }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BOTTOM SHEET — formulaire (adresse & demande)
+// BOTTOM SHEET
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-form-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(3,18,29,.55);
-  backdrop-filter: blur(8px);
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(3,18,29,.55); backdrop-filter: blur(8px);
 }
 
 .ud-form-sheet {
-  width: min(100%, 620px);
-  max-height: 92vh;
-  overflow-y: auto;
-  padding: 24px 20px 40px;
-  border-radius: 34px 34px 0 0;
-  background: $white;
-  box-shadow: 0 -30px 80px rgba(3,18,29,.2);
+  width: min(100%, 620px); max-height: 92vh; overflow-y: auto;
+  padding: 24px 20px 40px; border-radius: 34px 34px 0 0;
+  background: $white; box-shadow: 0 -30px 80px rgba(3,18,29,.2);
   animation: slideUp .28s cubic-bezier(.22,1,.36,1);
-
   &--demande { width: min(100%, 680px); }
 }
 
-.ud-form-handle {
-  width: 42px;
-  height: 4px;
-  border-radius: 9999px;
-  background: rgba($navy, .16);
-  margin: 0 auto 20px;
-}
+.ud-form-handle { width: 42px; height: 4px; border-radius: 9999px; background: rgba($navy, .16); margin: 0 auto 20px; }
+.ud-form-title   { color: $navy; font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
+.ud-form-subtitle { color: $muted; font-size: .8125rem; margin-bottom: 20px; }
 
-.ud-form-title {
-  color: $navy;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.ud-form-subtitle {
-  color: $muted;
-  font-size: .8125rem;
-  margin-bottom: 20px;
-}
-
-.ud-field {
-  margin-bottom: 16px;
-}
+.ud-field { margin-bottom: 20px; }
 
 .ud-label {
-  display: block;
-  margin-bottom: 8px;
-  color: $muted;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  display: block; margin-bottom: 8px; color: $muted;
+  font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
 }
 
 .ud-input {
-  width: 100%;
-  border: 1px solid rgba($navy, .1);
-  border-radius: 16px;
-  padding: 13px 14px;
-  color: $navy;
-  background: rgba($teal, .035);
-  outline: none;
-  font-size: .9375rem;
-  font-family: inherit;
-  box-sizing: border-box;
-
-  &:focus {
-    border-color: rgba($teal, .4);
-    box-shadow: 0 0 0 4px rgba($teal, .08);
-  }
+  width: 100%; border: 1px solid rgba($navy, .1); border-radius: 16px;
+  padding: 13px 14px; color: $navy; background: rgba($teal, .035);
+  outline: none; font-size: .9375rem; font-family: inherit; box-sizing: border-box;
+  &:focus { border-color: rgba($teal, .4); box-shadow: 0 0 0 4px rgba($teal, .08); }
 }
 
-.ud-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
+.ud-textarea { resize: vertical; min-height: 80px; }
 
 .ud-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235b7083' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  cursor: pointer;
+  background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer;
 }
 
-.ud-field-hint {
-  margin-top: 6px;
-  color: $muted;
-  font-size: .75rem;
-}
+.ud-field-hint    { margin-top: 6px; color: $muted; font-size: .75rem; }
+.ud-coords-preview { margin-top: 6px; color: $teal; font-size: .75rem; font-weight: 600; }
 
-.ud-coords-preview {
-  margin-top: 6px;
-  color: $teal;
-  font-size: .75rem;
-  font-weight: 600;
-}
-
-.ud-row {
-  display: flex;
-  gap: 12px;
-
-  .ud-field { flex: 1; }
-}
+.ud-row { display: flex; gap: 12px; .ud-field { flex: 1; } }
 
 .ud-checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  cursor: pointer;
-
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px; cursor: pointer;
   input { accent-color: $teal; }
 }
 
 .ud-checkbox-label { color: $muted; }
 
 .ud-gps-btn {
-  width: 100%;
-  border-radius: 9999px;
-  padding: 12px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: all .3s ease;
-  border: 1px solid rgba($teal, .18);
-  background: rgba($teal, .06);
-  color: $teal;
-  margin-bottom: 16px;
+  width: 100%; border-radius: 9999px; padding: 12px; cursor: pointer; font-weight: 700;
+  transition: all .3s ease; border: 1px solid rgba($teal, .18);
+  background: rgba($teal, .06); color: $teal; margin-bottom: 20px;
 }
 
-.ud-form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 4px;
-}
+.ud-form-actions { display: flex; gap: 12px; margin-top: 4px; }
 
 .ud-btn-cancel {
-  width: 100%;
-  border-radius: 9999px;
-  padding: 12px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: all .3s ease;
-  border: 1px solid rgba($navy, .1);
-  background: transparent;
-  color: $muted;
+  width: 100%; border-radius: 9999px; padding: 12px; cursor: pointer; font-weight: 700;
+  transition: all .3s ease; border: 1px solid rgba($navy, .1); background: transparent; color: $muted;
 }
 
 .ud-btn-save {
-  flex: 2;
-  padding: 12px;
-  border: none;
-  border-radius: 9999px;
-  background: $teal;
-  color: $white;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 16px 34px rgba($teal, .24);
-  transition: all .3s ease;
-
+  flex: 2; padding: 12px; border: none; border-radius: 9999px;
+  background: $teal; color: $white; font-weight: 700; cursor: pointer;
+  box-shadow: 0 16px 34px rgba($teal, .24); transition: all .3s ease;
   &:hover:not(:disabled) { transform: translateY(-2px); background: $teal-light; }
   &:disabled { opacity: .5; cursor: not-allowed; }
 }
 
 .ud-error {
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 16px;
-  color: $red-dark;
-  background: rgba($red, .08);
-  border: 1px solid rgba($red, .18);
+  padding: 12px; margin-bottom: 16px; border-radius: 16px;
+  color: $red-dark; background: rgba($red, .08); border: 1px solid rgba($red, .18);
 }
+
+.ud-char-warn   { color: darken($orange, 10%); }
+.ud-char-danger { color: $red-dark; font-weight: 800; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BOTTOM NAV
 // ─────────────────────────────────────────────────────────────────────────────
 
 .ud-bottom-nav {
-  position: fixed;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  z-index: 200;
-  height: 66px;
-  display: flex;
-  background: rgba($white, .92);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba($navy, .08);
-  border-radius: 9999px;
-  box-shadow: 0 22px 52px rgba(3,18,29,.14);
-  overflow: hidden;
+  position: fixed; left: 14px; right: 14px; bottom: 14px; z-index: 200;
+  height: 66px; display: flex;
+  background: rgba($white, .92); backdrop-filter: blur(16px);
+  border: 1px solid rgba($navy, .08); border-radius: 9999px;
+  box-shadow: 0 22px 52px rgba(3,18,29,.14); overflow: hidden;
 }
 
 .ud-nav-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: $muted;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  transition: all .3s ease;
-
-  &.active {
-    color: $teal;
-    background: rgba($teal, .08);
-  }
+  flex: 1; border: none; background: transparent; color: $muted; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; font-size: 11px; font-weight: 700; transition: all .25s ease;
+  &.active { color: $teal; background: rgba($teal, .08); .ud-nav-icon { transform: translateY(-1px); } }
 }
 
 .ud-nav-icon-wrap {
-  position: relative;
-  font-size: 20px;
-  line-height: 1;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+}
+
+.ud-nav-icon {
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .25s cubic-bezier(.22,1,.36,1);
 }
 
 .ud-nav-badge {
-  position: absolute;
-  top: -5px;
-  right: -8px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 9999px;
-  background: $red;
-  color: $white;
-  font-size: 9px;
-  font-weight: 800;
-  display: grid;
-  place-items: center;
-  border: 2px solid $white;
+  position: absolute; top: -5px; right: -8px;
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9999px;
+  background: $red; color: $white; font-size: 9px; font-weight: 800;
+  display: grid; place-items: center; border: 2px solid $white;
   animation: pulse 2s infinite;
 }
 
@@ -1153,17 +711,16 @@ $card-radius: 30px;
 // ─────────────────────────────────────────────────────────────────────────────
 
 @media (max-width: 768px) {
-  .ud-map-tab {
-    height: auto;
-    min-height: calc(100vh - 66px - 86px);
-    overflow: visible;
-  }
-
+  .ud-map-tab  { height: auto; min-height: calc(100vh - 66px - 86px); overflow: visible; }
   .ud-map-wrap { height: 52vh; min-height: 320px; }
-
   .ud-fab-demande .ud-fab-label { display: none; }
   .ud-fab-demande { padding: 14px; border-radius: 9999px; }
   .ud-fab-icon { font-size: 1.375rem; }
+
+  // Sur tablette : les cards prestataires peuvent repasser en 2 cols (info + action côte à côte)
+  .ud-presta-card { flex-direction: row; align-items: center; }
+  .ud-presta-card-top { flex: 1; }
+  .ud-presta-actions { flex-shrink: 0; .ud-call-btn { width: auto; } }
 }
 
 @media (max-width: 640px) {
@@ -1173,54 +730,37 @@ $card-radius: 30px;
   .ud-user-pill { padding: 4px; }
   .ud-user-name { display: none; }
   .ud-avatar { width: 32px; height: 32px; font-size: 11px; }
-
-  .ud-logout {
-    width: 38px;
-    height: 38px;
-    padding: 0;
-  }
-  .ud-logout-full { display: none; }
+  .ud-logout { width: 38px; height: 38px; padding: 0; }
+  .ud-logout-full  { display: none; }
   .ud-logout-short { display: inline; font-size: 18px; line-height: 1; }
+
+  // La bannière geo colle sous le header raccourci (62px)
+  .ud-geo-banner    { top: 62px; }
+  .ud-success-banner { top: 62px; }
 
   .ud-content { padding-bottom: 80px; }
   .ud-map-wrap { height: 48vh; min-height: 300px; }
-  .ud-presta-panel { overflow: visible; }
+  .ud-presta-panel { overflow-x: hidden; }
 
-  .ud-section,
-  .ud-rayon-card,
-  .ud-loc-list,
-  .ud-add-btn,
-  .ud-profile-wrap,
-  .ud-empty,
-  .ud-empty-presta,
-  .ud-presta-title,
-  .ud-presta-list,
-  .ud-demande-list,
-  .ud-demandes-toolbar {
-    width: calc(100% - 28px);
-  }
+  // Largeurs pleine sur petit écran
+  .ud-section, .ud-rayon-card, .ud-loc-list, .ud-add-btn, .ud-profile-wrap,
+  .ud-empty, .ud-empty-presta, .ud-presta-title, .ud-presta-list,
+  .ud-demande-list, .ud-demandes-toolbar, .ud-skeleton-list { width: calc(100% - 24px); }
 
-  .ud-presta-card {
-    grid-template-columns: auto 1fr;
-  }
-  .ud-presta-actions {
-    grid-column: 1 / -1;
-    .ud-call-btn { width: 100%; }
-  }
+  .ud-profile-card { width: calc(100% - 24px); }
 
-  .ud-loc-card,
-  .ud-form-actions,
-  .ud-row { flex-direction: column; }
+  // Cards prestataire : restent en colonne + bouton plein largeur
+  .ud-presta-card { flex-direction: column; }
+  .ud-presta-actions { width: 100%; .ud-call-btn { width: 100%; justify-content: center; } }
+
+  .ud-loc-card, .ud-form-actions, .ud-row { flex-direction: column; }
   .ud-loc-actions { width: 100%; justify-content: flex-start; }
 
   .ud-demande-card-header { flex-direction: column; }
   .ud-demande-actions { flex-direction: column; }
   .ud-demande-btn { justify-content: center; }
 
-  .ud-bottom-nav {
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    height: 62px;
-  }
+  .ud-form-sheet { max-height: 96vh; }
+
+  .ud-bottom-nav { left: 10px; right: 10px; bottom: 10px; height: 62px; }
 }
