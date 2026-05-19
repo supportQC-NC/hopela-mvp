@@ -1,0 +1,245 @@
+// src/components/admin/AdminSidebar.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ─────────────────────────────────────────────
+$as-primary      : #00a6b2;
+$as-primary-soft : rgba(0, 166, 178, 0.08);
+$as-primary-mid  : rgba(0, 166, 178, 0.15);
+$as-primary-text : #00a6b2;
+$as-bg           : #f7fbfc;
+$as-bg-hover     : rgba(0, 166, 178, 0.05);
+$as-border       : rgba(16, 42, 67, 0.07);
+$as-text         : #102a43;
+$as-sub          : rgba(16, 42, 67, 0.45);
+$as-faint        : rgba(16, 42, 67, 0.28);
+$as-active-bg    : $as-primary-soft;
+$as-active-border: $as-primary;
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR SHELL
+// ══════════════════════════════════════════════════════
+.as-sidebar {
+  width: 220px;
+  min-width: 220px;
+  height: 100vh;
+  background: $as-bg;
+  border-right: 1px solid $as-border;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  gap: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+
+  &::-webkit-scrollbar       { width: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 166, 178, 0.15);
+    border-radius: 2px;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// LOGO
+// ══════════════════════════════════════════════════════
+.as-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  padding: 4px 8px 18px;
+  border-bottom: 1px solid $as-border;
+  margin-bottom: 10px;
+}
+
+.as-logo-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: v.$radius-md;
+  background: linear-gradient(135deg, $as-primary, #00c2cf);
+  color: #ffffff;
+  font-family: v.$font-serif;
+  font-size: 20px;
+  font-weight: v.$font-bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 166, 178, 0.28);
+}
+
+.as-logo-name {
+  font-family: v.$font-serif;
+  font-size: 20px;
+  font-weight: v.$font-bold;
+  color: $as-text;
+  letter-spacing: 0.3px;
+}
+
+// ══════════════════════════════════════════════════════
+// SECTION LABEL
+// ══════════════════════════════════════════════════════
+.as-section-label {
+  font-size: 9px;
+  font-weight: v.$font-bold;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: $as-faint;
+  padding: 14px 10px 4px;
+}
+
+// ══════════════════════════════════════════════════════
+// DIVIDER
+// ══════════════════════════════════════════════════════
+.as-divider {
+  height: 1px;
+  background: $as-border;
+  margin: 6px 4px;
+}
+
+// ══════════════════════════════════════════════════════
+// NAV ITEM
+// ══════════════════════════════════════════════════════
+.as-nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: v.$radius-lg;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: v.$font-sans;
+  font-size: v.$text-sm;
+  font-weight: v.$font-medium;
+  color: $as-sub;
+  cursor: pointer;
+  transition: v.$transition-base;
+  text-align: left;
+  position: relative;
+
+  &:hover {
+    background: $as-bg-hover;
+    color: $as-text;
+    border-color: $as-primary-mid;
+  }
+
+  &.active {
+    background: $as-active-bg;
+    color: $as-primary-text;
+    border-color: $as-primary-mid;
+    font-weight: v.$font-semibold;
+
+    .as-nav-icon { filter: none; }
+  }
+}
+
+.as-nav-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+// ══════════════════════════════════════════════════════
+// NAV BADGE
+// ══════════════════════════════════════════════════════
+.as-nav-badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: $as-primary-soft;
+  color: $as-primary;
+  font-size: 10px;
+  font-weight: v.$font-bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $as-primary-mid;
+}
+
+// ══════════════════════════════════════════════════════
+// FOOTER
+// ══════════════════════════════════════════════════════
+.as-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid $as-border;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.as-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: v.$radius-lg;
+  background: rgba(16, 42, 67, 0.03);
+  border: 1px solid $as-border;
+}
+
+.as-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $as-primary, #00c2cf);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: v.$font-bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.as-user-name {
+  font-size: v.$text-xs;
+  font-weight: v.$font-semibold;
+  color: $as-text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.as-user-role {
+  font-size: 10px;
+  color: $as-primary;
+  font-weight: v.$font-medium;
+  margin-top: 1px;
+}
+
+// ══════════════════════════════════════════════════════
+// LOGOUT BTN
+// ══════════════════════════════════════════════════════
+.as-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: v.$radius-lg;
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  background: rgba(220, 38, 38, 0.04);
+  color: rgba(220, 38, 38, 0.70);
+  font-family: v.$font-sans;
+  font-size: v.$text-xs;
+  font-weight: v.$font-semibold;
+  cursor: pointer;
+  transition: v.$transition-base;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.28);
+    color: #dc2626;
+  }
+
+  span { font-size: 14px; }
+}

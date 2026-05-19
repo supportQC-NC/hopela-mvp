@@ -1,0 +1,416 @@
+// src/screens/admin/AdminContact.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ─────────────────────────────────────────────
+$ac-primary      : #00a6b2;
+$ac-primary-soft : rgba(0, 166, 178, 0.06);
+$ac-primary-mid  : rgba(0, 166, 178, 0.12);
+$ac-primary-hover: rgba(0, 166, 178, 0.35);
+$ac-primary-border: rgba(0, 166, 178, 0.20);
+$ac-text         : #102a43;
+$ac-sub          : rgba(16, 42, 67, 0.55);
+$ac-faint        : rgba(16, 42, 67, 0.30);
+$ac-bg           : #f4f7fb;
+$ac-bg-card      : #ffffff;
+$ac-bg-item      : #f9fbfc;
+$ac-border       : rgba(16, 42, 67, 0.08);
+$ac-border-soft  : rgba(16, 42, 67, 0.05);
+
+// ── Statuts ───────────────────────────────────────────────────
+$ac-new    : #d97706;
+$ac-read   : #2563eb;
+$ac-done   : #16a34a;
+$ac-arch   : rgba(16, 42, 67, 0.30);
+
+// ══════════════════════════════════════════════════════
+// ROOT
+// ══════════════════════════════════════════════════════
+.ac-root {
+  font-family: v.$font-admin;
+  color: $ac-text;
+}
+
+// ══════════════════════════════════════════════════════
+// TOOLBAR
+// ══════════════════════════════════════════════════════
+.ac-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ac-filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid $ac-border;
+  background: none;
+  cursor: pointer;
+  font-family: v.$font-admin;
+  font-size: 11px;
+  color: $ac-sub;
+  transition: v.$transition-fast;
+
+  &.active {
+    background: $ac-primary-mid;
+    border-color: $ac-primary-border;
+    color: $ac-primary;
+  }
+
+  &:hover:not(.active) {
+    border-color: $ac-primary-border;
+    color: $ac-text;
+  }
+}
+
+.ac-filter-count-pill {
+  margin-left: 5px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  background: rgba(16, 42, 67, 0.06);
+}
+
+.ac-count {
+  font-size: 11px;
+  color: $ac-faint;
+  margin-left: auto;
+}
+
+// ══════════════════════════════════════════════════════
+// LAYOUT
+// ══════════════════════════════════════════════════════
+.ac-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  height: calc(100vh - 160px);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// LISTE
+// ══════════════════════════════════════════════════════
+.ac-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.ac-item {
+  background: $ac-bg-card;
+  border: 1px solid $ac-border;
+  border-radius: v.$radius-lg;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: v.$transition-fast;
+
+  &:hover {
+    border-color: $ac-primary-border;
+    box-shadow: 0 2px 12px rgba(0, 166, 178, 0.08);
+  }
+
+  &.selected {
+    border-color: $ac-primary;
+    background: $ac-primary-soft;
+    box-shadow: 0 2px 16px rgba(0, 166, 178, 0.10);
+  }
+}
+
+.ac-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ac-item-nom {
+  font-size: 13px;
+  font-weight: v.$font-semibold;
+  color: $ac-text;
+}
+
+.ac-item-date {
+  font-size: 10px;
+  color: $ac-faint;
+  white-space: nowrap;
+}
+
+.ac-item-sujet {
+  font-size: 12px;
+  color: $ac-primary;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-item-preview {
+  font-size: 11px;
+  color: $ac-sub;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-statut-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: v.$font-bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 6px;
+}
+
+.ac-empty-list {
+  text-align: center;
+  padding: 40px 20px;
+  color: $ac-faint;
+  font-size: 13px;
+}
+
+// ══════════════════════════════════════════════════════
+// DÉTAIL
+// ══════════════════════════════════════════════════════
+.ac-detail {
+  background: $ac-bg-card;
+  border: 1px solid $ac-border;
+  border-radius: v.$radius-xl;
+  padding: 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 20px rgba(16, 42, 67, 0.05);
+}
+
+.ac-detail-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: $ac-faint;
+  font-size: 14px;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ac-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ac-detail-nom {
+  font-family: v.$font-display;
+  font-size: 24px;
+  font-weight: v.$font-bold;
+  color: $ac-text;
+}
+
+.ac-detail-email {
+  font-size: 12px;
+  color: $ac-primary;
+  margin-top: 3px;
+}
+
+.ac-detail-meta {
+  font-size: 11px;
+  color: $ac-faint;
+  margin-top: 4px;
+}
+
+// ── Statut actions ────────────────────────────────────
+.ac-statut-label {
+  font-size: 11px;
+  color: $ac-faint;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.ac-statut-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ac-statut-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid $ac-border;
+  background: none;
+  cursor: pointer;
+  font-family: v.$font-admin;
+  font-size: 10px;
+  color: $ac-sub;
+  transition: v.$transition-fast;
+
+  &:hover {
+    border-color: $ac-primary-border;
+    color: $ac-text;
+  }
+
+  &.active {
+    background: $ac-primary-mid;
+    border-color: $ac-primary-border;
+    color: $ac-primary;
+  }
+}
+
+// ── Blocs contenu ─────────────────────────────────────
+.ac-sujet-block {
+  background: $ac-primary-soft;
+  border: 1px solid $ac-primary-border;
+  border-radius: v.$radius-md;
+  padding: 14px 16px;
+}
+
+.ac-sujet-label,
+.ac-message-label,
+.ac-reponse-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: $ac-faint;
+  margin-bottom: 6px;
+}
+
+.ac-reponse-label { color: $ac-done; }
+
+.ac-sujet-text {
+  font-size: 15px;
+  font-weight: v.$font-semibold;
+  color: $ac-text;
+}
+
+.ac-message-block {
+  background: $ac-bg-item;
+  border: 1px solid $ac-border-soft;
+  border-radius: v.$radius-md;
+  padding: 18px;
+}
+
+.ac-message-text,
+.ac-reponse-text {
+  font-size: 13px;
+  color: $ac-sub;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.ac-reponse-block {
+  background: rgba(22, 163, 74, 0.05);
+  border: 1px solid rgba(22, 163, 74, 0.18);
+  border-radius: v.$radius-md;
+  padding: 18px;
+}
+
+.ac-reponse-meta {
+  font-size: 11px;
+  color: rgba(22, 163, 74, 0.6);
+  margin-top: 8px;
+}
+
+// ══════════════════════════════════════════════════════
+// FORMULAIRE RÉPONSE
+// ══════════════════════════════════════════════════════
+.ac-reply-title {
+  font-size: 14px;
+  font-weight: v.$font-semibold;
+  color: $ac-text;
+  margin-bottom: 10px;
+}
+
+.ac-reply-textarea {
+  width: 100%;
+  background: $ac-bg-item;
+  border: 1px solid $ac-border;
+  border-radius: v.$radius-md;
+  padding: 12px 14px;
+  font-family: v.$font-admin;
+  font-size: 13px;
+  color: $ac-text;
+  outline: none;
+  transition: v.$transition-fast;
+  resize: vertical;
+  min-height: 120px;
+  box-sizing: border-box;
+
+  &::placeholder { color: $ac-faint; }
+
+  &:focus {
+    border-color: $ac-primary;
+    box-shadow: 0 0 0 3px $ac-primary-soft;
+  }
+}
+
+.ac-reply-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ac-reply-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: v.$radius-md;
+  border: none;
+  background: linear-gradient(135deg, $ac-primary, #007a85);
+  color: #ffffff;
+  font-family: v.$font-admin;
+  font-size: 11px;
+  font-weight: v.$font-bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: v.$transition-fast;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(0, 166, 178, 0.30);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.ac-delete-btn {
+  padding: 10px 16px;
+  border-radius: v.$radius-md;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  background: none;
+  color: #dc2626;
+  font-family: v.$font-admin;
+  font-size: 11px;
+  cursor: pointer;
+  transition: v.$transition-fast;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.06);
+    border-color: rgba(220, 38, 38, 0.40);
+  }
+}
+
+.ac-success-inline {
+  font-size: 12px;
+  color: $ac-done;
+  padding: 8px 12px;
+  background: rgba(22, 163, 74, 0.06);
+  border: 1px solid rgba(22, 163, 74, 0.18);
+  border-radius: v.$radius-md;
+}

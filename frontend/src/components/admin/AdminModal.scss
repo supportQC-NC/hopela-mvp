@@ -1,0 +1,207 @@
+// src/components/admin/AdminModal.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ─────────────────────────────────────────────
+$am-primary      : #00a6b2;
+$am-primary-mid  : rgba(0, 166, 178, 0.12);
+$am-primary-hover: rgba(0, 166, 178, 0.28);
+$am-text         : #102a43;
+$am-sub          : rgba(16, 42, 67, 0.55);
+$am-faint        : rgba(16, 42, 67, 0.28);
+$am-bg           : #ffffff;
+$am-border       : rgba(16, 42, 67, 0.08);
+$am-border-soft  : rgba(16, 42, 67, 0.05);
+$am-input-bg     : rgba(16, 42, 67, 0.03);
+$am-overlay-bg   : rgba(16, 42, 67, 0.55);
+
+// ══════════════════════════════════════════════════════
+// OVERLAY
+// ══════════════════════════════════════════════════════
+.am-overlay {
+  position: fixed;
+  inset: 0;
+  background: $am-overlay-bg;
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: am-fade-in 0.18s ease;
+}
+
+@keyframes am-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ══════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════
+.am-modal {
+  background: $am-bg;
+  border: 1px solid $am-border;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: am-slide-up 0.22s ease;
+  box-shadow: 0 24px 80px rgba(16, 42, 67, 0.18);
+}
+
+@keyframes am-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+// ══════════════════════════════════════════════════════
+// HEADER
+// ══════════════════════════════════════════════════════
+.am-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid $am-border-soft;
+}
+
+.am-title {
+  font-family: v.$font-display;
+  font-size: 20px;
+  font-weight: v.$font-bold;
+  color: $am-text;
+}
+
+.am-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: $am-input-bg;
+  border: 1px solid $am-border;
+  cursor: pointer;
+  font-size: v.$text-sm;
+  color: $am-faint;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: v.$transition-fast;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.25);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// BODY / FOOTER
+// ══════════════════════════════════════════════════════
+.am-body { padding: 20px 24px; }
+
+.am-footer {
+  padding: 14px 24px 20px;
+  display: flex;
+  gap: v.$space-2 + 2;
+  justify-content: flex-end;
+  border-top: 1px solid $am-border-soft;
+}
+
+// ══════════════════════════════════════════════════════
+// FORM FIELDS
+// ══════════════════════════════════════════════════════
+.am-field { margin-bottom: 16px; }
+
+.am-label {
+  display: block;
+  font-size: 11px;
+  font-weight: v.$font-semibold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: $am-faint;
+  margin-bottom: 7px;
+}
+
+.am-input,
+.am-select,
+.am-textarea {
+  width: 100%;
+  background: $am-input-bg;
+  border: 1px solid $am-border;
+  border-radius: v.$radius-lg;
+  padding: 10px 14px;
+  font-family: v.$font-admin;
+  font-size: v.$text-sm;
+  color: $am-text;
+  outline: none;
+  transition: v.$transition-fast;
+
+  &:focus { border-color: $am-primary-hover; }
+}
+
+.am-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.am-select option {
+  background: $am-bg;
+  color: $am-text;
+}
+
+// ══════════════════════════════════════════════════════
+// BUTTONS
+// ══════════════════════════════════════════════════════
+.am-btn {
+  font-family: v.$font-admin;
+  font-size: v.$text-xs;
+  font-weight: v.$font-semibold;
+  padding: 9px 20px;
+  border-radius: v.$radius-md;
+  cursor: pointer;
+  transition: v.$transition-fast;
+  border: 1px solid transparent;
+}
+
+.am-btn-primary {
+  background: linear-gradient(135deg, $am-primary, #00c4d2);
+  color: #ffffff;
+  border-color: $am-primary;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 166, 178, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+.am-btn-danger {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.25);
+
+  &:hover { background: rgba(220, 38, 38, 0.15); }
+}
+
+.am-btn-ghost {
+  background: $am-input-bg;
+  color: $am-faint;
+  border-color: $am-border;
+
+  &:hover {
+    color: $am-text;
+    border-color: $am-primary-hover;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ERROR
+// ══════════════════════════════════════════════════════
+.am-error {
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.18);
+  border-radius: v.$radius-md;
+  padding: 10px 14px;
+  font-size: v.$text-xs;
+  color: #dc2626;
+  margin-bottom: 14px;
+}

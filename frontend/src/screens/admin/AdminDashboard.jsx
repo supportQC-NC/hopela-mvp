@@ -7,7 +7,7 @@ import AdminUsers from "./AdminUsers";
 import AdminCatalogues from "./AdminCatalogues";
 import AdminMap from "./AdminMap";
 import AdminContact from "./AdminContact";
-import "./AdminDashboard.css";
+import "./AdminDashboard.scss";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 

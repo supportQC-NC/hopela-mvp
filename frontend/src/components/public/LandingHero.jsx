@@ -5,10 +5,10 @@ import "./LandingHero.scss";
 const heroSlides = [
   {
     title: (
-      <>
-        Trouvez votre <br />
-        <em>prestataire idéal</em>
-      </>
+   <>
+  Hop là ! prestataire <br />
+  <em> déjà là</em>
+</>
     ),
     subtitle:
       "La plateforme géolocalisée qui connecte vos besoins aux bons professionnels autour de vous.",

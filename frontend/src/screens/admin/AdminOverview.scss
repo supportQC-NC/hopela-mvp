@@ -1,0 +1,264 @@
+// src/screens/admin/AdminOverview.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ─────────────────────────────────────────────
+$ao-primary      : #00a6b2;
+$ao-primary-soft : rgba(0, 166, 178, 0.07);
+$ao-primary-mid  : rgba(0, 166, 178, 0.12);
+$ao-primary-hover: rgba(0, 166, 178, 0.28);
+$ao-primary-faint: rgba(0, 166, 178, 0.08);
+$ao-text         : #102a43;
+$ao-sub          : rgba(16, 42, 67, 0.55);
+$ao-faint        : rgba(16, 42, 67, 0.28);
+$ao-bg-card      : #ffffff;
+$ao-border       : rgba(16, 42, 67, 0.08);
+$ao-border-mid   : rgba(16, 42, 67, 0.05);
+$ao-row-hover    : rgba(0, 166, 178, 0.03);
+$ao-th-bg        : rgba(16, 42, 67, 0.02);
+
+// ══════════════════════════════════════════════════════
+// STAT CARDS
+// ══════════════════════════════════════════════════════
+.ao-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.ao-stat-card {
+  background: $ao-bg-card;
+  border: 1px solid $ao-border;
+  border-radius: v.$radius-xl;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: v.$transition-base;
+  cursor: default;
+  box-shadow: 0 1px 4px rgba(16, 42, 67, 0.06);
+
+  &:hover {
+    border-color: $ao-primary-hover;
+    transform: translateY(-1px);
+  }
+}
+
+.ao-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: v.$radius-md;
+  background: $ao-primary-soft;
+  border: 1px solid $ao-primary-mid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.ao-stat-val {
+  font-family: v.$font-display;
+  font-size: 30px;
+  font-weight: v.$font-bold;
+  color: $ao-primary;
+  line-height: 1;
+}
+
+.ao-stat-label {
+  font-size: 11px;
+  color: $ao-faint;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+
+// ══════════════════════════════════════════════════════
+// SECTION HEADER
+// ══════════════════════════════════════════════════════
+.ao-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.ao-section-title {
+  font-family: v.$font-display;
+  font-size: 20px;
+  font-weight: v.$font-bold;
+  color: $ao-text;
+}
+
+.ao-section-link {
+  font-size: v.$text-xs;
+  color: rgba(0, 166, 178, 0.70);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: v.$font-admin;
+  transition: color v.$transition-fast;
+
+  &:hover { color: $ao-primary; }
+}
+
+// ══════════════════════════════════════════════════════
+// TWO-COL GRID
+// ══════════════════════════════════════════════════════
+.ao-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 28px;
+}
+
+// ══════════════════════════════════════════════════════
+// MINI TABLE
+// ══════════════════════════════════════════════════════
+.ao-table-wrap {
+  background: $ao-bg-card;
+  border: 1px solid $ao-border;
+  border-radius: v.$radius-xl;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(16, 42, 67, 0.06);
+}
+
+.ao-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 9px;
+    font-weight: v.$font-bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: $ao-faint;
+    border-bottom: 1px solid $ao-border;
+    background: $ao-th-bg;
+  }
+
+  td {
+    padding: 11px 16px;
+    font-size: v.$text-xs;
+    color: $ao-sub;
+    border-bottom: 1px solid $ao-border-mid;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td      { background: $ao-row-hover; }
+}
+
+// ══════════════════════════════════════════════════════
+// ROLE BADGE
+// ══════════════════════════════════════════════════════
+.ao-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: v.$radius-sm;
+  font-size: 9px;
+  font-weight: v.$font-bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  &.admin {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+  }
+  &.user {
+    background: rgba(99, 102, 241, 0.08);
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.18);
+  }
+  &.prestataire {
+    background: $ao-primary-faint;
+    color: $ao-primary;
+    border: 1px solid $ao-primary-mid;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// STATUS DOT
+// ══════════════════════════════════════════════════════
+.ao-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.active {
+    background: #059669;
+    box-shadow: 0 0 5px rgba(5, 150, 105, 0.45);
+  }
+  &.inactive { background: #dc2626; }
+}
+
+// ══════════════════════════════════════════════════════
+// MÉTIERS LIST
+// ══════════════════════════════════════════════════════
+.ao-metiers-list { padding: 8px 0; }
+
+.ao-metier-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 16px;
+  border-bottom: 1px solid $ao-border-mid;
+  transition: background v.$transition-fast;
+
+  &:last-child { border-bottom: none; }
+  &:hover      { background: $ao-row-hover; }
+}
+
+.ao-metier-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: $ao-sub;
+  min-width: 0;
+  flex: 1;
+}
+
+.ao-metier-cat {
+  font-size: 10px;
+  color: rgba(0, 166, 178, 0.50);
+  margin-top: 1px;
+  font-weight: v.$font-regular;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.ao-metier-count {
+  font-size: 11px;
+  font-weight: v.$font-semibold;
+  color: $ao-primary;
+  background: $ao-primary-faint;
+  border: 1px solid $ao-primary-mid;
+  border-radius: 20px;
+  padding: 2px 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ao-metier-inactive {
+  font-size: 9px;
+  color: $ao-faint;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+// ══════════════════════════════════════════════════════
+// RESPONSIVE
+// ══════════════════════════════════════════════════════
+@media (max-width: 1100px) {
+  .ao-stats { grid-template-columns: repeat(2, 1fr); }
+  .ao-grid  { grid-template-columns: 1fr; }
+}

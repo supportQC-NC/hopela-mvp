@@ -1,5 +1,5 @@
 // src/components/admin/AdminTopbar.jsx
-import "./AdminTopbar.css";
+import "./AdminTopbar.scss";
 
 const TITLES = {
   overview: { title: "Vue d'ensemble", sub: "Tableau de bord administrateur" },

@@ -272,7 +272,7 @@
 // src/screens/admin/AdminUsers.jsx
 import { useState } from "react";
 import AdminModal from "../../components/admin/AdminModal";
-import "./AdminUsers.css";
+import "./AdminUsers.scss";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 const FILTERS = ["Tous", "user", "prestataire", "admin"];
@@ -407,7 +407,7 @@ const AdminUsers = ({ users, metiers, onRefresh }) => {
               {filtered.map((u) => (
                 <tr key={u._id}>
                   <td>
-                    <div style={{ fontWeight: 600, color: "#f5f0e8" }}>{u.prenom} {u.nom}</div>
+                    <div style={{ fontWeight: 600, color: "#1b1b19" }}>{u.prenom} {u.nom}</div>
                     <div style={{ fontSize: 11, color: "rgba(245,240,232,0.3)" }}>{u.email}</div>
                   </td>
                   <td><span className={"au-role " + u.role}>{u.role}</span></td>
@@ -420,7 +420,7 @@ const AdminUsers = ({ users, metiers, onRefresh }) => {
                   <td style={{ fontSize: 12 }}>
                     {u.telephoneContact && <div>📞 {u.telephoneContact}</div>}
                     {u.emailContact     && <div>✉️ {u.emailContact}</div>}
-                    {!u.telephoneContact && !u.emailContact && <span style={{ color: "rgba(245,240,232,0.2)" }}>—</span>}
+                    {!u.telephoneContact && !u.emailContact && <span style={{ color: "#0c0c07" }}>—</span>}
                   </td>
                   <td>
                     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -432,7 +432,7 @@ const AdminUsers = ({ users, metiers, onRefresh }) => {
                         <span style={{
                           fontSize: 10, padding: "2px 6px", borderRadius: 4, fontWeight: 600,
                           background: u.isValidated ? "rgba(74,222,128,0.1)" : "rgba(239,68,68,0.1)",
-                          color: u.isValidated ? "#86efac" : "#fca5a5",
+                          color: u.isValidated ? "#37965a" : "#833131",
                           border: `1px solid ${u.isValidated ? "rgba(74,222,128,0.25)" : "rgba(239,68,68,0.25)"}`,
                           textAlign: "center",
                         }}>

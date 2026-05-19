@@ -1,0 +1,91 @@
+// src/components/admin/AdminTopbar.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ─────────────────────────────────────────────
+$at-primary      : #00a6b2;
+$at-primary-soft : rgba(0, 166, 178, 0.07);
+$at-primary-mid  : rgba(0, 166, 178, 0.15);
+$at-primary-hover: rgba(0, 166, 178, 0.35);
+$at-text         : #102a43;
+$at-sub          : rgba(16, 42, 67, 0.45);
+$at-faint        : rgba(16, 42, 67, 0.28);
+$at-bg           : rgba(255, 255, 255, 0.88);
+$at-border       : rgba(16, 42, 67, 0.08);
+
+// ══════════════════════════════════════════════════════
+// TOPBAR
+// ══════════════════════════════════════════════════════
+.at-topbar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid $at-border;
+  background: $at-bg;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+// ── Left ──────────────────────────────────────────────
+.at-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.at-title {
+  font-family: v.$font-display;
+  font-size: 20px;
+  font-weight: v.$font-bold;
+  color: $at-text;
+}
+
+.at-subtitle {
+  font-size: v.$text-xs;
+  color: $at-faint;
+  margin-top: 1px;
+}
+
+// ── Right ─────────────────────────────────────────────
+.at-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.at-admin-badge {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.20);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: v.$font-bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #dc2626;
+}
+
+.at-refresh-btn {
+  background: $at-primary-soft;
+  border: 1px solid $at-primary-mid;
+  border-radius: v.$radius-md;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: v.$font-admin;
+  font-size: v.$text-xs;
+  color: $at-sub;
+  transition: v.$transition-fast;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  &:hover {
+    color: $at-primary;
+    border-color: $at-primary-hover;
+  }
+}

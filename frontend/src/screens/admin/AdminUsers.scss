@@ -1,0 +1,277 @@
+// src/screens/admin/AdminUsers.scss
+@use '../../styles/variables' as v;
+
+// ── Tokens locaux ─────────────────────────────────────────────
+$au-primary      : #00a6b2;
+$au-primary-soft : rgba(0, 166, 178, 0.07);
+$au-primary-mid  : rgba(0, 166, 178, 0.12);
+$au-primary-hover: rgba(0, 166, 178, 0.28);
+$au-text         : #102a43;
+$au-sub          : rgba(16, 42, 67, 0.55);
+$au-faint        : rgba(16, 42, 67, 0.28);
+$au-bg-card      : #ffffff;
+$au-border       : rgba(16, 42, 67, 0.08);
+$au-border-soft  : rgba(16, 42, 67, 0.05);
+$au-row-hover    : rgba(0, 166, 178, 0.03);
+$au-th-bg        : rgba(16, 42, 67, 0.02);
+$au-input-bg     : rgba(16, 42, 67, 0.03);
+
+// ══════════════════════════════════════════════════════
+// TOOLBAR
+// ══════════════════════════════════════════════════════
+.au-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$space-3;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.au-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+}
+
+.au-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: v.$text-sm;
+  color: $au-faint;
+  pointer-events: none;
+}
+
+.au-search {
+  width: 100%;
+  background: $au-input-bg;
+  border: 1px solid $au-border;
+  border-radius: v.$radius-lg;
+  padding: 9px 14px 9px 36px;
+  font-family: v.$font-admin;
+  font-size: v.$text-sm;
+  color: $au-text;
+  outline: none;
+  transition: v.$transition-fast;
+
+  &:focus       { border-color: $au-primary-hover; }
+  &::placeholder { color: $au-faint; }
+}
+
+.au-filters {
+  display: flex;
+  gap: v.$space-2;
+  align-items: center;
+}
+
+.au-filter-btn {
+  font-family: v.$font-admin;
+  font-size: 11px;
+  font-weight: v.$font-medium;
+  padding: 7px 14px;
+  border-radius: v.$radius-md;
+  cursor: pointer;
+  transition: v.$transition-fast;
+  border: 1px solid $au-border;
+  background: transparent;
+  color: #1b1b19;
+  
+
+  &:hover {
+    color: $au-text;
+    border-color: $au-primary-hover;
+  }
+
+  &.active {
+    background: $au-primary-soft;
+    color: $au-primary;
+    border-color: $au-primary-mid;
+  }
+}
+
+.au-add-btn {
+  font-family: v.$font-admin;
+  font-size: v.$text-xs;
+  font-weight: v.$font-bold;
+  padding: 9px 18px;
+  border-radius: v.$radius-lg;
+  cursor: pointer;
+  background: linear-gradient(135deg, $au-primary, #00c4d2);
+  color: #ffffff;
+  border: none;
+  transition: v.$transition-base;
+  white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0, 166, 178, 0.22);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px rgba(0, 166, 178, 0.38);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// TABLE
+// ══════════════════════════════════════════════════════
+.au-table-wrap {
+  background: $au-bg-card;
+  border: 1px solid $au-border;
+  border-radius: v.$radius-xl;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(16, 42, 67, 0.06);
+}
+
+.au-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 12px 18px;
+    text-align: left;
+    font-size: 9px;
+    font-weight: v.$font-bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: $au-faint;
+    border-bottom: 1px solid $au-border-soft;
+    background: $au-th-bg;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 13px 18px;
+    font-size: v.$text-sm;
+    color: $au-sub;
+    border-bottom: 1px solid $au-border-soft;
+    vertical-align: middle;
+    color: #1b1b19;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td      { background: $au-row-hover; }
+}
+
+// ══════════════════════════════════════════════════════
+// ROLE BADGE
+// ══════════════════════════════════════════════════════
+.au-role {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: v.$radius-sm;
+  font-size: 9px;
+  font-weight: v.$font-bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  &.admin {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+  }
+  &.user {
+    background: rgba(99, 102, 241, 0.08);
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.18);
+  }
+  &.prestataire {
+    background: $au-primary-soft;
+    color: $au-primary;
+    border: 1px solid $au-primary-mid;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// STATUS TOGGLE
+// ══════════════════════════════════════════════════════
+.au-status-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  border-radius: v.$radius-md;
+  font-size: 11px;
+  cursor: pointer;
+  border: none;
+  font-family: v.$font-admin;
+  font-weight: v.$font-medium;
+  transition: v.$transition-fast;
+
+  &.active {
+    background: rgba(5, 150, 105, 0.08);
+    color: #059669;
+    border: 1px solid rgba(5, 150, 105, 0.2);
+  }
+  &.inactive {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+  }
+}
+
+.au-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  .au-status-toggle.active   & { background: #059669; box-shadow: 0 0 5px rgba(5, 150, 105, 0.45); }
+  .au-status-toggle.inactive & { background: #dc2626; }
+}
+
+// ══════════════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════════════
+.au-actions { display: flex; gap: v.$space-1 + 2; }
+
+.au-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: v.$radius-md;
+  border: 1px solid $au-border;
+  background: transparent;
+  cursor: pointer;
+  font-size: v.$text-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: v.$transition-fast;
+  color: $au-sub;
+
+  &:hover {
+    background: $au-primary-soft;
+    border-color: $au-primary-mid;
+    color: $au-primary;
+  }
+  &.danger:hover {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.2);
+    color: #dc2626;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// EMPTY
+// ══════════════════════════════════════════════════════
+.au-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: $au-faint;
+  font-size: v.$text-base;
+}
+
+// ══════════════════════════════════════════════════════
+// MÉTIERS CHIPS
+// ══════════════════════════════════════════════════════
+.au-metier-chip {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: v.$radius-sm;
+  background: $au-primary-soft;
+  border: 1px solid $au-primary-mid;
+  color: $au-primary;
+  margin-right: 3px;
+}

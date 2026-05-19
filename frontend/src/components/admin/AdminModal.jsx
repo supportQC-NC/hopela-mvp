@@ -1,6 +1,6 @@
 // src/components/admin/AdminModal.jsx
 import { useEffect } from "react";
-import "./AdminModal.css";
+import "./AdminModal.scss";
 
 const AdminModal = ({ title, onClose, children, footer }) => {
   // Fermer avec Echap

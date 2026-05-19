@@ -2,7 +2,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { logout, logoutUser } from "../../slices/authSlice";
-import "./AdminSidebar.css";
+import "./AdminSidebar.scss";
 
 const NAV = [
   { section: "Principal" },
