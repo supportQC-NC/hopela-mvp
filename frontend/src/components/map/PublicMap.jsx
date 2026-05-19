@@ -106,6 +106,17 @@ const makeCircle = (lng, lat, radiusKm, steps = 64) => {
   };
 };
 
+const MARKER_ANIMATION_MS = 900;
+
+const easeInOutCubic = (t) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+const readLngLat = (prestataire) => {
+  const [longitude, latitude] = prestataire?.location?.coordinates || [];
+  if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return null;
+  return { longitude, latitude };
+};
+
 // ── Composant d'Effets Carte (Bâtiments 3D, Brouillard) ───────────────────────
 const MapEffects = ({ styleId }) => {
   const { current: map } = useMap();
@@ -244,8 +255,106 @@ const PublicMap = ({
   });
 
   const mapRef = useRef(null);
+  const animationFramesRef = useRef({});
+  const animatedPositionsRef = useRef({});
+  const latestServerPositionsRef = useRef({});
+  const [animatedPositions, setAnimatedPositions] = useState({});
+
   const currentStyle = MAP_STYLES.find((s) => s.id === styleId);
   const prestataires = isUserMode ? prestatairesProps || [] : prestatairesLocal;
+
+  const setAnimatedMarkerPosition = useCallback((id, position) => {
+    animatedPositionsRef.current[id] = position;
+    setAnimatedPositions((prev) => ({ ...prev, [id]: position }));
+  }, []);
+
+  const animateMarkerTo = useCallback(
+    (id, from, to) => {
+      if (!id || !from || !to) return;
+
+      if (animationFramesRef.current[id]) {
+        cancelAnimationFrame(animationFramesRef.current[id]);
+      }
+
+      const start = performance.now();
+      const step = (now) => {
+        const progress = Math.min((now - start) / MARKER_ANIMATION_MS, 1);
+        const eased = easeInOutCubic(progress);
+        const next = {
+          longitude: from.longitude + (to.longitude - from.longitude) * eased,
+          latitude: from.latitude + (to.latitude - from.latitude) * eased,
+        };
+
+        animatedPositionsRef.current[id] = next;
+        setAnimatedPositions((prev) => ({ ...prev, [id]: next }));
+
+        if (progress < 1) {
+          animationFramesRef.current[id] = requestAnimationFrame(step);
+        } else {
+          delete animationFramesRef.current[id];
+          setAnimatedMarkerPosition(id, to);
+        }
+      };
+
+      animationFramesRef.current[id] = requestAnimationFrame(step);
+    },
+    [setAnimatedMarkerPosition],
+  );
+
+  // Synchronise les positions serveur avec les marqueurs animés.
+  // Quand une nouvelle coordonnée arrive par socket ou par props, le marqueur
+  // glisse vers sa nouvelle position au lieu de sauter brutalement.
+  useEffect(() => {
+    const visibleIds = new Set();
+
+    prestataires.forEach((prestataire) => {
+      const id = prestataire?._id;
+      const nextPosition = readLngLat(prestataire);
+      if (!id || !nextPosition) return;
+
+      visibleIds.add(id);
+      const previousServerPosition = latestServerPositionsRef.current[id];
+      const currentAnimatedPosition = animatedPositionsRef.current[id];
+
+      latestServerPositionsRef.current[id] = nextPosition;
+
+      if (!currentAnimatedPosition || !previousServerPosition) {
+        setAnimatedMarkerPosition(id, nextPosition);
+        return;
+      }
+
+      const hasMoved =
+        previousServerPosition.longitude !== nextPosition.longitude ||
+        previousServerPosition.latitude !== nextPosition.latitude;
+
+      if (hasMoved) {
+        animateMarkerTo(id, currentAnimatedPosition, nextPosition);
+      }
+    });
+
+    Object.keys(animatedPositionsRef.current).forEach((id) => {
+      if (!visibleIds.has(id)) {
+        if (animationFramesRef.current[id]) {
+          cancelAnimationFrame(animationFramesRef.current[id]);
+          delete animationFramesRef.current[id];
+        }
+        delete animatedPositionsRef.current[id];
+        delete latestServerPositionsRef.current[id];
+        setAnimatedPositions((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }
+    });
+  }, [prestataires, animateMarkerTo, setAnimatedMarkerPosition]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(animationFramesRef.current).forEach(cancelAnimationFrame);
+      animationFramesRef.current = {};
+    };
+  }, []);
 
   // ── Font Injection (Login Style) ────────────────────────────────────────
   useEffect(() => {
@@ -687,8 +796,10 @@ const PublicMap = ({
 
           {/* Marqueurs prestataires */}
           {filtres.map((p) => {
-            const [lng, lat] = p.location?.coordinates || [];
-            if (!lng || !lat) return null;
+            const serverPosition = readLngLat(p);
+            if (!serverPosition) return null;
+            const animatedPosition = animatedPositions[p._id] || serverPosition;
+            const { longitude: markerLng, latitude: markerLat } = animatedPosition;
             const metierNom = p.metiers?.[0]?.nom || "Prestataire";
             const color = getColor(metierNom);
             const icon = getIcon(metierNom);
@@ -696,8 +807,8 @@ const PublicMap = ({
             return (
               <Marker
                 key={p._id}
-                longitude={lng}
-                latitude={lat}
+                longitude={markerLng}
+                latitude={markerLat}
                 anchor="bottom"
                 onClick={(e) => {
                   e.originalEvent.stopPropagation();
@@ -777,8 +888,14 @@ const PublicMap = ({
               const color = getColor(metierNom);
               return (
                 <Popup
-                  longitude={selected.location.coordinates[0]}
-                  latitude={selected.location.coordinates[1]}
+                  longitude={
+                    animatedPositions[selected._id]?.longitude ||
+                    selected.location.coordinates[0]
+                  }
+                  latitude={
+                    animatedPositions[selected._id]?.latitude ||
+                    selected.location.coordinates[1]
+                  }
                   anchor="bottom"
                   offset={24}
                   closeOnClick={false}
