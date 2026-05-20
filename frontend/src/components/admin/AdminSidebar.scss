@@ -1,190 +1,309 @@
 // src/components/admin/AdminSidebar.scss
-@use '../../styles/variables' as v;
 
-// ── Tokens locaux ─────────────────────────────────────────────
-$as-primary      : #00a6b2;
-$as-primary-soft : rgba(0, 166, 178, 0.07);
-$as-primary-mid  : rgba(0, 166, 178, 0.12);
-$as-primary-hover: rgba(0, 166, 178, 0.22);
-$as-text         : #102a43;
-$as-sub          : rgba(16, 42, 67, 0.55);
-$as-faint        : rgba(16, 42, 67, 0.30);
-$as-bg           : #f4f7fb;
-$as-bg-card      : #ffffff;
-$as-border       : rgba(16, 42, 67, 0.08);
-$as-border-soft  : rgba(16, 42, 67, 0.05);
+$brand:        #00a6b2;
+$dark:         #102a43;
+$white:        #ffffff;
+$sidebar-bg:   #0d1f30;
+$sidebar-w:    240px;
+$sidebar-w-sm: 68px;
+$toggle-size:  28px;
+$transition:   .3s cubic-bezier(.22, 1, .36, 1);
 
-// ══════════════════════════════════════════════════════
-// SIDEBAR
-// ══════════════════════════════════════════════════════
+// ─── Sidebar ─────────────────────────────────────────────────────────────
 .as-sidebar {
-  width: 230px;
-  flex-shrink: 0;
-  background: $as-bg-card;
-  border-right: 1px solid $as-border;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: $sidebar-w;
+  height: 100vh;
+  background: $sidebar-bg;
   display: flex;
   flex-direction: column;
-  padding: 24px 0 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
+  padding-bottom: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  z-index: 200;
+  border-right: 1px solid rgba($white, .04);
+  box-shadow: 4px 0 24px rgba(0,0,0,.18);
+  transition: width $transition;
+
+  &::-webkit-scrollbar { display: none; }
+
+  &.collapsed {
+    width: $sidebar-w-sm;
+
+    .as-logo-bar   { justify-content: center; padding: 0 0 16px; }
+    .as-nav        { padding: 0 8px; }
+    .as-nav-item   { justify-content: center; padding: 12px 0; }
+    .as-footer     { align-items: center; padding: 12px 8px 0; }
+  }
 }
 
-// ── Logo ─────────────────────────────────────────────
+// ─── Barre du haut : toggle + logo côte à côte ───────────────────────────
+.as-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px 0;
+  flex-shrink: 0;
+
+  // Quand replié : centrer le toggle seul
+  .collapsed & {
+    justify-content: center;
+    padding: 16px 0 0;
+  }
+}
+
+// ─── Bouton toggle (en haut à gauche) ────────────────────────────────────
+.as-toggle {
+  width: $toggle-size;
+  height: $toggle-size;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid rgba($white, .12);
+  background: rgba($white, .06);
+  color: rgba($white, .6);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+
+  &:hover {
+    background: $brand;
+    color: $white;
+    border-color: $brand;
+  }
+}
+
+.as-toggle-icon {
+  line-height: 1;
+  user-select: none;
+}
+
+// ─── Logo (à droite du toggle) ────────────────────────────────────────────
 .as-logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 20px;
-  margin-bottom: 40px;
   text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+
+  .collapsed & { display: none; }   // caché quand replié, le toggle seul suffit
+
+  &:hover .as-logo-img  { transform: scale(1.06); }
+  &:hover .as-logo-name { color: $brand; }
 }
 
-// ── Logo img ──────────────────────────────────────────
 .as-logo-img {
-  width: 60px;
-  height: 60px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
   border-radius: 8px;
   flex-shrink: 0;
+  transition: transform .3s ease;
 }
 
 .as-logo-name {
-  font-family: v.$font-display;
-  font-weight: v.$font-bold;
-  font-size: 21px;
-  color: $as-text;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: $white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color .25s ease;
 }
 
-// ── Section label ─────────────────────────────────────
+// ─── Séparateur sous le top ───────────────────────────────────────────────
+.as-logo-bar {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba($white, .05);
+  margin-bottom: 8px;
+}
+
+// ─── Nav ──────────────────────────────────────────────────────────────────
+.as-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  gap: 2px;
+  transition: padding $transition;
+}
+
 .as-section-label {
-  font-size: 9px;
-  font-weight: v.$font-bold;
-  letter-spacing: 2.5px;
+  padding: 14px 10px 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: $as-faint;
-  padding: 0 20px;
-  margin: 4px 0 6px;
+  color: rgba($white, .28);
+  white-space: nowrap;
+  overflow: hidden;
+  user-select: none;
 }
 
-// ── Nav item ──────────────────────────────────────────
+.as-divider {
+  height: 1px;
+  background: rgba($white, .05);
+  margin: 6px 0;
+}
+
 .as-nav-item {
+  position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 11px;
-  padding: 10px 20px;
-  cursor: pointer;
+  padding: 10px 12px;
   border: none;
-  border-left: 2px solid transparent;
-  background: none;
-  width: 100%;
-  font-family: v.$font-admin;
-  font-size: v.$text-sm;
-  font-weight: v.$font-medium;
-  color: $as-faint;
-  transition: v.$transition-fast;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba($white, .55);
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
   text-align: left;
-  color: #1b1b19;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background .2s ease, color .2s ease, padding $transition;
 
   &:hover {
-    color: $as-text;
-    background: $as-primary-soft;
+    background: rgba($white, .07);
+    color: rgba($white, .9);
   }
 
   &.active {
-    color: $as-primary;
-    background: $as-primary-soft;
-    border-left-color: $as-primary;
+    background: rgba($brand, .18);
+    color: $brand;
+    font-weight: 700;
   }
 }
 
 .as-nav-icon {
-  font-size: 16px;
+  font-size: 1.1rem;
   flex-shrink: 0;
+  line-height: 1;
+}
+
+.as-nav-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .as-nav-badge {
-  margin-left: auto;
-  font-size: 10px;
-  font-weight: v.$font-bold;
-  background: $as-primary-mid;
-  color: $as-primary;
-  border-radius: 20px;
-  padding: 1px 7px;
-  border: 1px solid $as-primary-hover;
+  flex-shrink: 0;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 9999px;
+  background: rgba($brand, .22);
+  color: $brand;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .collapsed & {
+    min-width: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0;
+  }
 }
 
-// ── Divider ───────────────────────────────────────────
-.as-divider {
-  height: 1px;
-  background: $as-border-soft;
-  margin: 12px 20px;
-}
-
-// ══════════════════════════════════════════════════════
-// FOOTER
-// ══════════════════════════════════════════════════════
+// ─── Footer ───────────────────────────────────────────────────────────────
 .as-footer {
   margin-top: auto;
-  padding: 16px 20px 24px;
-  border-top: 1px solid $as-border-soft;
+  padding: 14px 10px 0;
+  border-top: 1px solid rgba($white, .05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: padding $transition;
 }
 
 .as-user-info {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 14px;
+  padding: 0 4px;
+  overflow: hidden;
 }
 
 .as-user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: $as-primary-mid;
-  border: 1px solid $as-primary-hover;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: rgba($brand, .22);
+  color: $brand;
+  font-size: 12px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: v.$text-sm;
-  font-weight: v.$font-bold;
-  color: $as-primary;
-  font-family: v.$font-display;
   flex-shrink: 0;
+  letter-spacing: .02em;
 }
 
+.as-user-text { min-width: 0; }
+
 .as-user-name {
-  font-size: v.$text-xs;
-  font-weight: v.$font-semibold;
-  color: $as-sub;
+  font-size: .8rem;
+  font-weight: 600;
+  color: rgba($white, .85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .as-user-role {
-  font-size: 10px;
-  color: $as-faint;
-  letter-spacing: 0.5px;
+  font-size: .68rem;
+  color: rgba($white, .35);
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-transform: uppercase;
 }
 
 .as-logout-btn {
   width: 100%;
-  background: none;
-  border: 1px solid $as-border;
-  border-radius: v.$radius-md;
-  padding: 8px;
-  cursor: pointer;
-  font-family: v.$font-admin;
-  font-size: v.$text-xs;
-  color: $as-faint;
-  transition: v.$transition-base;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba($white, .08);
+  border-radius: 12px;
+  background: transparent;
+  color: rgba($white, .45);
+  font-size: .8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+  white-space: nowrap;
+  overflow: hidden;
 
   &:hover {
-    border-color: rgba(220, 38, 38, 0.30);
-    color: #dc2626;
-    background: rgba(220, 38, 38, 0.05);
+    background: rgba(239, 68, 68, .12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, .25);
+  }
+
+  &--icon {
+    padding: 10px 0;
+    font-size: 1rem;
   }
 }

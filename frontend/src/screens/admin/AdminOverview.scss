@@ -1,264 +1,265 @@
 // src/screens/admin/AdminOverview.scss
-@use '../../styles/variables' as v;
+// Fond clair (#f0f4f8) → tous les textes doivent être foncés
 
-// ── Tokens locaux ─────────────────────────────────────────────
-$ao-primary      : #00a6b2;
-$ao-primary-soft : rgba(0, 166, 178, 0.07);
-$ao-primary-mid  : rgba(0, 166, 178, 0.12);
-$ao-primary-hover: rgba(0, 166, 178, 0.28);
-$ao-primary-faint: rgba(0, 166, 178, 0.08);
-$ao-text         : #102a43;
-$ao-sub          : rgba(16, 42, 67, 0.55);
-$ao-faint        : rgba(16, 42, 67, 0.28);
-$ao-bg-card      : #ffffff;
-$ao-border       : rgba(16, 42, 67, 0.08);
-$ao-border-mid   : rgba(16, 42, 67, 0.05);
-$ao-row-hover    : rgba(0, 166, 178, 0.03);
-$ao-th-bg        : rgba(16, 42, 67, 0.02);
+$brand:   #00a6b2;
+$dark:    #102a43;
+$muted:   #5b7083;
+$light:   #f0f4f8;
+$white:   #ffffff;
+$border:  rgba(#102a43, .08);
 
-// ══════════════════════════════════════════════════════
-// STAT CARDS
-// ══════════════════════════════════════════════════════
+// ─── Grille de stats ─────────────────────────────────────────────────────
 .ao-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
   margin-bottom: 28px;
 }
 
 .ao-stat-card {
-  background: $ao-bg-card;
-  border: 1px solid $ao-border;
-  border-radius: v.$radius-xl;
-  padding: 18px 20px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  transition: v.$transition-base;
-  cursor: default;
-  box-shadow: 0 1px 4px rgba(16, 42, 67, 0.06);
+  gap: 16px;
+  padding: 20px 22px;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba($dark, .05);
+  transition: transform .2s ease, box-shadow .2s ease;
 
   &:hover {
-    border-color: $ao-primary-hover;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba($dark, .09);
   }
 }
 
 .ao-stat-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: v.$radius-md;
-  background: $ao-primary-soft;
-  border: 1px solid $ao-primary-mid;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
+  font-size: 1.75rem;
+  line-height: 1;
   flex-shrink: 0;
 }
 
 .ao-stat-val {
-  font-family: v.$font-display;
-  font-size: 30px;
-  font-weight: v.$font-bold;
-  color: $ao-primary;
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: $dark;          // ← foncé
+  letter-spacing: -.03em;
   line-height: 1;
 }
 
 .ao-stat-label {
-  font-size: 11px;
-  color: $ao-faint;
-  letter-spacing: 0.5px;
+  font-size: .775rem;
+  color: $muted;         // ← gris foncé lisible
+  font-weight: 500;
   margin-top: 3px;
 }
 
-// ══════════════════════════════════════════════════════
-// SECTION HEADER
-// ══════════════════════════════════════════════════════
+// ─── Grille deux colonnes ─────────────────────────────────────────────────
+.ao-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── En-tête de section ───────────────────────────────────────────────────
 .ao-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .ao-section-title {
-  font-family: v.$font-display;
-  font-size: 20px;
-  font-weight: v.$font-bold;
-  color: $ao-text;
+  font-size: .9375rem;
+  font-weight: 700;
+  color: $dark;          // ← foncé
 }
 
 .ao-section-link {
-  font-size: v.$text-xs;
-  color: rgba(0, 166, 178, 0.70);
-  background: none;
+  font-size: .8rem;
+  font-weight: 600;
+  color: $brand;
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-family: v.$font-admin;
-  transition: color v.$transition-fast;
+  padding: 0;
+  transition: opacity .2s ease;
 
-  &:hover { color: $ao-primary; }
+  &:hover { opacity: .7; }
 }
 
-// ══════════════════════════════════════════════════════
-// TWO-COL GRID
-// ══════════════════════════════════════════════════════
-.ao-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 28px;
-}
-
-// ══════════════════════════════════════════════════════
-// MINI TABLE
-// ══════════════════════════════════════════════════════
+// ─── Tableau ─────────────────────────────────────────────────────────────
 .ao-table-wrap {
-  background: $ao-bg-card;
-  border: 1px solid $ao-border;
-  border-radius: v.$radius-xl;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(16, 42, 67, 0.06);
+  box-shadow: 0 2px 10px rgba($dark, .04);
 }
 
 .ao-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: .8375rem;
+
+  thead tr {
+    background: rgba($dark, .03);
+    border-bottom: 1px solid $border;
+  }
 
   th {
     padding: 11px 16px;
     text-align: left;
-    font-size: 9px;
-    font-weight: v.$font-bold;
-    letter-spacing: 2px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .07em;
     text-transform: uppercase;
-    color: $ao-faint;
-    border-bottom: 1px solid $ao-border;
-    background: $ao-th-bg;
+    color: $muted;       // ← gris foncé lisible
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba($dark, .05);
+    transition: background .15s ease;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba($brand, .03); }
   }
 
   td {
     padding: 11px 16px;
-    font-size: v.$text-xs;
-    color: $ao-sub;
-    border-bottom: 1px solid $ao-border-mid;
+    color: $dark;        // ← foncé par défaut
     vertical-align: middle;
   }
-
-  tr:last-child td { border-bottom: none; }
-  tr:hover td      { background: $ao-row-hover; }
 }
 
-// ══════════════════════════════════════════════════════
-// ROLE BADGE
-// ══════════════════════════════════════════════════════
-.ao-role {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: v.$radius-sm;
-  font-size: 9px;
-  font-weight: v.$font-bold;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+// Surcharge des inline styles codés en dur dans le JSX (couleurs claires)
+// On les réécrit via des classes utilitaires
+.ao-table td {
+  // Nom de l'utilisateur
+  &:first-child {
+    font-weight: 600;
+    color: $dark !important;    // force sur fond clair
 
+    div {  // email sous le nom
+      font-size: 11px;
+      font-weight: 400;
+      color: $muted !important;
+      margin-top: 2px;
+    }
+  }
+}
+
+// Statut actif/inactif inline
+.ao-table td span[style] {
+  color: $muted !important;
+}
+
+// ─── Badge rôle ───────────────────────────────────────────────────────────
+.ao-role {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: capitalize;
+
+  &.prestataire {
+    background: rgba($brand, .12);
+    color: darken($brand, 8%);
+  }
   &.admin {
-    background: rgba(220, 38, 38, 0.08);
-    color: #dc2626;
-    border: 1px solid rgba(220, 38, 38, 0.18);
+    background: rgba(139, 92, 246, .12);
+    color: #7c3aed;
   }
   &.user {
-    background: rgba(99, 102, 241, 0.08);
-    color: #6366f1;
-    border: 1px solid rgba(99, 102, 241, 0.18);
-  }
-  &.prestataire {
-    background: $ao-primary-faint;
-    color: $ao-primary;
-    border: 1px solid $ao-primary-mid;
+    background: rgba($dark, .08);
+    color: $muted;
   }
 }
 
-// ══════════════════════════════════════════════════════
-// STATUS DOT
-// ══════════════════════════════════════════════════════
+// ─── Dot actif/inactif ────────────────────────────────────────────────────
 .ao-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
   display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  vertical-align: middle;
 
-  &.active {
-    background: #059669;
-    box-shadow: 0 0 5px rgba(5, 150, 105, 0.45);
-  }
-  &.inactive { background: #dc2626; }
+  &.active   { background: #22c55e; }
+  &.inactive { background: #cbd5e1; }
 }
 
-// ══════════════════════════════════════════════════════
-// MÉTIERS LIST
-// ══════════════════════════════════════════════════════
-.ao-metiers-list { padding: 8px 0; }
+// ─── Liste métiers ────────────────────────────────────────────────────────
+.ao-metiers-list {
+  padding: 4px 0;
+}
 
 .ao-metier-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 16px;
-  border-bottom: 1px solid $ao-border-mid;
-  transition: background v.$transition-fast;
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba($dark, .05);
+  transition: background .15s ease;
 
   &:last-child { border-bottom: none; }
-  &:hover      { background: $ao-row-hover; }
+  &:hover { background: rgba($brand, .03); }
 }
 
 .ao-metier-name {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
-  color: $ao-sub;
+  font-size: .875rem;
+  font-weight: 600;
+  color: $dark;          // ← foncé
   min-width: 0;
-  flex: 1;
+
+  > div {
+    min-width: 0;
+    > div:first-child {
+      color: $dark;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.ao-metier-icon-wrap {
+  color: $brand;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .ao-metier-cat {
-  font-size: 10px;
-  color: rgba(0, 166, 178, 0.50);
+  font-size: .72rem;
+  color: $muted;         // ← lisible sur fond clair
+  font-weight: 500;
   margin-top: 1px;
-  font-weight: v.$font-regular;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
-}
-
-.ao-metier-count {
-  font-size: 11px;
-  font-weight: v.$font-semibold;
-  color: $ao-primary;
-  background: $ao-primary-faint;
-  border: 1px solid $ao-primary-mid;
-  border-radius: 20px;
-  padding: 2px 9px;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .ao-metier-inactive {
-  font-size: 9px;
-  color: $ao-faint;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: .68rem;
+  font-weight: 600;
+  color: #ef4444;
+  background: rgba(239, 68, 68, .1);
+  padding: 2px 7px;
+  border-radius: 9999px;
   flex-shrink: 0;
 }
 
-// ══════════════════════════════════════════════════════
-// RESPONSIVE
-// ══════════════════════════════════════════════════════
-@media (max-width: 1100px) {
-  .ao-stats { grid-template-columns: repeat(2, 1fr); }
-  .ao-grid  { grid-template-columns: 1fr; }
+.ao-metier-count {
+  font-size: .775rem;
+  color: $muted;         // ← lisible
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
