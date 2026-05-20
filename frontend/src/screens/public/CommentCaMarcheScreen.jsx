@@ -71,23 +71,23 @@ const STEPS_PRESTA = [
 const FAQ = [
   {
     q: "Hopela est-il gratuit ?",
-    a: "Oui, l'accès à la plateforme est entièrement gratuit pour les utilisateurs particuliers. Pour les prestataires, l'inscription et la visibilité sont également gratuites pendant la phase MVP.",
+    a: "Hopela propose un accès gratuit aux particuliers pour consulter la carte et contacter directement un prestataire. Pour accéder aux fonctionnalités avancées, un abonnement est disponible. Les prestataires s’abonnent à Hopela pour signaler leur présence et capter des opportunités dans leur zone.",
   },
   {
     q: "Comment mes données de localisation sont-elles gérées ?",
-    a: "Votre position n'est partagée que si vous l'activez explicitement. Pour les prestataires, la position est visible uniquement lors du partage actif.",
+    a: "Votre position n’est jamais partagée sans votre accord. Pour les prestataires, elle est visible uniquement lorsque le signal est activé. Vous restez maître de votre présence — vous allumez, vous éteignez.",
   },
   {
     q: "Puis-je utiliser Hopela sans créer de compte ?",
-    a: "Vous pouvez consulter la carte en mode public. Pour accéder aux fonctionnalités personnalisées, un compte gratuit est requis.",
+    a: "Oui. Vous pouvez consulter la carte, voir les prestataires déjà dans votre zone et les contacter directement — sans créer de compte. Un compte gratuit est requis uniquement pour sauvegarder des favoris ou signaler votre besoin.",
   },
   {
     q: "Comment devenir prestataire sur Hopela ?",
-    a: "Créez un compte prestataire avec votre RIDET et numéro de téléphone professionnel. Notre équipe valide votre inscription sous 24h.",
+    a: "Créez votre compte prestataire avec votre numéro RIDET et votre téléphone professionnel. Notre équipe valide votre inscription sous 24 heures. Une fois validé, votre signal est actif — vous apparaissez sur la carte dès que vous signalez votre présence.",
   },
   {
     q: "Hopela couvre-t-il toute la Nouvelle-Calédonie ?",
-    a: "Actuellement, la plateforme est optimisée pour le Grand Nouméa : Nouméa, Dumbéa, Paita et Mont-Dore.",
+    a: "Hopela est actuellement optimisé pour le Grand Nouméa — Nouméa, Dumbéa, Païta et Mont-Dore. L’extension vers d’autres zones est prévue en fonction de la croissance de la plateforme.",
   },
 ];
 
@@ -176,11 +176,14 @@ const CommentCaMarcheScreen = () => {
               Particulier <em>👤</em>
             </h3>
             <ul>
-              <li>🗺️ Carte en temps réel avec les prestataires disponibles</li>
-              <li>📍 Adresses enregistrées</li>
-              <li>⊙ Rayon de recherche personnalisable</li>
+              <li>🗺️ Carte en temps réel — prestataires déjà dans votre zone</li>
+              <li>📍  Géolocalisation immédiate</li>
               <li>📞 Contact direct sans intermédiaire</li>
               <li>🔍 Filtrage par métier</li>
+              <li>🔍 Position enregistrée</li>
+              <li>🔍 Rayon de recherche personnalisable</li>
+              <li>🔍  Favoris — sauvegardez vos prestataires</li>
+              <li>🔍 Message de besoin — 144 caractères pour signaler votre demande aux prestataires de votre zone</li>
               <li>🆓 Accès gratuit</li>
             </ul>
           </article>
@@ -191,11 +194,11 @@ const CommentCaMarcheScreen = () => {
             </h3>
             <ul>
               <li>📍 Visibilité sur la carte</li>
-              <li>⚡ Partage de position activable / désactivable</li>
+              <li>⚡ Partage de position activable / désactivable </li>
               <li>✅ Profil certifié avec RIDET vérifié</li>
-              <li>🔧 Affichage métier et coordonnées</li>
-              <li>📱 Dashboard mobile-first</li>
-              <li>🆓 Gratuit pendant le MVP</li>
+              <li>⚡Affichage métier et coordonnées</li>
+              <li>🔧 Dashboard mobile-first</li>
+              <li>Message publicitaire 144 caractères — promotion, offre du moment, produit à liquider — visible par tous les clients de votre zone</li>
             </ul>
           </article>
         </div>
