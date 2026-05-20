@@ -1,0 +1,285 @@
+// ─── ForPros Section ───────────────────────────────────────────────────────────
+// Fond sombre (#102a43) pour contraster avec la section clients (blanche)
+
+.fp-section {
+  position: relative;
+  overflow: hidden;
+  padding: 120px 20px;
+}
+
+// Fond dark avec gradient et texture
+.fp-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(145deg, #03121d 0%, #102a43 50%, #0a1e30 100%);
+  z-index: 0;
+
+  // Grain subtil
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 166, 178, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 166, 178, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  // Glow teal
+  &::after {
+    content: "";
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 166, 178, 0.14), transparent 65%);
+    pointer-events: none;
+  }
+}
+
+// Glow bas-droit
+.fp-section::after {
+  content: "";
+  position: absolute;
+  bottom: -80px;
+  right: -80px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 92, 69, 0.18), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fp-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 64px;
+  align-items: center;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+}
+
+// ─── Steps colonne gauche ──────────────────────────────────────────────────────
+.fp-col-steps {
+  @media (max-width: 899px) {
+    order: 2;
+  }
+}
+
+.fp-steps-track {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fp-step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  opacity: 0;
+  animation: fpFadeUp 0.6s ease forwards;
+  animation-delay: calc(var(--i, 0) * 0.15s);
+}
+
+@keyframes fpFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fp-step-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.fp-step-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(0, 166, 178, 0.12);
+  border: 1px solid rgba(0, 166, 178, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #00a6b2;
+  flex-shrink: 0;
+  transition: background 0.3s, border-color 0.3s;
+
+  .fp-step:hover & {
+    background: rgba(0, 166, 178, 0.2);
+    border-color: rgba(0, 166, 178, 0.45);
+  }
+}
+
+.fp-step-line {
+  width: 1px;
+  flex: 1;
+  min-height: 32px;
+  background: linear-gradient(to bottom, rgba(0, 166, 178, 0.3), rgba(0, 166, 178, 0.08));
+  margin: 6px 0;
+}
+
+.fp-step-body {
+  padding-bottom: 32px;
+  flex: 1;
+
+  h4 {
+    font-size: clamp(15px, 1.2vw, 17px);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+
+  p {
+    font-size: clamp(13px, 1vw, 15px);
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.7;
+  }
+}
+
+// ─── Colonne content droite ────────────────────────────────────────────────────
+.fp-col-content {
+  @media (max-width: 899px) {
+    order: 1;
+  }
+}
+
+.fp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  background: rgba(0, 166, 178, 0.1);
+  border: 1px solid rgba(0, 166, 178, 0.25);
+  border-radius: 9999px;
+  color: #00a6b2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.fp-title {
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin-bottom: 28px;
+
+  em {
+    font-style: normal;
+    color: #00a6b2;
+  }
+}
+
+.fp-body {
+  margin-bottom: 20px;
+
+  p {
+    font-size: clamp(15px, 1.2vw, 17px);
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.7;
+    margin-bottom: 4px;
+  }
+}
+
+.fp-transition {
+  font-size: clamp(15px, 1.2vw, 17px);
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  margin-bottom: 12px;
+  margin-top: 20px;
+}
+
+// ─── Citations ─────────────────────────────────────────────────────────────────
+.fp-quote {
+  margin: 0 0 8px;
+  padding: 14px 20px;
+  border-left: 3px solid rgba(0, 166, 178, 0.4);
+  border-radius: 0 8px 8px 0;
+
+  &--muted {
+    font-size: clamp(15px, 1.3vw, 18px);
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.38);
+    background: rgba(255, 255, 255, 0.03);
+    font-weight: 500;
+  }
+
+  &--bold {
+    font-size: clamp(22px, 2.5vw, 32px);
+    font-style: italic;
+    color: #ffffff;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: rgba(0, 166, 178, 0.06);
+    border-color: #00a6b2;
+    margin-bottom: 36px;
+  }
+}
+
+// ─── Actions ───────────────────────────────────────────────────────────────────
+.fp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.fp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+
+  &--primary {
+    background: #00a6b2;
+    color: #ffffff;
+    box-shadow: 0 12px 32px rgba(0, 166, 178, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 44px rgba(0, 166, 178, 0.42);
+    }
+  }
+
+  &--ghost {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+  }
+}

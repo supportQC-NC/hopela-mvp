@@ -10,6 +10,8 @@ import PricingSection from "../../components/public/PricingSection";
 import TestimonialsSection from "../../components/public/TestimonialsSection";
 import FinalCta from "../../components/public/FinalCta";
 import LandingHero from "../../components/public/LandingHero";
+import ForClients from "../../components/public/ForClients";
+import ForPros from "../../components/public/ForPros";
 import "./LandingScreen.scss";
 
 const FONT_HREF =
@@ -30,6 +32,8 @@ const LandingScreen = () => {
     <main className="lp-root">
       <Header />
       <LandingHero />
+      <ForClients />
+      <ForPros />
       <LandingMapSection />
       <CategoriesCarousel />
       <HowItWorksSection />
