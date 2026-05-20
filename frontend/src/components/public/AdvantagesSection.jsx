@@ -6,7 +6,7 @@ const AdvantagesSection = () => (
     <div className="lp-avantages-inner">
       <div className="lp-eyebrow">Avantages</div>
       <h2 className="lp-section-title">
-        La différence <em>Hopela</em>
+        Pourquoi <em>Hopela</em> ?
       </h2>
 
       <div className="lp-avantages-grid">
