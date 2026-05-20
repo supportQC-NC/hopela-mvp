@@ -265,6 +265,9 @@ const CategorieScreen = () => {
             {metiers.map((m) => {
               const count = prestaCountByMetier(m._id);
               const active = count > 0;
+              const prestasMetier = prestataires.filter((p) =>
+                p.metiers?.some((pm) => (pm._id || pm) === m._id),
+              );
 
               return (
                 <article className="sc-metier-card" key={m._id}>
@@ -297,6 +300,26 @@ const CategorieScreen = () => {
                       {active ? "Disponible" : "Hors ligne"}
                     </span>
                   </div>
+
+                  {prestasMetier.length > 0 && (
+                    <div className="sc-metier-prestas">
+                      {prestasMetier.slice(0, 3).map((p) => (
+                        <Link
+                          key={p._id}
+                          to={`/prestataire/${p._id}`}
+                          className="sc-presta-chip"
+                        >
+                          <span className="sc-presta-dot" />
+                          {p.prenom} {p.nom}
+                        </Link>
+                      ))}
+                      {prestasMetier.length > 3 && (
+                        <span className="sc-presta-more">
+                          +{prestasMetier.length - 3} autre{prestasMetier.length - 3 > 1 ? "s" : ""}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </article>
               );
             })}

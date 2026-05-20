@@ -6,7 +6,7 @@ import "./Header.scss";
 import logo from "../../logo.png";
 
 const NAV_LINKS = [
-  { label: "Services", to: "/services" },
+  { label: "Prestataires", to: "/services" },
   { label: "Comment ça marche", to: "/comment-ca-marche" },
   { label: "Contact", to: "/contact" },
 ];

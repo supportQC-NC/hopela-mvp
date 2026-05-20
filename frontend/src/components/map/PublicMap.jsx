@@ -1,5 +1,4 @@
 
-
 // /* eslint-disable react-hooks/exhaustive-deps */
 // // src/components/map/PublicMap.jsx
 // import { useEffect, useState, useRef, useCallback } from "react";
@@ -56,8 +55,7 @@
 //   },
 // ];
 
-// // Couleurs fonctionnelles pour les marqueurs (gardées pour la lisibilité de la carte)
-// // Palette cohérente avec la charte de l'app
+// // Couleurs fonctionnelles pour les marqueurs
 // const METIER_COLORS = {
 //   Électricien: "#00a6b2",
 //   Plombier: "#1a2d4a",
@@ -117,7 +115,7 @@
 //   return { longitude, latitude };
 // };
 
-// // ── Composant d'Effets Carte (Bâtiments 3D, Brouillard) ───────────────────────
+// // ── Composant d'Effets Carte ────────────────────────────────────────────────────
 // const MapEffects = ({ styleId }) => {
 //   const { current: map } = useMap();
 //   const applyEffects = useCallback(() => {
@@ -225,19 +223,20 @@
 //   activeSource = "gps",
 //   onSelectSource = null,
 //   prestataires: prestatairesProps = null,
-//   filtreMetier: filtreMetierProp = null,
+//   filtreCategorie: filtreCategorieProp = null,
 //   onFiltreChange = null,
 //   onCountChange = null,
 // }) => {
 //   const isUserMode = prestatairesProps !== null || onSelectSource !== null;
 
 //   const [prestatairesLocal, setPrestatairesLocal] = useState([]);
-//   const [filtreMetierLocal, setFiltreMetierLocal] = useState("Tous");
-//   const filtreMetier =
-//     filtreMetierProp !== null ? filtreMetierProp : filtreMetierLocal;
-//   const setFiltreMetier = (v) => {
+//   const [categories, setCategories] = useState([]);
+//   const [filtreCategorieLocal, setFiltreCategorieLocal] = useState("Toutes");
+//   const filtreCategorie =
+//     filtreCategorieProp !== null ? filtreCategorieProp : filtreCategorieLocal;
+//   const setFiltreCategorie = (v) => {
 //     if (onFiltreChange) onFiltreChange(v);
-//     else setFiltreMetierLocal(v);
+//     else setFiltreCategorieLocal(v);
 //   };
 
 //   const [selected, setSelected] = useState(null);
@@ -263,6 +262,7 @@
 //   const currentStyle = MAP_STYLES.find((s) => s.id === styleId);
 //   const prestataires = isUserMode ? prestatairesProps || [] : prestatairesLocal;
 
+//   // ── Helpers position animée ────────────────────────────────────────────────
 //   const setAnimatedMarkerPosition = useCallback((id, position) => {
 //     animatedPositionsRef.current[id] = position;
 //     setAnimatedPositions((prev) => ({ ...prev, [id]: position }));
@@ -271,11 +271,9 @@
 //   const animateMarkerTo = useCallback(
 //     (id, from, to) => {
 //       if (!id || !from || !to) return;
-
 //       if (animationFramesRef.current[id]) {
 //         cancelAnimationFrame(animationFramesRef.current[id]);
 //       }
-
 //       const start = performance.now();
 //       const step = (now) => {
 //         const progress = Math.min((now - start) / MARKER_ANIMATION_MS, 1);
@@ -284,10 +282,8 @@
 //           longitude: from.longitude + (to.longitude - from.longitude) * eased,
 //           latitude: from.latitude + (to.latitude - from.latitude) * eased,
 //         };
-
 //         animatedPositionsRef.current[id] = next;
 //         setAnimatedPositions((prev) => ({ ...prev, [id]: next }));
-
 //         if (progress < 1) {
 //           animationFramesRef.current[id] = requestAnimationFrame(step);
 //         } else {
@@ -295,43 +291,33 @@
 //           setAnimatedMarkerPosition(id, to);
 //         }
 //       };
-
 //       animationFramesRef.current[id] = requestAnimationFrame(step);
 //     },
 //     [setAnimatedMarkerPosition],
 //   );
 
-//   // Synchronise les positions serveur avec les marqueurs animés.
-//   // Quand une nouvelle coordonnée arrive par socket ou par props, le marqueur
-//   // glisse vers sa nouvelle position au lieu de sauter brutalement.
+//   // Synchronise les positions serveur avec les marqueurs animés
 //   useEffect(() => {
 //     const visibleIds = new Set();
-
 //     prestataires.forEach((prestataire) => {
 //       const id = prestataire?._id;
 //       const nextPosition = readLngLat(prestataire);
 //       if (!id || !nextPosition) return;
-
 //       visibleIds.add(id);
 //       const previousServerPosition = latestServerPositionsRef.current[id];
 //       const currentAnimatedPosition = animatedPositionsRef.current[id];
-
 //       latestServerPositionsRef.current[id] = nextPosition;
-
 //       if (!currentAnimatedPosition || !previousServerPosition) {
 //         setAnimatedMarkerPosition(id, nextPosition);
 //         return;
 //       }
-
 //       const hasMoved =
 //         previousServerPosition.longitude !== nextPosition.longitude ||
 //         previousServerPosition.latitude !== nextPosition.latitude;
-
 //       if (hasMoved) {
 //         animateMarkerTo(id, currentAnimatedPosition, nextPosition);
 //       }
 //     });
-
 //     Object.keys(animatedPositionsRef.current).forEach((id) => {
 //       if (!visibleIds.has(id)) {
 //         if (animationFramesRef.current[id]) {
@@ -356,7 +342,7 @@
 //     };
 //   }, []);
 
-//   // ── Font Injection (Login Style) ────────────────────────────────────────
+//   // ── Font Injection ─────────────────────────────────────────────────────────
 //   useEffect(() => {
 //     if (!document.getElementById("map-fonts")) {
 //       const link = document.createElement("link");
@@ -390,7 +376,15 @@
 //     }));
 //   }, [centerPosition?.longitude, centerPosition?.latitude]);
 
-//   // Fetch public (landing uniquement)
+//   // ── Fetch catégories ────────────────────────────────────────────────────────
+//   useEffect(() => {
+//     fetch(`${API_URL}/api/categories`)
+//       .then((r) => (r.ok ? r.json() : []))
+//       .then((data) => setCategories(Array.isArray(data) ? data : []))
+//       .catch((e) => console.error("PublicMap categories:", e.message));
+//   }, []);
+
+//   // ── Fetch public (landing uniquement) ──────────────────────────────────────
 //   useEffect(() => {
 //     if (isUserMode) return;
 //     fetch(`${API_URL}/api/users/prestataires/positions/public`)
@@ -402,7 +396,7 @@
 //       .catch((e) => console.error("PublicMap:", e.message));
 //   }, []);
 
-//   // Socket — via singleton
+//   // ── Socket ─────────────────────────────────────────────────────────────────
 //   useEffect(() => {
 //     if (isUserMode) return;
 //     const socket = getSocket();
@@ -458,14 +452,20 @@
 //     }));
 //   };
 
-//   const metiersDispos = [
-//     "Tous",
-//     ...new Set(prestataires.map((p) => p.metiers?.[0]?.nom).filter(Boolean)),
-//   ];
+//   // ── Filtrage par catégorie ──────────────────────────────────────────────────
+//   // Un prestataire appartient à une catégorie si son métier principal
+//   // a une catégorie dont le nom correspond au filtre sélectionné.
 //   const filtres =
-//     filtreMetier === "Tous"
+//     filtreCategorie === "Toutes"
 //       ? prestataires
-//       : prestataires.filter((p) => p.metiers?.[0]?.nom === filtreMetier);
+//       : prestataires.filter((p) => {
+//           const metier = p.metiers?.[0];
+//           const cat = metier?.categorie;
+//           // categorie peut être un objet peuplé { nom, icone } ou un simple id string
+//           if (!cat) return false;
+//           const catNom = typeof cat === "object" ? cat.nom : null;
+//           return catNom === filtreCategorie;
+//         });
 
 //   const circleData =
 //     centerPosition && rayonLocal
@@ -475,7 +475,6 @@
 //           rayonLocal,
 //         )
 //       : null;
-//   const rayonPct = Math.round(((rayonLocal - 1) / 99) * 100);
 
 //   return (
 //     <div
@@ -485,7 +484,7 @@
 //         setShowRayonCtrl(false);
 //       }}
 //     >
-//       {/* ══ BARRE DE CONTRÔLE (Style Login) ══ */}
+//       {/* ══ BARRE DE CONTRÔLE ══ */}
 //       <div style={s.filterBar}>
 //         {/* 1. Sélecteur Source (Mode User) */}
 //         {isUserMode && (
@@ -554,33 +553,33 @@
 //           </div>
 //         )}
 
-//         {/* 2. LIVE COUNTER (Subtle) */}
+//         {/* 2. LIVE COUNTER */}
 //         <div style={s.liveChip}>
 //           <span style={s.liveDot} />
-//           <span style={{ fontWeight: 600, color: "#c9a84c" }}>
+//           <span style={{ fontWeight: 600, color: "#00a6b2" }}>
 //             {prestataires.length}
 //           </span>
 //           <span style={{ marginLeft: 4 }}>en ligne</span>
 //         </div>
 
-//         {/* 3. FILTRE MÉTIER (Mobile First - Style Input Login) */}
+//         {/* 3. FILTRE CATÉGORIE */}
 //         <div style={s.inputGroup}>
-//           <span style={s.inputIcon}>⚡</span>
+//           <span style={s.inputIcon}>📂</span>
 //           <select
 //             style={s.styledSelect}
-//             value={filtreMetier}
+//             value={filtreCategorie}
 //             onChange={(e) => {
-//               setFiltreMetier(e.target.value);
+//               setFiltreCategorie(e.target.value);
 //               setSelected(null);
 //             }}
 //           >
-//             {metiersDispos.map((m) => (
-//               <option key={m} value={m}>
-//                 {m === "Tous" ? "Tous les métiers" : `${getIcon(m)} ${m}`}
+//             <option value="Toutes">Toutes les catégories</option>
+//             {categories.map((cat) => (
+//               <option key={cat._id} value={cat.nom}>
+//                 {cat.nom}
 //               </option>
 //             ))}
 //           </select>
-//           {/* Flèche personnalisée */}
 //           <span style={s.selectArrow}>▼</span>
 //         </div>
 
@@ -603,7 +602,7 @@
 //           </button>
 //         )}
 
-//         {/* 5. SÉLECTEUR STYLE (Icônes seules sur mobile) */}
+//         {/* 5. SÉLECTEUR STYLE */}
 //         <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
 //           {MAP_STYLES.map((ms) => (
 //             <button
@@ -621,7 +620,7 @@
 //         </div>
 //       </div>
 
-//       {/* ══ PANNEAU RAYON (Style Login Panel) ══ */}
+//       {/* ══ PANNEAU RAYON ══ */}
 //       {isUserMode && showRayonCtrl && (
 //         <div style={s.panel} onClick={(e) => e.stopPropagation()}>
 //           <div
@@ -635,7 +634,7 @@
 //             <span
 //               style={{
 //                 fontSize: 11,
-//                 color: "rgba(245,240,232,0.4)",
+//                 color: "rgba(16,42,67,0.5)",
 //                 textTransform: "uppercase",
 //                 letterSpacing: 1.5,
 //               }}
@@ -646,7 +645,7 @@
 //               style={{
 //                 fontSize: 18,
 //                 fontWeight: 700,
-//                 color: "#c9a84c",
+//                 color: "#00a6b2",
 //                 fontFamily: "'Cormorant Garamond', serif",
 //               }}
 //             >
@@ -705,7 +704,7 @@
 //                 <Layer
 //                   id="rayon-fill-layer"
 //                   type="fill"
-//                   paint={{ "fill-color": "#c9a84c", "fill-opacity": 0.06 }}
+//                   paint={{ "fill-color": "#00a6b2", "fill-opacity": 0.06 }}
 //                 />
 //               </Source>
 //               <Source id="rayon-border" type="geojson" data={circleData}>
@@ -713,7 +712,7 @@
 //                   id="rayon-border-layer"
 //                   type="line"
 //                   paint={{
-//                     "line-color": "#c9a84c",
+//                     "line-color": "#00a6b2",
 //                     "line-width": 1.5,
 //                     "line-opacity": 0.5,
 //                     "line-dasharray": [4, 3],
@@ -794,7 +793,7 @@
 //               </Marker>
 //             ))}
 
-//           {/* Marqueurs prestataires */}
+//           {/* Marqueurs prestataires (filtrés par catégorie) */}
 //           {filtres.map((p) => {
 //             const serverPosition = readLngLat(p);
 //             if (!serverPosition) return null;
@@ -832,7 +831,6 @@
 //                   }}
 //                   title={p.prenom + " " + p.nom + " — " + metierNom}
 //                 >
-//                   {/* Tête de l'épingle */}
 //                   <div
 //                     style={{
 //                       width: 38,
@@ -850,7 +848,6 @@
 //                     }}
 //                   >
 //                     <span style={{ fontSize: 17, lineHeight: 1 }}>{icon}</span>
-//                     {/* Anneau pulsant */}
 //                     {isActive && (
 //                       <div
 //                         style={{
@@ -864,7 +861,6 @@
 //                       />
 //                     )}
 //                   </div>
-//                   {/* Pointe de l'épingle */}
 //                   <div
 //                     style={{
 //                       width: 0,
@@ -881,10 +877,11 @@
 //             );
 //           })}
 
-//           {/* Popup (Style Carte de visite sombre) */}
+//           {/* Popup */}
 //           {selected &&
 //             (() => {
 //               const metierNom = selected.metiers?.[0]?.nom || "Prestataire";
+//               const catNom = selected.metiers?.[0]?.categorie?.nom || null;
 //               const color = getColor(metierNom);
 //               return (
 //                 <Popup
@@ -918,11 +915,14 @@
 //                         {selected.prenom} {selected.nom}
 //                       </div>
 //                       <div style={{ ...s.popupMetier, color }}>{metierNom}</div>
+//                       {catNom && (
+//                         <div style={s.popupCategorie}>{catNom}</div>
+//                       )}
 //                       {selected.ridet && (
 //                         <div
 //                           style={{
 //                             fontSize: 10,
-//                             color: "rgba(245,240,232,0.4)",
+//                             color: "rgba(16,42,67,0.4)",
 //                             marginTop: 2,
 //                             fontFamily: "'DM Sans', sans-serif",
 //                           }}
@@ -938,7 +938,7 @@
 //                         gap: 4,
 //                         marginTop: 8,
 //                         paddingTop: 8,
-//                         borderTop: "1px solid rgba(255,255,255,0.1)",
+//                         borderTop: "1px solid rgba(16,42,67,0.08)",
 //                       }}
 //                     >
 //                       {selected.telephoneContact && (
@@ -972,16 +972,8 @@
 //   );
 // };
 
-// // ── STYLES (Charte LoginScreen) ───────────────────────────────────────────────
+// // ── STYLES ────────────────────────────────────────────────────────────────────
 // const s = {
-//   // ── Couleurs landing light mode ──
-//   // primary teal : #00a6b2
-//   // text dark    : #102a43
-//   // text sub     : #5b7083
-//   // border       : rgba(16,42,67,0.08)
-//   // bg           : #f7faf9
-//   // bg card      : #ffffff
-
 //   wrapper: {
 //     display: "flex",
 //     flexDirection: "column",
@@ -1084,13 +1076,9 @@
 //     border: "1px solid rgba(16,42,67,0.1)",
 //     borderRadius: 8,
 //     flex: 1,
-//     maxWidth: 240,
-//     minWidth: 140,
+//     maxWidth: 280,
+//     minWidth: 160,
 //     transition: "all 0.2s",
-//   },
-//   inputGroupFocus: {
-//     borderColor: "rgba(0,166,178,0.4)",
-//     boxShadow: "0 0 0 3px rgba(0,166,178,0.08)",
 //   },
 //   inputIcon: {
 //     position: "absolute",
@@ -1216,28 +1204,6 @@
 //   },
 
 //   mapContainer: { flex: 1, minHeight: 0, position: "relative", width: "100%" },
-//   marker: {
-//     width: 40,
-//     height: 40,
-//     borderRadius: "50%",
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     cursor: "pointer",
-//     position: "relative",
-//     transition: "transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-//     userSelect: "none",
-//     border: "2.5px solid rgba(255,255,255,0.9)",
-//     boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-//   },
-//   pulse: {
-//     position: "absolute",
-//     inset: -8,
-//     borderRadius: "50%",
-//     border: "2px solid",
-//     animation: "pulse-ring 2.2s ease-out infinite",
-//     pointerEvents: "none",
-//   },
 
 //   popupCard: {
 //     background: "#ffffff",
@@ -1271,8 +1237,17 @@
 //   popupMetier: {
 //     fontSize: 12,
 //     fontWeight: 600,
+//     marginBottom: 2,
+//     fontFamily: "'Inter', sans-serif",
+//   },
+//   popupCategorie: {
+//     fontSize: 10,
+//     fontWeight: 500,
+//     color: "#5b7083",
 //     marginBottom: 4,
 //     fontFamily: "'Inter', sans-serif",
+//     textTransform: "uppercase",
+//     letterSpacing: "0.08em",
 //   },
 //   popupLink: {
 //     display: "inline-flex",
@@ -1288,7 +1263,6 @@
 //     background: "rgba(0,166,178,0.08)",
 //     transition: "background 0.2s",
 //   },
-//   popupLinkHover: { background: "rgba(0,166,178,0.15)" },
 
 //   recenterBtn: {
 //     position: "absolute",
@@ -1310,7 +1284,7 @@
 //   },
 // };
 
-// // Global CSS Injection — light mode
+// // Global CSS Injection
 // if (
 //   typeof document !== "undefined" &&
 //   !document.getElementById("map-login-styles")
@@ -1346,9 +1320,11 @@
 // }
 
 // export default PublicMap;
+
 /* eslint-disable react-hooks/exhaustive-deps */
 // src/components/map/PublicMap.jsx
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Map, {
   Marker,
   Popup,
@@ -1369,20 +1345,11 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const MAP_STYLES = [
   {
-    id: "plan",
-    label: "🗺️ Plan",
-    url: "mapbox://styles/mapbox/streets-v12",
-    pitch: 0,
-    terrain: false,
-    bearing: 0,
-  },
-  {
     id: "nuit",
     label: "🌙 Nuit",
     url: "mapbox://styles/mapbox/dark-v11",
     pitch: 45,
     terrain: false,
-    bearing: -10,
   },
   {
     id: "satellite",
@@ -1390,7 +1357,13 @@ const MAP_STYLES = [
     url: "mapbox://styles/mapbox/satellite-streets-v12",
     pitch: 60,
     terrain: true,
-    bearing: -15,
+  },
+  {
+    id: "plan",
+    label: "🗺️ Plan",
+    url: "mapbox://styles/mapbox/streets-v12",
+    pitch: 0,
+    terrain: false,
   },
   {
     id: "relief",
@@ -1398,11 +1371,11 @@ const MAP_STYLES = [
     url: "mapbox://styles/mapbox/outdoors-v12",
     pitch: 60,
     terrain: true,
-    bearing: -10,
   },
 ];
 
-// Couleurs fonctionnelles pour les marqueurs
+// Couleurs fonctionnelles pour les marqueurs (gardées pour la lisibilité de la carte)
+// Palette cohérente avec la charte de l'app
 const METIER_COLORS = {
   Électricien: "#00a6b2",
   Plombier: "#1a2d4a",
@@ -1451,18 +1424,7 @@ const makeCircle = (lng, lat, radiusKm, steps = 64) => {
   };
 };
 
-const MARKER_ANIMATION_MS = 900;
-
-const easeInOutCubic = (t) =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-const readLngLat = (prestataire) => {
-  const [longitude, latitude] = prestataire?.location?.coordinates || [];
-  if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return null;
-  return { longitude, latitude };
-};
-
-// ── Composant d'Effets Carte ────────────────────────────────────────────────────
+// ── Composant d'Effets Carte (Bâtiments 3D, Brouillard) ───────────────────────
 const MapEffects = ({ styleId }) => {
   const { current: map } = useMap();
   const applyEffects = useCallback(() => {
@@ -1570,24 +1532,24 @@ const PublicMap = ({
   activeSource = "gps",
   onSelectSource = null,
   prestataires: prestatairesProps = null,
-  filtreCategorie: filtreCategorieProp = null,
+  filtreMetier: filtreMetierProp = null,
   onFiltreChange = null,
   onCountChange = null,
 }) => {
+  const navigate = useNavigate();
   const isUserMode = prestatairesProps !== null || onSelectSource !== null;
 
   const [prestatairesLocal, setPrestatairesLocal] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [filtreCategorieLocal, setFiltreCategorieLocal] = useState("Toutes");
-  const filtreCategorie =
-    filtreCategorieProp !== null ? filtreCategorieProp : filtreCategorieLocal;
-  const setFiltreCategorie = (v) => {
+  const [filtreMetierLocal, setFiltreMetierLocal] = useState("Tous");
+  const filtreMetier =
+    filtreMetierProp !== null ? filtreMetierProp : filtreMetierLocal;
+  const setFiltreMetier = (v) => {
     if (onFiltreChange) onFiltreChange(v);
-    else setFiltreCategorieLocal(v);
+    else setFiltreMetierLocal(v);
   };
 
   const [selected, setSelected] = useState(null);
-  const [styleId, setStyleId] = useState("plan");
+  const [styleId, setStyleId] = useState("nuit");
   const [showRayonCtrl, setShowRayonCtrl] = useState(false);
   const [showSrcPicker, setShowSrcPicker] = useState(false);
   const [rayonLocal, setRayonLocal] = useState(rayon != null ? rayon : 10);
@@ -1596,100 +1558,15 @@ const PublicMap = ({
     longitude: 166.458,
     latitude: -22.272,
     zoom: 11.5,
-    pitch: 0,
-    bearing: 0,
+    pitch: 45,
+    bearing: -10,
   });
 
   const mapRef = useRef(null);
-  const animationFramesRef = useRef({});
-  const animatedPositionsRef = useRef({});
-  const latestServerPositionsRef = useRef({});
-  const [animatedPositions, setAnimatedPositions] = useState({});
-
   const currentStyle = MAP_STYLES.find((s) => s.id === styleId);
   const prestataires = isUserMode ? prestatairesProps || [] : prestatairesLocal;
 
-  // ── Helpers position animée ────────────────────────────────────────────────
-  const setAnimatedMarkerPosition = useCallback((id, position) => {
-    animatedPositionsRef.current[id] = position;
-    setAnimatedPositions((prev) => ({ ...prev, [id]: position }));
-  }, []);
-
-  const animateMarkerTo = useCallback(
-    (id, from, to) => {
-      if (!id || !from || !to) return;
-      if (animationFramesRef.current[id]) {
-        cancelAnimationFrame(animationFramesRef.current[id]);
-      }
-      const start = performance.now();
-      const step = (now) => {
-        const progress = Math.min((now - start) / MARKER_ANIMATION_MS, 1);
-        const eased = easeInOutCubic(progress);
-        const next = {
-          longitude: from.longitude + (to.longitude - from.longitude) * eased,
-          latitude: from.latitude + (to.latitude - from.latitude) * eased,
-        };
-        animatedPositionsRef.current[id] = next;
-        setAnimatedPositions((prev) => ({ ...prev, [id]: next }));
-        if (progress < 1) {
-          animationFramesRef.current[id] = requestAnimationFrame(step);
-        } else {
-          delete animationFramesRef.current[id];
-          setAnimatedMarkerPosition(id, to);
-        }
-      };
-      animationFramesRef.current[id] = requestAnimationFrame(step);
-    },
-    [setAnimatedMarkerPosition],
-  );
-
-  // Synchronise les positions serveur avec les marqueurs animés
-  useEffect(() => {
-    const visibleIds = new Set();
-    prestataires.forEach((prestataire) => {
-      const id = prestataire?._id;
-      const nextPosition = readLngLat(prestataire);
-      if (!id || !nextPosition) return;
-      visibleIds.add(id);
-      const previousServerPosition = latestServerPositionsRef.current[id];
-      const currentAnimatedPosition = animatedPositionsRef.current[id];
-      latestServerPositionsRef.current[id] = nextPosition;
-      if (!currentAnimatedPosition || !previousServerPosition) {
-        setAnimatedMarkerPosition(id, nextPosition);
-        return;
-      }
-      const hasMoved =
-        previousServerPosition.longitude !== nextPosition.longitude ||
-        previousServerPosition.latitude !== nextPosition.latitude;
-      if (hasMoved) {
-        animateMarkerTo(id, currentAnimatedPosition, nextPosition);
-      }
-    });
-    Object.keys(animatedPositionsRef.current).forEach((id) => {
-      if (!visibleIds.has(id)) {
-        if (animationFramesRef.current[id]) {
-          cancelAnimationFrame(animationFramesRef.current[id]);
-          delete animationFramesRef.current[id];
-        }
-        delete animatedPositionsRef.current[id];
-        delete latestServerPositionsRef.current[id];
-        setAnimatedPositions((prev) => {
-          const next = { ...prev };
-          delete next[id];
-          return next;
-        });
-      }
-    });
-  }, [prestataires, animateMarkerTo, setAnimatedMarkerPosition]);
-
-  useEffect(() => {
-    return () => {
-      Object.values(animationFramesRef.current).forEach(cancelAnimationFrame);
-      animationFramesRef.current = {};
-    };
-  }, []);
-
-  // ── Font Injection ─────────────────────────────────────────────────────────
+  // ── Font Injection (Login Style) ────────────────────────────────────────
   useEffect(() => {
     if (!document.getElementById("map-fonts")) {
       const link = document.createElement("link");
@@ -1723,15 +1600,7 @@ const PublicMap = ({
     }));
   }, [centerPosition?.longitude, centerPosition?.latitude]);
 
-  // ── Fetch catégories ────────────────────────────────────────────────────────
-  useEffect(() => {
-    fetch(`${API_URL}/api/categories`)
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setCategories(Array.isArray(data) ? data : []))
-      .catch((e) => console.error("PublicMap categories:", e.message));
-  }, []);
-
-  // ── Fetch public (landing uniquement) ──────────────────────────────────────
+  // Fetch public (landing uniquement)
   useEffect(() => {
     if (isUserMode) return;
     fetch(`${API_URL}/api/users/prestataires/positions/public`)
@@ -1743,7 +1612,7 @@ const PublicMap = ({
       .catch((e) => console.error("PublicMap:", e.message));
   }, []);
 
-  // ── Socket ─────────────────────────────────────────────────────────────────
+  // Socket — via singleton
   useEffect(() => {
     if (isUserMode) return;
     const socket = getSocket();
@@ -1782,8 +1651,8 @@ const PublicMap = ({
     setSelected(null);
     setViewState((v) => ({
       ...v,
-      pitch: st?.pitch ?? 0,
-      bearing: st?.bearing ?? 0,
+      pitch: st.pitch,
+      bearing: newId === "satellite" ? -15 : -10,
     }));
   };
 
@@ -1794,25 +1663,18 @@ const PublicMap = ({
       longitude: pos.longitude,
       latitude: pos.latitude,
       zoom: 12,
-      pitch: currentStyle?.pitch ?? 0,
-      bearing: currentStyle?.bearing ?? 0,
+      pitch: currentStyle.pitch,
     }));
   };
 
-  // ── Filtrage par catégorie ──────────────────────────────────────────────────
-  // Un prestataire appartient à une catégorie si son métier principal
-  // a une catégorie dont le nom correspond au filtre sélectionné.
+  const metiersDispos = [
+    "Tous",
+    ...new Set(prestataires.map((p) => p.metiers?.[0]?.nom).filter(Boolean)),
+  ];
   const filtres =
-    filtreCategorie === "Toutes"
+    filtreMetier === "Tous"
       ? prestataires
-      : prestataires.filter((p) => {
-          const metier = p.metiers?.[0];
-          const cat = metier?.categorie;
-          // categorie peut être un objet peuplé { nom, icone } ou un simple id string
-          if (!cat) return false;
-          const catNom = typeof cat === "object" ? cat.nom : null;
-          return catNom === filtreCategorie;
-        });
+      : prestataires.filter((p) => p.metiers?.[0]?.nom === filtreMetier);
 
   const circleData =
     centerPosition && rayonLocal
@@ -1822,6 +1684,7 @@ const PublicMap = ({
           rayonLocal,
         )
       : null;
+  const rayonPct = Math.round(((rayonLocal - 1) / 99) * 100);
 
   return (
     <div
@@ -1831,7 +1694,7 @@ const PublicMap = ({
         setShowRayonCtrl(false);
       }}
     >
-      {/* ══ BARRE DE CONTRÔLE ══ */}
+      {/* ══ BARRE DE CONTRÔLE (Style Login) ══ */}
       <div style={s.filterBar}>
         {/* 1. Sélecteur Source (Mode User) */}
         {isUserMode && (
@@ -1900,33 +1763,33 @@ const PublicMap = ({
           </div>
         )}
 
-        {/* 2. LIVE COUNTER */}
+        {/* 2. LIVE COUNTER (Subtle) */}
         <div style={s.liveChip}>
           <span style={s.liveDot} />
-          <span style={{ fontWeight: 600, color: "#00a6b2" }}>
+          <span style={{ fontWeight: 600, color: "#c9a84c" }}>
             {prestataires.length}
           </span>
           <span style={{ marginLeft: 4 }}>en ligne</span>
         </div>
 
-        {/* 3. FILTRE CATÉGORIE */}
+        {/* 3. FILTRE MÉTIER (Mobile First - Style Input Login) */}
         <div style={s.inputGroup}>
-          <span style={s.inputIcon}>📂</span>
+          <span style={s.inputIcon}>⚡</span>
           <select
             style={s.styledSelect}
-            value={filtreCategorie}
+            value={filtreMetier}
             onChange={(e) => {
-              setFiltreCategorie(e.target.value);
+              setFiltreMetier(e.target.value);
               setSelected(null);
             }}
           >
-            <option value="Toutes">Toutes les catégories</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat.nom}>
-                {cat.nom}
+            {metiersDispos.map((m) => (
+              <option key={m} value={m}>
+                {m === "Tous" ? "Tous les métiers" : `${getIcon(m)} ${m}`}
               </option>
             ))}
           </select>
+          {/* Flèche personnalisée */}
           <span style={s.selectArrow}>▼</span>
         </div>
 
@@ -1949,7 +1812,7 @@ const PublicMap = ({
           </button>
         )}
 
-        {/* 5. SÉLECTEUR STYLE */}
+        {/* 5. SÉLECTEUR STYLE (Icônes seules sur mobile) */}
         <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
           {MAP_STYLES.map((ms) => (
             <button
@@ -1967,7 +1830,7 @@ const PublicMap = ({
         </div>
       </div>
 
-      {/* ══ PANNEAU RAYON ══ */}
+      {/* ══ PANNEAU RAYON (Style Login Panel) ══ */}
       {isUserMode && showRayonCtrl && (
         <div style={s.panel} onClick={(e) => e.stopPropagation()}>
           <div
@@ -1981,7 +1844,7 @@ const PublicMap = ({
             <span
               style={{
                 fontSize: 11,
-                color: "rgba(16,42,67,0.5)",
+                color: "rgba(245,240,232,0.4)",
                 textTransform: "uppercase",
                 letterSpacing: 1.5,
               }}
@@ -1992,7 +1855,7 @@ const PublicMap = ({
               style={{
                 fontSize: 18,
                 fontWeight: 700,
-                color: "#00a6b2",
+                color: "#c9a84c",
                 fontFamily: "'Cormorant Garamond', serif",
               }}
             >
@@ -2051,7 +1914,7 @@ const PublicMap = ({
                 <Layer
                   id="rayon-fill-layer"
                   type="fill"
-                  paint={{ "fill-color": "#00a6b2", "fill-opacity": 0.06 }}
+                  paint={{ "fill-color": "#c9a84c", "fill-opacity": 0.06 }}
                 />
               </Source>
               <Source id="rayon-border" type="geojson" data={circleData}>
@@ -2059,7 +1922,7 @@ const PublicMap = ({
                   id="rayon-border-layer"
                   type="line"
                   paint={{
-                    "line-color": "#00a6b2",
+                    "line-color": "#c9a84c",
                     "line-width": 1.5,
                     "line-opacity": 0.5,
                     "line-dasharray": [4, 3],
@@ -2140,12 +2003,10 @@ const PublicMap = ({
               </Marker>
             ))}
 
-          {/* Marqueurs prestataires (filtrés par catégorie) */}
+          {/* Marqueurs prestataires */}
           {filtres.map((p) => {
-            const serverPosition = readLngLat(p);
-            if (!serverPosition) return null;
-            const animatedPosition = animatedPositions[p._id] || serverPosition;
-            const { longitude: markerLng, latitude: markerLat } = animatedPosition;
+            const [lng, lat] = p.location?.coordinates || [];
+            if (!lng || !lat) return null;
             const metierNom = p.metiers?.[0]?.nom || "Prestataire";
             const color = getColor(metierNom);
             const icon = getIcon(metierNom);
@@ -2153,8 +2014,8 @@ const PublicMap = ({
             return (
               <Marker
                 key={p._id}
-                longitude={markerLng}
-                latitude={markerLat}
+                longitude={lng}
+                latitude={lat}
                 anchor="bottom"
                 onClick={(e) => {
                   e.originalEvent.stopPropagation();
@@ -2178,6 +2039,7 @@ const PublicMap = ({
                   }}
                   title={p.prenom + " " + p.nom + " — " + metierNom}
                 >
+                  {/* Tête de l'épingle */}
                   <div
                     style={{
                       width: 38,
@@ -2195,6 +2057,7 @@ const PublicMap = ({
                     }}
                   >
                     <span style={{ fontSize: 17, lineHeight: 1 }}>{icon}</span>
+                    {/* Anneau pulsant */}
                     {isActive && (
                       <div
                         style={{
@@ -2208,6 +2071,7 @@ const PublicMap = ({
                       />
                     )}
                   </div>
+                  {/* Pointe de l'épingle */}
                   <div
                     style={{
                       width: 0,
@@ -2224,22 +2088,15 @@ const PublicMap = ({
             );
           })}
 
-          {/* Popup */}
+          {/* Popup (Style Carte de visite sombre) */}
           {selected &&
             (() => {
               const metierNom = selected.metiers?.[0]?.nom || "Prestataire";
-              const catNom = selected.metiers?.[0]?.categorie?.nom || null;
               const color = getColor(metierNom);
               return (
                 <Popup
-                  longitude={
-                    animatedPositions[selected._id]?.longitude ||
-                    selected.location.coordinates[0]
-                  }
-                  latitude={
-                    animatedPositions[selected._id]?.latitude ||
-                    selected.location.coordinates[1]
-                  }
+                  longitude={selected.location.coordinates[0]}
+                  latitude={selected.location.coordinates[1]}
                   anchor="bottom"
                   offset={24}
                   closeOnClick={false}
@@ -2262,14 +2119,11 @@ const PublicMap = ({
                         {selected.prenom} {selected.nom}
                       </div>
                       <div style={{ ...s.popupMetier, color }}>{metierNom}</div>
-                      {catNom && (
-                        <div style={s.popupCategorie}>{catNom}</div>
-                      )}
                       {selected.ridet && (
                         <div
                           style={{
                             fontSize: 10,
-                            color: "rgba(16,42,67,0.4)",
+                            color: "rgba(245,240,232,0.4)",
                             marginTop: 2,
                             fontFamily: "'DM Sans', sans-serif",
                           }}
@@ -2285,7 +2139,7 @@ const PublicMap = ({
                         gap: 4,
                         marginTop: 8,
                         paddingTop: 8,
-                        borderTop: "1px solid rgba(16,42,67,0.08)",
+                        borderTop: "1px solid rgba(255,255,255,0.1)",
                       }}
                     >
                       {selected.telephoneContact && (
@@ -2304,6 +2158,21 @@ const PublicMap = ({
                           ✉️ Email
                         </a>
                       )}
+                      <button
+                        onClick={() => navigate(`/prestataire/${selected._id}`)}
+                        style={{
+                          ...s.popupLink,
+                          background: "rgba(0,166,178,0.12)",
+                          color: "#00a6b2",
+                          border: "1px solid rgba(0,166,178,0.25)",
+                          cursor: "pointer",
+                          width: "100%",
+                          fontWeight: 700,
+                          marginTop: 4,
+                        }}
+                      >
+                        👤 Voir le profil
+                      </button>
                     </div>
                   </div>
                 </Popup>
@@ -2319,8 +2188,16 @@ const PublicMap = ({
   );
 };
 
-// ── STYLES ────────────────────────────────────────────────────────────────────
+// ── STYLES (Charte LoginScreen) ───────────────────────────────────────────────
 const s = {
+  // ── Couleurs landing light mode ──
+  // primary teal : #00a6b2
+  // text dark    : #102a43
+  // text sub     : #5b7083
+  // border       : rgba(16,42,67,0.08)
+  // bg           : #f7faf9
+  // bg card      : #ffffff
+
   wrapper: {
     display: "flex",
     flexDirection: "column",
@@ -2423,9 +2300,13 @@ const s = {
     border: "1px solid rgba(16,42,67,0.1)",
     borderRadius: 8,
     flex: 1,
-    maxWidth: 280,
-    minWidth: 160,
+    maxWidth: 240,
+    minWidth: 140,
     transition: "all 0.2s",
+  },
+  inputGroupFocus: {
+    borderColor: "rgba(0,166,178,0.4)",
+    boxShadow: "0 0 0 3px rgba(0,166,178,0.08)",
   },
   inputIcon: {
     position: "absolute",
@@ -2551,6 +2432,28 @@ const s = {
   },
 
   mapContainer: { flex: 1, minHeight: 0, position: "relative", width: "100%" },
+  marker: {
+    width: 40,
+    height: 40,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    position: "relative",
+    transition: "transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+    userSelect: "none",
+    border: "2.5px solid rgba(255,255,255,0.9)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+  },
+  pulse: {
+    position: "absolute",
+    inset: -8,
+    borderRadius: "50%",
+    border: "2px solid",
+    animation: "pulse-ring 2.2s ease-out infinite",
+    pointerEvents: "none",
+  },
 
   popupCard: {
     background: "#ffffff",
@@ -2584,17 +2487,8 @@ const s = {
   popupMetier: {
     fontSize: 12,
     fontWeight: 600,
-    marginBottom: 2,
-    fontFamily: "'Inter', sans-serif",
-  },
-  popupCategorie: {
-    fontSize: 10,
-    fontWeight: 500,
-    color: "#5b7083",
     marginBottom: 4,
     fontFamily: "'Inter', sans-serif",
-    textTransform: "uppercase",
-    letterSpacing: "0.08em",
   },
   popupLink: {
     display: "inline-flex",
@@ -2610,6 +2504,7 @@ const s = {
     background: "rgba(0,166,178,0.08)",
     transition: "background 0.2s",
   },
+  popupLinkHover: { background: "rgba(0,166,178,0.15)" },
 
   recenterBtn: {
     position: "absolute",
@@ -2631,7 +2526,7 @@ const s = {
   },
 };
 
-// Global CSS Injection
+// Global CSS Injection — light mode
 if (
   typeof document !== "undefined" &&
   !document.getElementById("map-login-styles")

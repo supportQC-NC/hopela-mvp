@@ -21,6 +21,7 @@ import ServicesScreen         from "./screens/public/ServicesScreen";
 import CategorieScreen        from "./screens/public/CategorieScreen";  // ← nouveau
 import CommentCaMarcheScreen  from "./screens/public/CommentCaMarcheScreen";
 import ContactScreen          from "./screens/public/ContactScreen";
+import PrestairePublicPage    from "./screens/public/PrestatairePublicPage";
 import NotFoundScreen         from "./screens/NotFoundScreen";
 
 // ── Pages légales ─────────────────────────────────────
@@ -48,6 +49,7 @@ const router = createBrowserRouter(
       <Route path="services/categories/:id"         element={<CategorieScreen />} />  {/* ← nouveau */}
       <Route path="comment-ca-marche"               element={<CommentCaMarcheScreen />} />
       <Route path="contact"                         element={<ContactScreen />} />
+      <Route path="prestataire/:id"                 element={<PrestairePublicPage />} />
 
       {/* ── Pages légales ── */}
       <Route path="mentions-legales"  element={<MentionLegalesScreen />} />

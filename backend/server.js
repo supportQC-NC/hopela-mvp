@@ -13,15 +13,17 @@ import connectDB from "./config/db.js";
 import User from "./models/UserModel.js";
 
 // Import des routes
-import userRoutes      from "./routes/userRoutes.js";
-import categorieRoutes from "./routes/categorieRoutes.js";
-import metierRoutes    from "./routes/metierRoutes.js";
-import serviceRoutes   from "./routes/serviceRoutes.js";
-import uploadRoutes    from "./routes/uploadRoutes.js";
-import photoRoutes     from "./routes/photoRoutes.js";
-import contactRoutes   from "./routes/contactRoutes.js";
-import demandeRoutes   from "./routes/demandeRoutes.js";
-console.log("✅ demandeRoutes chargé:", typeof demandeRoutes);
+import userRoutes             from "./routes/userRoutes.js";
+import categorieRoutes        from "./routes/categorieRoutes.js";
+import metierRoutes           from "./routes/metierRoutes.js";
+import serviceRoutes          from "./routes/serviceRoutes.js";
+import uploadRoutes           from "./routes/uploadRoutes.js";
+import photoRoutes            from "./routes/photoRoutes.js";
+import contactRoutes          from "./routes/contactRoutes.js";
+import promotionRoutes        from "./routes/promotionRoutes.js";
+import favoriRoutes           from "./routes/favoriRoutes.js";
+import prestairePublicRoutes  from "./routes/prestairePublicRoutes.js";
+
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 const PORT = process.env.PORT || 5000;
@@ -100,8 +102,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Création automatique des dossiers nécessaires au démarrage
 const uploadDirs = [
   "./uploads",
-  "./uploads/logos",    // logos des prestataires
-  "./uploads/services", // images des services
+  "./uploads/logos",
+  "./uploads/services",
+  "./uploads/promotions",
 ];
 
 uploadDirs.forEach((dir) => {
@@ -121,14 +124,16 @@ app.get("/", (req, res) => {
 // ==========================================
 // ROUTES API
 // ==========================================
-app.use("/api/users",      userRoutes);
-app.use("/api/categories", categorieRoutes);
-app.use("/api/metiers",    metierRoutes);
-app.use("/api/services",   serviceRoutes);
-app.use("/api/upload",     uploadRoutes);
-app.use("/api/photos",     photoRoutes);
-app.use("/api/contact",    contactRoutes);
-app.use("/api/demandes",   demandeRoutes);
+app.use("/api/users",        userRoutes);
+app.use("/api/categories",   categorieRoutes);
+app.use("/api/metiers",      metierRoutes);
+app.use("/api/services",     serviceRoutes);
+app.use("/api/upload",       uploadRoutes);
+app.use("/api/photos",       photoRoutes);
+app.use("/api/contact",      contactRoutes);
+app.use("/api/promotions",   promotionRoutes);
+app.use("/api/favoris",      favoriRoutes);
+app.use("/api/prestataires", prestairePublicRoutes);
 
 // ==========================================
 // ERROR MIDDLEWARES

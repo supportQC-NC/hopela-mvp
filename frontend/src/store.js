@@ -7,7 +7,8 @@ import metierReducer      from "./slices/metierSlice";
 import categorieReducer   from "./slices/categorieSlice";
 import serviceReducer     from "./slices/serviceSlice";
 import uploadReducer      from "./slices/uploadSlice";
-import demandeReducer     from "./slices/demandeSlice";
+import promotionReducer   from "./slices/promotionSlice";
+import favoriReducer      from "./slices/favoriSlice";
 
 const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ const store = configureStore({
     categorie: categorieReducer,
     service:   serviceReducer,
     upload:    uploadReducer,
-    demande:   demandeReducer,
+    promotion: promotionReducer,
+    favori:    favoriReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
