@@ -5,39 +5,39 @@ export const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 export const AVANTAGES = [
   {
     icon: Zap,
-    titre: "Disponibilité immédiate",
-    desc: "Trouvez un prestataire disponible maintenant grâce à la géolocalisation en direct.",
+    titre: "Pour les clients",
+    desc: "Le professionnel dont vous avez besoin est peut-être à 800 mètres. Il ne le sait pas encore. Vous non plus. Hopela le rend visible — grâce à votre position géographique.",
     accent: "#145C45",
   },
   {
     icon: Shield,
-    titre: "Prestataires vérifiés",
-    desc: "Identité et qualifications contrôlées pour une tranquillité d'esprit totale.",
+    titre: "Des profils déjà là",
+    desc: "Un coiffeur à domicile. Un thérapeute. Un jardinier. Un artisan. Un professionnel mobile. Leur présence est déjà là. Hopela vous envoie le signal.",
     accent: "#1A2D4A",
   },
   {
     icon: Users,
-    titre: "Communauté locale",
-    desc: "Soutenez l'économie locale en faisant appel à des talents de Nouvelle-Calédonie.",
+    titre: "Pour les professionnels",
+    desc: "Vous êtes dans la zone. C'est suffisant. Votre position géographique devient un signal actif dans votre zone. Chaque trajet devient une opportunité. Chaque zone traversée, un territoire visible.",
     accent: "#145C45",
   },
 ];
 
 export const STEPS = [
   {
-    num: "01",
-    titre: "Localisez",
-    desc: "Ouvrez la carte et voyez qui est disponible autour de vous en temps réel.",
+    num: "1",
+    titre: "Vous signalez votre présence.",
+    desc: "Vous êtes dans la zone. Un geste. Votre position devient un signal visible dans un rayon de 10 km.",
   },
   {
-    num: "02",
-    titre: "Choisissez",
-    desc: "Filtrez par métier, consultez les profils et les avis des autres utilisateurs.",
+    num: "2",
+    titre: "Hopela capte et diffuse.",
+    desc: "Les personnes autour de vous voient que vous êtes déjà là. Pas une publicité. Pas une fiche statique. Une présence réelle, en temps réel.",
   },
   {
-    num: "03",
-    titre: "Contactez",
-    desc: "Appelez ou messagez directement le prestataire pour fixer un rendez-vous.",
+    num: "3",
+    titre: "L'opportunité se crée.",
+    desc: "Une personne vous contacte. Directement. Sans intermédiaire. Sans commission. Parce que vous étiez déjà là.",
   },
 ];
 

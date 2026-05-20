@@ -1,77 +1,327 @@
 @use "../../styles/variables" as v;
 @use "./landingTokens" as t;
 
+// ─── Section shell ─────────────────────────────────────────────────────────────
 .lp-steps-section {
   @include t.section-shell;
   min-height: 96vh;
+  padding: 100px 20px 120px;
+  overflow: hidden;
+  position: relative;
+
+  // Fond micro-texture quadrillée subtile
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 166, 178, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 166, 178, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (min-width: v.$bp-md) {
+    padding: 120px 0 140px;
+  }
 }
+
+// ─── Header ────────────────────────────────────────────────────────────────────
+.lp-steps-header {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto 80px;
+  padding: 0 20px;
+
+  @media (min-width: v.$bp-md) {
+    padding: 0;
+  }
+}
+
 .lp-eyebrow {
   @include t.eyebrow;
 }
+
 .lp-section-title {
   @include t.title;
 }
 
-.lp-section-head--center {
-  text-align: center;
-  margin-bottom: 50px;
+.lp-steps-intro {
+  margin-top: 16px;
+  font-size: clamp(16px, 1.4vw, 19px);
+  color: t.$lp-text-sub;
+  line-height: 1.7;
+  max-width: 480px;
 }
 
-.lp-steps {
+// ─── Timeline track ────────────────────────────────────────────────────────────
+.lp-steps-track {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
-  gap: v.$space-5;
-  margin-top: v.$space-10;
+  gap: 0;
+
+  @media (min-width: v.$bp-md) {
+    padding: 0;
+  }
+}
+
+// Ligne verticale centrale
+.lp-steps-line {
+  display: none;
+
+  @media (min-width: v.$bp-md) {
+    display: block;
+    position: absolute;
+    top: 24px;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(0, 166, 178, 0.25) 8%,
+      rgba(0, 166, 178, 0.25) 92%,
+      transparent 100%
+    );
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 40%;
+      background: linear-gradient(to bottom, #00a6b2, transparent);
+      border-radius: 9999px;
+      animation: lineFlow 3s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes lineFlow {
+  0%   { top: 0;   opacity: 1; height: 40%; }
+  100% { top: 60%; opacity: 0; height: 40%; }
+}
+
+// ─── Step item ─────────────────────────────────────────────────────────────────
+.lp-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 32px 0;
+
+  // Mobile : layout vertical simple
+  flex-direction: column;
+  align-items: flex-start;
 
   @media (min-width: v.$bp-md) {
     flex-direction: row;
+    align-items: center;
+    gap: 0;
+    min-height: 180px;
+
+    // Étapes paires : card à gauche
+    &.lp-step--left {
+      flex-direction: row;
+      .lp-step-card { margin-right: auto; margin-left: 0; text-align: left; }
+    }
+
+    // Étapes impaires : card à droite
+    &.lp-step--right {
+      flex-direction: row-reverse;
+      .lp-step-card { margin-left: auto; margin-right: 0; text-align: left; }
+    }
   }
 }
 
-.lp-step {
-  background: t.$lp-bg-card;
-  border: 1px solid t.$lp-border;
-  border-radius: v.$radius-lg;
-  padding: v.$space-6;
-  display: flex;
-  gap: v.$space-5;
-  align-items: flex-start;
-  transition: v.$transition-smooth;
-  flex: 1;
-  box-shadow: t.$lp-shadow;
-
-  &:hover {
-    border-color: t.$lp-primary;
-    transform: translateY(-2px);
-    box-shadow: t.$lp-shadow-hover;
-  }
+// ─── Node (point sur la timeline) ─────────────────────────────────────────────
+.lp-step-node {
+  display: none;
 
   @media (min-width: v.$bp-md) {
-    flex-direction: column;
+    display: flex;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid rgba(0, 166, 178, 0.2);
+    box-shadow: 0 0 0 8px rgba(0, 166, 178, 0.06);
+    z-index: 2;
+    transition: box-shadow 0.35s ease, border-color 0.35s ease;
+
+    .lp-step:hover & {
+      border-color: #00a6b2;
+      box-shadow: 0 0 0 12px rgba(0, 166, 178, 0.1);
+    }
   }
 }
 
-.lp-step-num {
-  font-size: v.$text-4xl;
-  color: t.$lp-primary;
-  font-weight: v.$font-extrabold;
-  line-height: 1;
-  opacity: 0.3;
+.lp-step-node-inner {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00a6b2;
+  box-shadow: 0 0 12px rgba(0, 166, 178, 0.5);
+  animation: nodePulse 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--step-index, 0) * 0.6s);
 }
 
+@keyframes nodePulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(0.75); opacity: 0.55; }
+}
+
+// ─── Card ──────────────────────────────────────────────────────────────────────
+.lp-step-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(16, 42, 67, 0.08);
+  border-radius: 20px;
+  padding: 40px 44px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.38s ease,
+    border-color 0.38s ease;
+
+  @media (min-width: v.$bp-md) {
+    width: calc(50% - 56px);
+  }
+
+  .lp-step:hover & {
+    transform: translateY(-6px);
+    border-color: rgba(0, 166, 178, 0.22);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.1),
+      0 8px 24px rgba(0, 166, 178, 0.08);
+  }
+}
+
+// Numéro fantôme en arrière-plan
+.lp-step-ghost-num {
+  position: absolute;
+  right: -12px;
+  bottom: -24px;
+  font-size: clamp(100px, 12vw, 160px);
+  font-weight: 900;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0, 166, 178, 0.08);
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  user-select: none;
+  transition: -webkit-text-stroke-color 0.38s ease;
+  z-index: 0;
+
+  .lp-step:hover .lp-step-card & {
+    -webkit-text-stroke-color: rgba(0, 166, 178, 0.14);
+  }
+}
+
+// Badge numéro
+.lp-step-badge {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(0, 166, 178, 0.08);
+  border: 1px solid rgba(0, 166, 178, 0.18);
+  color: #00a6b2;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+
+  .lp-step:hover .lp-step-card & {
+    background: rgba(0, 166, 178, 0.14);
+    border-color: rgba(0, 166, 178, 0.35);
+  }
+}
+
+// Contenu texte
 .lp-step-content {
+  position: relative;
+  z-index: 1;
+
   h3 {
-    color: t.$lp-text;
-    margin-bottom: v.$space-2;
-    font-size: v.$text-lg;
-    font-weight: v.$font-bold;
+    color: #102a43;
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    margin-bottom: 12px;
   }
 
   p {
-    color: t.$lp-text-sub;
-    font-size: v.$text-base;
-    line-height: v.$leading-relaxed;
+    color: #5b7083;
+    font-size: clamp(14px, 1.1vw, 16px);
+    line-height: 1.75;
+    max-width: 380px;
+  }
+}
+
+// Trait coloré en bas de card au hover
+.lp-step-card-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00a6b2, rgba(0, 166, 178, 0.3));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: 0 0 20px 20px;
+
+  .lp-step:hover .lp-step-card & {
+    transform: scaleX(1);
+  }
+}
+
+// ─── Mobile fallback propre ────────────────────────────────────────────────────
+@media (max-width: calc(v.$bp-md - 1px)) {
+  .lp-steps-track {
+    gap: 20px;
+  }
+
+  .lp-step {
+    padding: 0;
+  }
+
+  .lp-step-card {
+    padding: 28px 24px;
+    border-radius: 16px;
+  }
+
+  .lp-step-ghost-num {
+    font-size: 80px;
+    right: -8px;
+    bottom: -16px;
   }
 }
