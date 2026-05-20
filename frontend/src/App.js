@@ -3,6 +3,7 @@ import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./index.css";
 import ScrollToTop from "./components/Utils/ScrollToTop";
+import CookieBanner from "./components/Utils/CookieBanner";
 
 const PUBLIC_ROUTES = [
   "/",
@@ -26,7 +27,7 @@ const App = () => {
   const isPublicRoute =
     PUBLIC_ROUTES.includes(pathname) ||
     pathname.startsWith("/reset-password/")  ||
-    pathname.startsWith("/services/categories/"); // ← nouvelle route publique catégorie
+    pathname.startsWith("/services/categories/");
 
   if (!userInfo && !isPublicRoute) {
     return <Navigate to="/login" replace />;
@@ -35,6 +36,7 @@ const App = () => {
   return (
     <>
       <ScrollToTop />
+      <CookieBanner />
       <Outlet />
     </>
   );
