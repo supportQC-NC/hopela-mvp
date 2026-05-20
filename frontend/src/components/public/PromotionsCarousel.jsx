@@ -22,6 +22,86 @@ const BADGE_COLORS = {
   BadgeCheck: "#00a6b2",
 };
 
+// ─── Sous-composant : slider d'images interne à une card ───────────────────
+const CardImageSlider = ({ images, titre, badgeColor, BadgeIcon }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sliderRef = useRef(null);
+
+  // Synchronise le scroll physique avec l'index actif
+  useEffect(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+    el.scrollTo({ left: activeIndex * el.clientWidth, behavior: "smooth" });
+  }, [activeIndex]);
+
+  // Détecte le slide visible après un scroll manuel (swipe)
+  const handleScroll = useCallback(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+    const index = Math.round(el.scrollLeft / el.clientWidth);
+    setActiveIndex(index);
+  }, []);
+
+  const goTo = (e, idx) => {
+    // On ne stopPropagation pas : le Link parent s'ouvre quand même
+    setActiveIndex(idx);
+  };
+
+  const hasMultiple = images.length > 1;
+
+  return (
+    <div className="lp-promo-img-wrapper">
+      {/* ── Slides ── */}
+      <div
+        className="lp-promo-img-slider"
+        ref={sliderRef}
+        onScroll={handleScroll}
+      >
+        {images.map((src, i) => (
+          <div key={i} className="lp-promo-img-slide">
+            <img src={`${API_URL}${src}`} alt={`${titre} – photo ${i + 1}`} />
+          </div>
+        ))}
+      </div>
+
+      {/* ── Dots ── */}
+      {hasMultiple && (
+        <div className="lp-promo-img-dots">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`lp-promo-img-dot${i === activeIndex ? " lp-promo-img-dot--active" : ""}`}
+              aria-label={`Photo ${i + 1}`}
+              onClick={(e) => goTo(e, i)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ── Compteur discret (ex : 2 / 3) ── */}
+      {hasMultiple && (
+        <div className="lp-promo-img-counter">
+          {activeIndex + 1} / {images.length}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Placeholder quand aucune image ───────────────────────────────────────
+const CardImagePlaceholder = ({ badgeColor, BadgeIcon }) => (
+  <div className="lp-promo-img-wrapper">
+    <div
+      className="lp-promo-img-placeholder"
+      style={{ background: `linear-gradient(135deg, ${badgeColor}22, ${badgeColor}08)` }}
+    >
+      <BadgeIcon size={48} strokeWidth={1.2} style={{ color: badgeColor, opacity: 0.35 }} />
+    </div>
+  </div>
+);
+
+// ─── Composant principal ──────────────────────────────────────────────────
 const PromotionsCarousel = () => {
   const trackRef = useRef(null);
   const [promotions, setPromotions] = useState([]);
@@ -57,24 +137,23 @@ const PromotionsCarousel = () => {
     };
   }, [promotions, checkScroll]);
 
-  // Auto-scroll
+  // Auto-scroll du carrousel principal (entre les cards)
   useEffect(() => {
     if (isPaused || loading || promotions.length <= 2) return;
     const interval = setInterval(() => {
       const el = trackRef.current;
       if (!el) return;
       const maxScroll = el.scrollWidth - el.clientWidth;
-      const next = el.scrollLeft + 340;
+      const next = el.scrollLeft + 380;
       el.scrollTo({ left: next >= maxScroll - 10 ? 0 : next, behavior: "smooth" });
-    }, 3800);
+    }, 4200);
     return () => clearInterval(interval);
   }, [isPaused, loading, promotions.length]);
 
   const scroll = (dir) => {
-    trackRef.current?.scrollBy({ left: dir * 360, behavior: "smooth" });
+    trackRef.current?.scrollBy({ left: dir * 400, behavior: "smooth" });
   };
 
-  // Pas de promos → on n'affiche rien du tout
   if (!loading && promotions.length === 0) return null;
 
   return (
@@ -126,11 +205,11 @@ const PromotionsCarousel = () => {
           onTouchEnd={() => setIsPaused(false)}
         >
           {promotions.map((promo, index) => {
-            const BadgeIcon  = BADGE_ICONS[promo.badge] || Tag;
-            const badgeColor = BADGE_COLORS[promo.badge] || "#00a6b2";
-            const badgeLabel = BADGE_LABELS[promo.badge] || promo.badge;
+            const BadgeIcon   = BADGE_ICONS[promo.badge] || Tag;
+            const badgeColor  = BADGE_COLORS[promo.badge] || "#00a6b2";
+            const badgeLabel  = BADGE_LABELS[promo.badge] || promo.badge;
             const prestataire = promo.prestataire;
-            const firstImage  = promo.images?.[0];
+            const images      = promo.images?.length ? promo.images : [];
             const metierNom   = prestataire?.metiers?.[0]?.nom || null;
 
             return (
@@ -140,42 +219,53 @@ const PromotionsCarousel = () => {
                 className="lp-promo-card"
                 style={{ "--delay": `${index * 60}ms` }}
               >
-                {/* Image ou fond coloré */}
-                <div className="lp-promo-card-img">
-                  {firstImage ? (
-                    <img src={`${API_URL}${firstImage}`} alt={promo.titre} />
-                  ) : (
-                    <div
-                      className="lp-promo-card-img-placeholder"
-                      style={{ background: `linear-gradient(135deg, ${badgeColor}22, ${badgeColor}08)` }}
-                    >
-                      <BadgeIcon size={40} strokeWidth={1.2} style={{ color: badgeColor, opacity: 0.4 }} />
-                    </div>
-                  )}
+                {/* ── Zone image avec slider ── */}
+                {images.length > 0 ? (
+                  <CardImageSlider
+                    images={images}
+                    titre={promo.titre}
+                    badgeColor={badgeColor}
+                    BadgeIcon={BadgeIcon}
+                  />
+                ) : (
+                  <CardImagePlaceholder badgeColor={badgeColor} BadgeIcon={BadgeIcon} />
+                )}
 
-                  {/* Badge flottant */}
-                  <div
-                    className="lp-promo-badge"
-                    style={{ background: `${badgeColor}18`, border: `1px solid ${badgeColor}40`, color: badgeColor }}
-                  >
-                    <BadgeIcon size={12} />
-                    {badgeLabel}
-                  </div>
+                {/* ── Badge flottant sur l'image ── */}
+                <div
+                  className="lp-promo-badge"
+                  style={{
+                    background: `${badgeColor}18`,
+                    border: `1px solid ${badgeColor}40`,
+                    color: badgeColor,
+                  }}
+                >
+                  <BadgeIcon size={12} />
+                  {badgeLabel}
                 </div>
 
+                {/* ── Corps de la card ── */}
                 <div className="lp-promo-card-body">
                   {/* Prestataire */}
                   <div className="lp-promo-presta">
                     {prestataire?.avatar ? (
-                      <img src={`${API_URL}${prestataire.avatar}`} alt={prestataire.prenom} className="lp-promo-avatar" />
+                      <img
+                        src={`${API_URL}${prestataire.avatar}`}
+                        alt={prestataire.prenom}
+                        className="lp-promo-avatar"
+                      />
                     ) : (
                       <div className="lp-promo-avatar lp-promo-avatar--placeholder">
                         {prestataire?.prenom?.[0]}{prestataire?.nom?.[0]}
                       </div>
                     )}
                     <div className="lp-promo-presta-info">
-                      <span className="lp-promo-presta-name">{prestataire?.prenom} {prestataire?.nom}</span>
-                      {metierNom && <span className="lp-promo-presta-metier">{metierNom}</span>}
+                      <span className="lp-promo-presta-name">
+                        {prestataire?.prenom} {prestataire?.nom}
+                      </span>
+                      {metierNom && (
+                        <span className="lp-promo-presta-metier">{metierNom}</span>
+                      )}
                     </div>
                   </div>
 
@@ -189,7 +279,11 @@ const PromotionsCarousel = () => {
                   {promo.dateFin && (
                     <div className="lp-promo-date">
                       <Clock size={12} />
-                      Jusqu'au {new Date(promo.dateFin).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                      Jusqu'au{" "}
+                      {new Date(promo.dateFin).toLocaleDateString("fr-FR", {
+                        day: "numeric",
+                        month: "long",
+                      })}
                     </div>
                   )}
 

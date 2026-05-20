@@ -1,31 +1,71 @@
 // src/components/public/PromotionsCarousel.scss
-// Charte : primary #00a6b2 | dark #102a43 | sub #5b7083
 
+// ─── Tokens ──────────────────────────────────────────────────────────────
+$brand:        #00a6b2;
+$brand-dark:   #007e89;
+$dark:         #102a43;
+$muted:        #5b7083;
+$white:        #ffffff;
+$radius-card:  28px;
+$radius-img:   20px;
+
+// ─── Animations ──────────────────────────────────────────────────────────
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes skeletonShimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+// ─── Section ─────────────────────────────────────────────────────────────
 .lp-promos-section {
   position: relative;
   width: 100%;
   overflow: hidden;
-  padding: 80px 0;
-  background: linear-gradient(180deg, #f7fafe 0%, #ffffff 100%);
+  padding: 80px 0 100px;
+  background:
+    radial-gradient(circle at 8%  8%,  rgba($brand, .07),        transparent 36%),
+    radial-gradient(circle at 90% 14%, rgba(255, 70, 90, .045),  transparent 34%);
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(0, 166, 178, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 166, 178, 0.025) 1px, transparent 1px);
-    background-size: 56px 56px;
+      linear-gradient(rgba($dark, .018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba($dark, .018) 1px, transparent 1px);
+    background-size: 72px 72px;
     pointer-events: none;
+  }
+
+  // Fondu latéral sur le track
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba($white, .92)   0%,
+      rgba($white, .60)   2.5%,
+      rgba($white, 0)    10%,
+      rgba($white, 0)    90%,
+      rgba($white, .60)  97.5%,
+      rgba($white, .92) 100%
+    );
   }
 }
 
-// ── Header ─────────────────────────────────────────────────────────────────────
+// ─── Header ──────────────────────────────────────────────────────────────
 .lp-promos-header {
   position: relative;
-  z-index: 3;
+  z-index: 5;
   width: min(100% - 40px, 1320px);
-  margin: 0 auto 40px;
+  margin: 0 auto 44px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -33,129 +73,76 @@
   gap: 24px;
 }
 
-.lp-promos-intro {
-  max-width: 520px;
-}
+.lp-promos-intro { max-width: 680px; }
 
-// Réutilise les classes globales lp-eyebrow / lp-section-title déjà définies
-
-.lp-section-sub {
-  font-size: clamp(15px, 1.2vw, 17px);
-  color: #5b7083;
-  line-height: 1.7;
-  max-width: 480px;
-}
-
-// ── Skeletons ──────────────────────────────────────────────────────────────────
-.lp-promos-skeletons {
-  display: flex;
-  gap: 24px;
-  padding: 0 max(20px, calc((100% - 1320px) / 2));
-  overflow: hidden;
-}
-
-.lp-promo-skeleton {
-  flex-shrink: 0;
-  width: 320px;
-  height: 420px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #f0f4f8 25%, #e2eaf2 50%, #f0f4f8 75%);
-  background-size: 400% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0%   { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
-
-// ── Track ──────────────────────────────────────────────────────────────────────
+// ─── Track (carrousel horizontal de cards) ────────────────────────────────
 .lp-promos-track {
+  position: relative;
+  z-index: 5;
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto;
   display: flex;
-  gap: 24px;
+  gap: 28px;
   overflow-x: auto;
+  overflow-y: visible;
   scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
   scrollbar-width: none;
-  padding: 8px max(20px, calc((100% - 1320px) / 2)) 20px;
+  padding: 20px 4px 60px;
 
   &::-webkit-scrollbar { display: none; }
 }
 
-// ── Card ───────────────────────────────────────────────────────────────────────
+// ─── Card ────────────────────────────────────────────────────────────────
 .lp-promo-card {
-  flex-shrink: 0;
-  width: 300px;
-  border-radius: 20px;
-  background: #ffffff;
-  border: 1px solid rgba(16, 42, 67, 0.08);
+  position: relative;
+  flex: 0 0 360px;
+  min-width: 360px;
+  scroll-snap-align: start;
+  border-radius: $radius-card;
+  border: 1px solid rgba($white, .72);
+  background: linear-gradient(
+    145deg,
+    rgba($white, .72) 0%,
+    rgba($white, .56) 52%,
+    rgba(235, 249, 251, .44) 100%
+  );
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.06),
-    0 1px 3px rgba(0, 0, 0, 0.04);
+    0 28px 70px rgba($dark, .11),
+    0 10px 28px rgba($brand, .05),
+    inset 0 1px 0 rgba($white, .82);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  scroll-snap-align: start;
   text-decoration: none;
   color: inherit;
-  transition:
-    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.32s ease,
-    border-color 0.32s ease;
-  animation: lpFadeUp 0.5s ease both;
+  animation: cardReveal .65s cubic-bezier(.22, 1, .36, 1) both;
   animation-delay: var(--delay, 0ms);
+  transition:
+    transform    .35s cubic-bezier(.22, 1, .36, 1),
+    border-color .35s ease,
+    box-shadow   .35s ease;
 
-  &:hover {
-    transform: translateY(-8px);
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-10px);
+    border-color: rgba($brand, .30);
     box-shadow:
-      0 24px 64px rgba(0, 0, 0, 0.1),
-      0 8px 24px rgba(0, 166, 178, 0.08);
-    border-color: rgba(0, 166, 178, 0.22);
-  }
+      0 44px 96px rgba($dark, .17),
+      0 20px 44px rgba($brand, .11),
+      inset 0 1px 0 rgba($white, .95);
+    outline: none;
 
-  @media (max-width: 480px) {
-    width: 270px;
-  }
-}
-
-@keyframes lpFadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-// Image
-.lp-promo-card-img {
-  position: relative;
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.42s ease;
-
-    .lp-promo-card:hover & {
-      transform: scale(1.05);
-    }
+    .lp-promo-cta { letter-spacing: .06em; }
   }
 }
 
-.lp-promo-card-img-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// Badge flottant
+// ─── Badge flottant (positionné en absolute par rapport à la card) ────────
 .lp-promo-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -163,21 +150,127 @@
   border-radius: 9999px;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
 }
 
-// Corps
+// ─── Wrapper image (contient le slider + dots + counter) ─────────────────
+.lp-promo-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 240px;           // zone image agrandie
+  overflow: hidden;
+  border-radius: $radius-img $radius-img 0 0;
+  flex-shrink: 0;
+}
+
+// ─── Slider (scroll-snap horizontal) ─────────────────────────────────────
+.lp-promo-img-slider {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  // Pas de border-radius ici car le wrapper le gère
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+// ─── Chaque slide ─────────────────────────────────────────────────────────
+.lp-promo-img-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+  }
+}
+
+// Zoom léger au hover de la card sur l'image active
+.lp-promo-card:hover .lp-promo-img-slide img {
+  transform: scale(1.04);
+}
+
+// ─── Placeholder (aucune image) ───────────────────────────────────────────
+.lp-promo-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Dots de navigation ───────────────────────────────────────────────────
+.lp-promo-img-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 8;
+}
+
+.lp-promo-img-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba($white, .52);
+  backdrop-filter: blur(4px);
+  transition: width .3s ease, background .3s ease, opacity .3s ease;
+
+  &--active {
+    width: 20px;
+    background: $white;
+  }
+
+  &:hover:not(&--active) {
+    background: rgba($white, .80);
+  }
+}
+
+// ─── Compteur (ex : "2 / 3") ─────────────────────────────────────────────
+.lp-promo-img-counter {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 8;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background: rgba($dark, .40);
+  backdrop-filter: blur(6px);
+  color: $white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  pointer-events: none;
+}
+
+// ─── Corps de la card ─────────────────────────────────────────────────────
 .lp-promo-card-body {
-  padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 20px 22px 22px;
   flex: 1;
 }
 
-// Prestataire info
+// ─── Ligne prestataire ────────────────────────────────────────────────────
 .lp-promo-presta {
   display: flex;
   align-items: center;
@@ -185,36 +278,36 @@
 }
 
 .lp-promo-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
   object-fit: cover;
-  border: 2px solid rgba(0, 166, 178, 0.2);
+  border: 2px solid rgba($brand, .25);
   flex-shrink: 0;
 
   &--placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #00a6b2, #145c45);
-    color: #ffffff;
+    background: linear-gradient(135deg, rgba($brand, .18), rgba($brand, .06));
+    color: $brand;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: .02em;
   }
 }
 
 .lp-promo-presta-info {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
 }
 
 .lp-promo-presta-name {
   font-size: 13px;
   font-weight: 700;
-  color: #102a43;
+  color: $dark;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -222,78 +315,133 @@
 
 .lp-promo-presta-metier {
   font-size: 11px;
-  color: #5b7083;
-  font-weight: 500;
+  color: $brand;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-// Titre
+// ─── Titre & description ──────────────────────────────────────────────────
 .lp-promo-titre {
-  font-size: 16px;
+  font-size: 1.0625rem;
   font-weight: 800;
-  color: #102a43;
-  line-height: 1.3;
-  letter-spacing: -0.025em;
+  color: $dark;
+  line-height: 1.28;
+  letter-spacing: -.018em;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-// Description
 .lp-promo-desc {
-  font-size: 13px;
-  color: #5b7083;
-  line-height: 1.6;
+  font-size: .875rem;
+  color: $muted;
+  line-height: 1.62;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-// Date fin
+// ─── Date de fin ──────────────────────────────────────────────────────────
 .lp-promo-date {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   font-size: 11px;
   font-weight: 600;
-  color: #5b7083;
-
-  svg { color: #00a6b2; }
+  color: $muted;
+  letter-spacing: .02em;
 }
 
-// CTA
+// ─── CTA ─────────────────────────────────────────────────────────────────
 .lp-promo-cta {
   margin-top: auto;
-  font-size: 13px;
+  font-size: .8rem;
   font-weight: 700;
-  color: #00a6b2;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: gap 0.2s;
-
-  .lp-promo-card:hover & {
-    gap: 8px;
-  }
+  color: $brand;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  transition: letter-spacing .3s ease;
 }
 
-// ── Arrows (reprend les classes existantes du carousel catégories) ─────────────
-// .lp-carousel-arrows et .lp-arrow sont déjà définis dans CategoriesCarousel.scss
-// On les réutilise directement
+// ─── Skeletons ────────────────────────────────────────────────────────────
+.lp-promos-skeletons {
+  position: relative;
+  z-index: 5;
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto;
+  display: flex;
+  gap: 28px;
+  overflow: hidden;
+  padding: 20px 4px 60px;
+}
 
+.lp-promo-skeleton {
+  flex: 0 0 360px;
+  min-width: 360px;
+  height: 480px;
+  border-radius: $radius-card;
+  background: linear-gradient(
+    90deg,
+    rgba($dark, .06) 0%,
+    rgba($dark, .03) 40%,
+    rgba($dark, .06) 80%
+  );
+  background-size: 600px 100%;
+  animation: skeletonShimmer 1.6s linear infinite;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .lp-promos-section {
-    padding: 60px 0;
+    padding: 52px 0 72px;
   }
 
   .lp-promos-header {
-    flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    margin-bottom: 32px;
   }
 
   .lp-carousel-arrows {
-    align-self: flex-end;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .lp-promo-card {
+    flex: 0 0 310px;
+    min-width: 310px;
+  }
+
+  .lp-promo-img-wrapper {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lp-promos-track,
+  .lp-promos-skeletons {
+    width: min(100% - 28px, 1320px);
+    gap: 18px;
+  }
+
+  .lp-promo-card {
+    flex: 0 0 86vw;
+    min-width: 86vw;
+  }
+
+  .lp-promo-img-wrapper {
+    height: 180px;
+  }
+
+  .lp-promo-skeleton {
+    flex: 0 0 86vw;
+    min-width: 86vw;
   }
 }
