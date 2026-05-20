@@ -1,5 +1,3 @@
-
-
 // backend/models/UserModel.js
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
@@ -75,7 +73,7 @@ const userSchema = new mongoose.Schema(
     },
 
     // ── Rayon de recherche ───────────────────────────
-    rayonRecherche: { type: Number, min: 1, max: 500, default: 10 },
+    rayonRecherche: { type: Number, min: 1, max: 500, default: 2 },
   },
   { timestamps: true }
 );

@@ -5,12 +5,6 @@ import { useSelector } from "react-redux";
 import "./Header.scss";
 import logo from "../../logo.png";
 
-const NAV_LINKS = [
-  { label: "Prestataires",       to: "/services" },
-  { label: "Comment ça marche",  to: "/comment-ca-marche" },
-  { label: "Contact",            to: "/contact" },
-];
-
 const Header = () => {
   const navigate = useNavigate();
   const { userInfo } = useSelector((state) => state.auth);
@@ -23,14 +17,12 @@ const Header = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Ferme le menu si on redimensionne vers desktop
   useEffect(() => {
     const onResize = () => { if (window.innerWidth > 960) setMenuOpen(false); };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Bloque le scroll body quand le menu est ouvert
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -41,6 +33,20 @@ const Header = () => {
     if (role === "prestataire") return "/prestataire/dashboard";
     return "/dashboard";
   };
+
+  // Lien carte adapté selon le rôle
+  const getCartePath = () => {
+    if (userInfo?.role === "prestataire") return "/prestataire/carte";
+    if (userInfo?.role === "user")        return "/dashboard/carte";
+    return "/carte";
+  };
+
+  const NAV_LINKS = [
+    { label: "Prestataires",      to: "/services" },
+    { label: "Carte interactive", to: getCartePath() },
+    { label: "Comment ça marche", to: "/comment-ca-marche" },
+    { label: "Contact",           to: "/contact" },
+  ];
 
   const closeMenu = () => setMenuOpen(false);
 

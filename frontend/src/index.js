@@ -33,8 +33,13 @@ import CookiesScreen         from "./screens/public/legal/CookiesScreen";
 
 // ── Dashboards ────────────────────────────────────────
 import UserDashboard        from "./screens/user/UserDashboard";
+import CarteUserScreen      from "./screens/user/CarteUserScreen";
 import PrestataireDashboard from "./screens/prestataire/PrestataireDashboard";
+import CartePrestaireScreen from "./screens/prestataire/CartePrestaireScreen";
 import AdminDashboard       from "./screens/admin/AdminDashboard";
+
+// ── Carte publique ─────────────────────────────────────
+import CarteScreen from "./screens/public/CarteScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,6 +55,7 @@ const router = createBrowserRouter(
       <Route path="comment-ca-marche"               element={<CommentCaMarcheScreen />} />
       <Route path="contact"                         element={<ContactScreen />} />
       <Route path="prestataire/:id"                 element={<PrestairePublicPage />} />
+      <Route path="carte"                           element={<CarteScreen />} />
 
       {/* ── Pages légales ── */}
       <Route path="mentions-legales"  element={<MentionLegalesScreen />} />
@@ -60,12 +66,14 @@ const router = createBrowserRouter(
 
       {/* ── Utilisateur connecté ── */}
       <Route element={<PrivateRoute />}>
-        <Route path="dashboard" element={<UserDashboard />} />
+        <Route path="dashboard"       element={<UserDashboard />} />
+        <Route path="dashboard/carte" element={<CarteUserScreen />} />
       </Route>
 
       {/* ── Prestataire ── */}
       <Route element={<PrestataireRoute />}>
         <Route path="prestataire/dashboard" element={<PrestataireDashboard />} />
+        <Route path="prestataire/carte"     element={<CartePrestaireScreen />} />
       </Route>
 
       {/* ── Admin ── */}

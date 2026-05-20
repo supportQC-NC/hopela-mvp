@@ -1,0 +1,738 @@
+// src/screens/prestataire/CartePrestaireScreen.scss
+
+$teal:       #00a6b2;
+$teal-light: rgba(0, 166, 178, 0.12);
+$teal-mid:   rgba(0, 166, 178, 0.25);
+$amber:      #f59e0b;
+$amber-light: rgba(245, 158, 11, 0.12);
+$dark:       #102a43;
+$sub:        #5b7083;
+$border:     rgba(16, 42, 67, 0.1);
+$white:      #ffffff;
+
+// ── Root ────────────────────────────────────────────────────────────────────
+.cps-root {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: "DM Sans", "Inter", sans-serif;
+}
+
+// ── Topbar ──────────────────────────────────────────────────────────────────
+.cps-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  height: 54px;
+  background: rgba(16, 42, 67, 0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  z-index: 30;
+}
+
+.cps-back-link {
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: color 0.2s;
+
+  &:hover { color: $white; }
+}
+
+// Toggle mode
+.cps-mode-toggle {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+  flex: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.cps-mode-btn {
+  flex: 1;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &.active {
+    background: $teal;
+    color: $white;
+    box-shadow: 0 2px 8px rgba(0, 166, 178, 0.4);
+
+    &.besoins {
+      background: $amber;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+    }
+  }
+
+  &:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.cps-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cps-besoins-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: $amber;
+  background: $amber-light;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 20px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.cps-user-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $teal;
+  color: $white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+// ── Filterbar ────────────────────────────────────────────────────────────────
+.cps-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid $border;
+  flex-shrink: 0;
+  z-index: 20;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar { height: 0; }
+}
+
+.cps-live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: $sub;
+  background: rgba(16, 42, 67, 0.05);
+  border: 1px solid $border;
+  border-radius: 20px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &.besoins {
+    color: darken(#f59e0b, 15%);
+    background: $amber-light;
+    border-color: rgba(245, 158, 11, 0.2);
+
+    .cps-live-dot { background: $amber; box-shadow: 0 0 8px rgba(245, 158, 11, 0.6); }
+  }
+}
+
+.cps-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $teal;
+  box-shadow: 0 0 8px rgba(0, 166, 178, 0.7);
+  flex-shrink: 0;
+  animation: cps-pulse 2s ease-out infinite;
+}
+
+@keyframes cps-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.3); opacity: 0.7; }
+}
+
+// Recherche
+.cps-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 120px;
+  max-width: 240px;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: $teal-mid;
+    box-shadow: 0 0 0 3px $teal-light;
+  }
+}
+
+.cps-search-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 13px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.cps-search-input {
+  width: 100%;
+  height: 36px;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 30px 0 34px;
+  font-size: 13px;
+  color: $dark;
+  font-family: inherit;
+
+  &::placeholder { color: $sub; opacity: 0.6; }
+}
+
+.cps-search-clear {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: $sub;
+  padding: 4px;
+}
+
+// Catégorie
+.cps-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 8px;
+  min-width: 140px;
+  max-width: 200px;
+}
+
+.cps-select-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 13px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.cps-select {
+  width: 100%;
+  height: 36px;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 28px 0 34px;
+  font-size: 13px;
+  color: $dark;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.cps-select-arrow {
+  position: absolute;
+  right: 10px;
+  font-size: 9px;
+  color: $teal;
+  pointer-events: none;
+}
+
+// Rayon
+.cps-rayon-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cps-rayon-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid $teal-mid;
+  background: $teal-light;
+  color: $teal;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all 0.2s;
+
+  &.active, &:hover { background: rgba(0, 166, 178, 0.2); }
+}
+
+.cps-rayon-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 250px;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(16, 42, 67, 0.14);
+  z-index: 100;
+}
+
+.cps-rayon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: $sub;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cps-rayon-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: $teal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cps-rayon-hints {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: $sub;
+  margin-top: 4px;
+}
+
+.cps-rayon-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: $teal-light;
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $teal;
+    cursor: pointer;
+    border: 2px solid $white;
+    box-shadow: 0 0 8px rgba(0, 166, 178, 0.4);
+  }
+
+  &::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $teal;
+    cursor: pointer;
+    border: 2px solid $white;
+  }
+}
+
+.cps-rayon-warn {
+  margin-top: 10px;
+  font-size: 11px;
+  color: $amber;
+  background: $amber-light;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+// Styles carte
+.cps-style-btns {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.cps-style-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  background: $white;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &.active {
+    background: $teal-light;
+    border-color: $teal-mid;
+  }
+
+  &:hover:not(.active) { background: rgba(0, 0, 0, 0.04); }
+}
+
+// ── Carte ────────────────────────────────────────────────────────────────────
+.cps-map-container {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+// ── Marqueurs prestataires ───────────────────────────────────────────────────
+.cps-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+
+  &--active {
+    transform: scale(1.15) translateY(-4px);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+  }
+}
+
+.cps-marker-head {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  position: relative;
+}
+
+.cps-marker-icon { font-size: 17px; line-height: 1; }
+
+.cps-marker-ring {
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2px solid;
+  animation: cps-ring 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cps-ring {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.cps-marker-tip {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  margin-top: -1px;
+}
+
+// ── Marqueurs besoins ────────────────────────────────────────────────────────
+.cps-besoin-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  transition: transform 0.2s;
+
+  &.active {
+    transform: scale(1.2);
+  }
+
+  &:hover { transform: scale(1.1); }
+}
+
+.cps-besoin-ring {
+  position: absolute;
+  inset: -7px;
+  border-radius: 14px;
+  border: 2px solid;
+  animation: cps-ring 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+// ── Marqueur ma position ─────────────────────────────────────────────────────
+.cps-my-marker {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cps-my-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid $white;
+  z-index: 1;
+}
+
+.cps-my-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.4);
+  animation: cps-ring 2.2s ease-out infinite;
+}
+
+// ── Popup ────────────────────────────────────────────────────────────────────
+.cps-popup {
+  .mapboxgl-popup-content {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .mapboxgl-popup-tip { display: none; }
+}
+
+.cps-popup-card {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 16px;
+  min-width: 230px;
+  max-width: 290px;
+  box-shadow: 0 12px 40px rgba(16, 42, 67, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cps-popup-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: $white;
+  align-self: center;
+  overflow: hidden;
+
+  img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+}
+
+.cps-popup-info { text-align: center; }
+.cps-popup-name { font-size: 15px; font-weight: 700; color: $dark; margin-bottom: 3px; }
+.cps-popup-metier { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+.cps-popup-cat { font-size: 10px; color: $sub; text-transform: uppercase; letter-spacing: 0.08em; }
+.cps-popup-ridet { font-size: 10px; color: rgba(16, 42, 67, 0.4); margin-top: 2px; }
+
+.cps-popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 10px;
+  border-top: 1px solid $border;
+}
+
+.cps-popup-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+  &--tel  { background: rgba(34, 197, 94, 0.08); color: #16a34a; border-color: rgba(34, 197, 94, 0.2); }
+  &--mail { background: rgba(59, 130, 246, 0.08); color: #2563eb; border-color: rgba(59, 130, 246, 0.2); }
+  &--profil { background: $teal-light; color: $teal; border-color: $teal-mid; width: 100%; }
+}
+
+// ── Popup Besoin ─────────────────────────────────────────────────────────────
+.cps-besoin-card {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 16px;
+  min-width: 220px;
+  max-width: 280px;
+  box-shadow: 0 12px 40px rgba(16, 42, 67, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cps-besoin-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cps-besoin-urgence-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cps-besoin-urgence-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cps-besoin-expire {
+  font-size: 10px;
+  color: $sub;
+  margin-left: auto;
+}
+
+.cps-besoin-metier {
+  font-size: 14px;
+  font-weight: 600;
+  color: $dark;
+}
+
+.cps-besoin-cat {
+  font-size: 12px;
+  color: $sub;
+}
+
+.cps-besoin-desc {
+  font-size: 12px;
+  color: $dark;
+  line-height: 1.5;
+  margin: 0;
+  padding: 8px;
+  background: rgba(16, 42, 67, 0.03);
+  border-radius: 6px;
+  border-left: 3px solid $amber;
+}
+
+.cps-besoin-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cps-besoin-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 20px;
+  padding: 3px 8px;
+}
+
+// ── Légende ──────────────────────────────────────────────────────────────────
+.cps-legende {
+  position: absolute;
+  bottom: 80px;
+  left: 14px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 16px rgba(16, 42, 67, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.cps-legende-title {
+  font-size: 10px;
+  color: $sub;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.cps-legende-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: $dark;
+  margin-bottom: 4px;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.cps-legende-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// ── Bouton recentrer ─────────────────────────────────────────────────────────
+.cps-recenter-btn {
+  position: absolute;
+  bottom: 80px;
+  right: 14px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $white;
+  border: 1px solid $border;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(16, 42, 67, 0.14);
+  transition: transform 0.2s;
+
+  &:hover { transform: scale(1.08); }
+}
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 640px) {
+  .cps-mode-toggle { max-width: 220px; }
+  .cps-mode-btn { font-size: 11px; }
+  .cps-filterbar { padding: 8px 10px; gap: 6px; }
+  .cps-search-wrap { min-width: 100px; }
+  .cps-select-wrap { min-width: 100px; }
+  .cps-besoins-badge { display: none; }
+}

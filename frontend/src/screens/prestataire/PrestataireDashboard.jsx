@@ -9,6 +9,7 @@ import { logoutUser, updateProfile, clearUpdateSuccess } from "../../slices/auth
 import { fetchCategories } from "../../slices/categorieSlice";
 import { fetchMetiers } from "../../slices/metierSlice";
 import useGeolocate from "../../hooks/UseGeoLocate";
+import IconeRenderer from "../../components/shared/IconeRenderer";
 import "./PrestataireDashboard.scss";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
@@ -468,6 +469,14 @@ const PrestataireDashboard = () => {
               onToggle={handleToggleTracking}
             />
 
+            {/* ── Bouton carte plein écran ── */}
+            <Link
+              to="/prestataire/carte"
+              className="pd-carte-btn"
+            >
+              🗺️ Voir la carte des besoins en plein écran
+            </Link>
+
           </section>
         )}
 
@@ -748,7 +757,9 @@ const PrestataireDashboard = () => {
                   {metierSelectionne && (
                     <div className="pd-metier-preview">
                       {metierSelectionne.icone && (
-                        <span className="pd-metier-preview-icon">{metierSelectionne.icone}</span>
+                        <span className="pd-metier-preview-icon">
+                          <IconeRenderer icone={metierSelectionne.icone} size={20} />
+                        </span>
                       )}
                       <span className="pd-metier-preview-nom">{metierSelectionne.nom}</span>
                       {metierSelectionne.description && (

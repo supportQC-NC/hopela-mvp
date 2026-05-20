@@ -1,101 +1,185 @@
-// src/components/public/LandingMapSection.scss — Mobile-first
-
-$brand: #00a6b2;
-$dark:  #102a43;
-$muted: #5b7083;
-$white: #ffffff;
-
+@keyframes lpFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes lpFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
 .lp-map-section {
   position: relative;
   overflow: hidden;
-  padding: 52px 0 52px;
-  background:
-    radial-gradient(circle at 12% 10%, rgba($brand,.07), transparent 36%),
-    radial-gradient(circle at 88% 12%, rgba(255,70,90,.045), transparent 34%);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba($dark,.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba($dark,.018) 1px, transparent 1px);
-    background-size: 72px 72px;
-    pointer-events: none;
-  }
-
-  @media (min-width: 768px)  { padding: 80px 0; }
-  @media (min-width: 1024px) { padding: 140px 0 80px; }
+  min-height: 96vh;
+  padding: 140px 0 80px;
+  background: radial-gradient(circle at 12% 10%, rgba(0, 166, 178, 0.07), transparent 36%), radial-gradient(circle at 88% 12%, rgba(255, 70, 90, 0.045), transparent 34%);
+}
+.lp-map-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(3, 18, 29, 0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(3, 18, 29, 0.018) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
 }
 
 .lp-map-header,
 .lp-map-container {
   position: relative;
   z-index: 1;
-  width: min(100% - 24px, 1320px);
+  width: min(100% - 40px, 1320px);
   margin-left: auto;
   margin-right: auto;
-
-  @media (min-width: 640px) { width: min(100% - 40px, 1320px); }
 }
 
 .lp-map-header {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 22px;
-
-  @media (min-width: 768px) {
+  gap: 16px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+@media (min-width: 768px) {
+  .lp-map-header {
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 36px;
   }
 }
 
-.lp-map-title {
-  margin: 0;
-  color: $dark;
-  font-size: clamp(28px, 7vw, 64px);
-  line-height: .96;
-  font-weight: 900;
-  letter-spacing: -.05em;
+.lp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 6px 14px;
+  background: rgba(0, 166, 178, 0.08);
+  border: 1px solid rgba(0, 166, 178, 0.25);
+  border-radius: 9999px;
+  color: #00a6b2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
 
-  em { font-style: italic; color: $brand; }
+.lp-map-title {
+  max-width: 760px;
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 0.96;
+  font-weight: 900;
+  letter-spacing: -0.065em;
+}
+.lp-map-title em {
+  font-style: italic;
+  color: #00a6b2;
 }
 
 .lp-map-subtitle {
-  max-width: 360px;
-  color: $muted;
-  font-size: clamp(14px, 1.5vw, 18px);
-  line-height: 1.65;
+  max-width: 420px;
+  color: #5b7083;
+  font-size: clamp(17px, 1.5vw, 20px);
+  line-height: 1.7;
   font-weight: 500;
 }
 
 .lp-map-container {
-  // hauteur progressive selon l'écran
-  height: 300px;
+  position: relative;
+  height: 560px;
   overflow: hidden;
-  border-radius: 20px;
-  border: 1px solid rgba($white,.72);
-  background: linear-gradient(145deg, rgba($white,.72), rgba($white,.54) 52%, rgba(235,249,251,.42));
-  box-shadow: 0 18px 52px rgba($dark,.12), 0 8px 24px rgba($brand,.06), inset 0 1px 0 rgba($white,.85);
+  border-radius: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.54) 52%, rgba(235, 249, 251, 0.42));
+  box-shadow: 0 36px 90px rgba(3, 18, 29, 0.16), 0 16px 42px rgba(0, 166, 178, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   isolation: isolate;
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 22px;
-    right: 22px;
-    z-index: 3;
-    height: 3px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, $brand, rgba(255,70,90,.58));
-    pointer-events: none;
-  }
-
-  @media (min-width: 480px)  { height: 380px; border-radius: 26px; }
-  @media (min-width: 768px)  { height: 460px; border-radius: 32px; }
-  @media (min-width: 1024px) { height: 560px; border-radius: 42px; }
 }
+.lp-map-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34), inset 0 0 90px rgba(3, 18, 29, 0.08);
+}
+.lp-map-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 36px;
+  right: 36px;
+  z-index: 3;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #00a6b2, rgba(255, 70, 90, 0.58));
+  pointer-events: none;
+}
+
+/* ── Bouton plein écran ────────────────────────────────────────────────────── */
+.lp-map-fullscreen-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(16, 42, 67, 0.1);
+  border-radius: 20px;
+  color: #102a43;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(16, 42, 67, 0.12);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+.lp-map-fullscreen-btn:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(16, 42, 67, 0.18);
+  transform: translateY(-1px);
+  color: #00a6b2;
+}
+.lp-map-fullscreen-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .lp-map-section {
+    min-height: auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .lp-map-header {
+    margin-bottom: 32px;
+  }
+  .lp-map-title {
+    font-size: clamp(38px, 11vw, 56px);
+  }
+  .lp-map-container {
+    height: 460px;
+    border-radius: 34px;
+  }
+}
+@media (max-width: 640px) {
+  .lp-map-header,
+  .lp-map-container {
+    width: calc(100% - 28px);
+  }
+  .lp-map-container {
+    height: 420px;
+  }
+}/*# sourceMappingURL=LandingMapSection.css.map */
