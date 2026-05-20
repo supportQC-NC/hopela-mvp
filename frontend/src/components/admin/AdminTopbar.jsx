@@ -2,11 +2,13 @@
 import "./AdminTopbar.scss";
 
 const TITLES = {
-  overview: { title: "Vue d'ensemble", sub: "Tableau de bord administrateur" },
-  map: { title: "Carte live", sub: "Prestataires en temps réel" },
-  users: { title: "Utilisateurs", sub: "Gestion des comptes" },
-  catalogues: { title: "Catalogues", sub: "Catégories & Métiers" },
-  contact: { title: "Messages", sub: "Boîte de réception" },
+  overview:   { title: "Vue d'ensemble",  sub: "Tableau de bord administrateur" },
+  map:        { title: "Carte live",      sub: "Prestataires en temps réel" },
+  users:      { title: "Utilisateurs",    sub: "Gestion des comptes" },
+  catalogues: { title: "Catalogues",      sub: "Catégories & Métiers" },
+  contact:    { title: "Messages",        sub: "Boîte de réception" },
+  promotions: { title: "Promotions",      sub: "Toutes les offres des prestataires" },
+  favoris:    { title: "Favoris",         sub: "Prestataires les plus appréciés" },
 };
 
 const AdminTopbar = ({ activeNav, onRefresh }) => {

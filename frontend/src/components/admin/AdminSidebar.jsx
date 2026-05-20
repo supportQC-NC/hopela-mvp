@@ -2,7 +2,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { logout, logoutUser } from "../../slices/authSlice";
-import logo from "../../logo.png";
 import "./AdminSidebar.scss";
 
 const NAV = [
@@ -13,6 +12,8 @@ const NAV = [
   { section: "Gestion" },
   { icon: "👥", label: "Utilisateurs", key: "users" },
   { icon: "📂", label: "Catalogues", key: "catalogues" },
+  { icon: "🏷️", label: "Promotions", key: "promotions" },
+  { icon: "❤️", label: "Favoris", key: "favoris" },
   { divider: true },
   { section: "Communication" },
   { icon: "📬", label: "Messages", key: "contact" },
@@ -32,15 +33,18 @@ const AdminSidebar = ({ activeNav, setActiveNav, counts = {} }) => {
   return (
     <aside className="as-sidebar">
       <Link to="/" className="as-logo">
-        <img src={logo} alt="Hopela" className="as-logo-img" />
+        <div className="as-logo-mark">H</div>
         <span className="as-logo-name">Hopela</span>
       </Link>
 
       {NAV.map((item, i) => {
         if (item.section)
-          return <div key={i} className="as-section-label">{item.section}</div>;
-        if (item.divider)
-          return <div key={i} className="as-divider" />;
+          return (
+            <div key={i} className="as-section-label">
+              {item.section}
+            </div>
+          );
+        if (item.divider) return <div key={i} className="as-divider" />;
         const count = counts[item.key];
         return (
           <button
@@ -55,7 +59,7 @@ const AdminSidebar = ({ activeNav, setActiveNav, counts = {} }) => {
                 className="as-nav-badge"
                 style={
                   item.key === "contact"
-                    ? { background: "rgba(251,191,36,0.15)", color: "#d97706", borderColor: "rgba(251,191,36,0.3)" }
+                    ? { background: "rgba(251,191,36,0.2)", color: "#fbbf24" }
                     : {}
                 }
               >
@@ -73,7 +77,9 @@ const AdminSidebar = ({ activeNav, setActiveNav, counts = {} }) => {
             {userInfo?.nom?.[0]}
           </div>
           <div>
-            <div className="as-user-name">{userInfo?.prenom} {userInfo?.nom}</div>
+            <div className="as-user-name">
+              {userInfo?.prenom} {userInfo?.nom}
+            </div>
             <div className="as-user-role">Administrateur</div>
           </div>
         </div>

@@ -22,6 +22,25 @@ const isVisible = (promo) => {
 // PUBLIC
 // =============================================
 
+// @desc    Toutes les promotions actives en ce moment (landing page)
+// @route   GET /api/promotions/actives
+// @access  Public
+const getPromotionsActives = asyncHandler(async (req, res) => {
+  const now = new Date();
+  const promos = await Promotion.find({
+    isActive: true,
+    $and: [
+      { $or: [{ dateDebut: null }, { dateDebut: { $lte: now } }] },
+      { $or: [{ dateFin:   null }, { dateFin:   { $gte: now } }] },
+    ],
+  })
+    .populate("prestataire", "prenom nom avatar metiers")
+    .populate({ path: "prestataire", populate: { path: "metiers", select: "nom icone" } })
+    .sort({ createdAt: -1 })
+    .limit(20);
+  res.json(promos);
+});
+
 // @desc    Promotions actives et valides d'un prestataire (vue publique)
 // @route   GET /api/promotions/prestataire/:id
 // @access  Public
@@ -185,6 +204,7 @@ const getAllPromotionsAdmin = asyncHandler(async (req, res) => {
 });
 
 export {
+  getPromotionsActives,
   getPromotionsPubliques,
   getMesPromotions,
   createPromotion,

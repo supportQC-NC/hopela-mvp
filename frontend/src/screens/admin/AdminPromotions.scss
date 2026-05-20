@@ -1,9 +1,7 @@
-// src/screens/admin/AdminPromotions.scss
 .ap-root {
   padding: 32px;
   max-width: 1100px;
 }
-
 .ap-header {
   display: flex;
   align-items: flex-start;
@@ -12,7 +10,6 @@
   gap: 16px;
   margin-bottom: 32px;
 }
-
 .ap-title {
   font-size: 24px;
   font-weight: 800;
@@ -20,17 +17,14 @@
   letter-spacing: -0.03em;
   margin-bottom: 4px;
 }
-
 .ap-sub {
   font-size: 13px;
   color: rgba(245, 244, 249, 0.45);
 }
-
 .ap-filters {
   display: flex;
   gap: 8px;
 }
-
 .ap-filter-btn {
   padding: 7px 16px;
   border-radius: 9999px;
@@ -41,49 +35,36 @@
   background: rgba(245, 244, 249, 0.05);
   color: rgba(245, 244, 249, 0.55);
   transition: all 0.2s;
-
-  &.active {
-    background: rgba(0, 166, 178, 0.15);
-    border-color: rgba(0, 166, 178, 0.4);
-    color: #00a6b2;
-  }
-
-  &:hover:not(.active) {
-    background: rgba(245, 244, 249, 0.08);
-    color: rgba(245, 244, 249, 0.8);
-  }
 }
-
-.ap-loading, .ap-empty {
+.ap-filter-btn.active {
+  background: rgba(0, 166, 178, 0.15);
+  border-color: rgba(0, 166, 178, 0.4);
+  color: #00a6b2;
+}
+.ap-filter-btn:hover:not(.active) {
+  background: rgba(245, 244, 249, 0.08);
+  color: rgba(245, 244, 249, 0.8);
+}
+.ap-empty {
   text-align: center;
   padding: 60px 20px;
   color: rgba(245, 244, 249, 0.35);
   font-size: 15px;
 }
-
 .ap-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .ap-card {
   background: rgba(245, 244, 249, 0.04);
   border: 1px solid rgba(245, 244, 249, 0.08);
   border-radius: 14px;
   padding: 20px 24px;
   transition: border-color 0.2s;
-
-  &.expired {
-    opacity: 0.55;
-    border-color: rgba(245, 244, 249, 0.05);
-  }
-
-  &:hover {
-    border-color: rgba(245, 244, 249, 0.15);
-  }
 }
-
+.ap-card.expired { opacity: 0.55; }
+.ap-card:hover { border-color: rgba(245, 244, 249, 0.15); }
 .ap-card-head {
   display: flex;
   align-items: center;
@@ -92,30 +73,10 @@
   margin-bottom: 12px;
   flex-wrap: wrap;
 }
-
-.ap-presta-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ap-presta-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: #f5f4f9;
-}
-
-.ap-presta-metier {
-  font-size: 12px;
-  color: rgba(245, 244, 249, 0.4);
-}
-
-.ap-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+.ap-presta-info { display: flex; flex-direction: column; gap: 2px; }
+.ap-presta-name { font-size: 14px; font-weight: 700; color: #f5f4f9; }
+.ap-presta-metier { font-size: 12px; color: rgba(245, 244, 249, 0.4); }
+.ap-card-meta { display: flex; align-items: center; gap: 8px; }
 .ap-badge {
   display: inline-flex;
   align-items: center;
@@ -128,10 +89,8 @@
   font-size: 11px;
   font-weight: 700;
 }
-
 .ap-expired-tag {
   display: inline-flex;
-  align-items: center;
   padding: 4px 10px;
   border-radius: 9999px;
   background: rgba(239, 68, 68, 0.1);
@@ -140,50 +99,17 @@
   font-size: 11px;
   font-weight: 700;
 }
-
-.ap-promo-titre {
-  font-size: 16px;
-  font-weight: 700;
-  color: #f5f4f9;
-  margin-bottom: 6px;
-  letter-spacing: -0.02em;
-}
-
-.ap-promo-desc {
-  font-size: 13px;
-  color: rgba(245, 244, 249, 0.5);
-  line-height: 1.6;
-  margin-bottom: 8px;
-}
-
-.ap-dates {
-  font-size: 12px;
-  color: rgba(245, 244, 249, 0.35);
-  margin-bottom: 12px;
-}
-
-.ap-images {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.ap-img {
-  width: 80px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid rgba(245, 244, 249, 0.08);
-}
-
+.ap-promo-titre { font-size: 16px; font-weight: 700; color: #f5f4f9; margin-bottom: 6px; }
+.ap-promo-desc { font-size: 13px; color: rgba(245, 244, 249, 0.5); line-height: 1.6; margin-bottom: 8px; }
+.ap-dates { font-size: 12px; color: rgba(245, 244, 249, 0.35); margin-bottom: 12px; }
+.ap-images { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ap-img { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(245, 244, 249, 0.08); }
 .ap-card-actions {
   display: flex;
   justify-content: flex-end;
   padding-top: 12px;
   border-top: 1px solid rgba(245, 244, 249, 0.06);
 }
-
 .ap-btn-danger {
   display: inline-flex;
   align-items: center;
@@ -197,9 +123,8 @@
   background: rgba(239, 68, 68, 0.08);
   color: #ef4444;
   transition: all 0.2s;
-
-  &:hover {
-    background: rgba(239, 68, 68, 0.16);
-    border-color: rgba(239, 68, 68, 0.4);
-  }
+}
+.ap-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.4);
 }

@@ -5,6 +5,7 @@ import path     from "path";
 import fs       from "fs";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import {
+  getPromotionsActives,
   getPromotionsPubliques,
   getMesPromotions,
   createPromotion,
@@ -47,7 +48,8 @@ const handleUpload = (req, res, next) => {
 };
 
 // ── Routes publiques ──────────────────────────────────────────────────────────
-router.get("/prestataire/:id", getPromotionsPubliques);
+router.get("/actives",          getPromotionsActives);
+router.get("/prestataire/:id",  getPromotionsPubliques);
 
 // ── Routes admin ───────────────────────────────────────────────────────────────
 router.get("/admin/all", protect, admin, getAllPromotionsAdmin);

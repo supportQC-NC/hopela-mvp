@@ -1,17 +1,16 @@
 // src/screens/public/LandingScreen.jsx
 import { useEffect } from "react";
-import Header from "../../components/layout/Header";
-import Footer from "../../components/layout/Footer";
+import Header            from "../../components/layout/Header";
+import Footer            from "../../components/layout/Footer";
 import LandingMapSection from "../../components/public/LandingMapSection";
-import CategoriesCarousel from "../../components/public/CategoriesCarousel";
+import CategoriesCarousel   from "../../components/public/CategoriesCarousel";
+import PromotionsCarousel   from "../../components/public/PromotionsCarousel";
 import HowItWorksSection from "../../components/public/HowItWorksSection";
 import AdvantagesSection from "../../components/public/AdvantagesSection";
-import PricingSection from "../../components/public/PricingSection";
+import PricingSection    from "../../components/public/PricingSection";
 import TestimonialsSection from "../../components/public/TestimonialsSection";
-import FinalCta from "../../components/public/FinalCta";
-import LandingHero from "../../components/public/LandingHero";
-import ForClients from "../../components/public/ForClients";
-import ForPros from "../../components/public/ForPros";
+import FinalCta          from "../../components/public/FinalCta";
+import LandingHero       from "../../components/public/LandingHero";
 import "./LandingScreen.scss";
 
 const FONT_HREF =
@@ -32,10 +31,9 @@ const LandingScreen = () => {
     <main className="lp-root">
       <Header />
       <LandingHero />
-      <ForClients />
-      <ForPros />
       <LandingMapSection />
       <CategoriesCarousel />
+      <PromotionsCarousel />
       <HowItWorksSection />
       <AdvantagesSection />
       <PricingSection />

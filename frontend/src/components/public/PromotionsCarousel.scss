@@ -1,0 +1,299 @@
+// src/components/public/PromotionsCarousel.scss
+// Charte : primary #00a6b2 | dark #102a43 | sub #5b7083
+
+.lp-promos-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 80px 0;
+  background: linear-gradient(180deg, #f7fafe 0%, #ffffff 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 166, 178, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 166, 178, 0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+  }
+}
+
+// ── Header ─────────────────────────────────────────────────────────────────────
+.lp-promos-header {
+  position: relative;
+  z-index: 3;
+  width: min(100% - 40px, 1320px);
+  margin: 0 auto 40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.lp-promos-intro {
+  max-width: 520px;
+}
+
+// Réutilise les classes globales lp-eyebrow / lp-section-title déjà définies
+
+.lp-section-sub {
+  font-size: clamp(15px, 1.2vw, 17px);
+  color: #5b7083;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+// ── Skeletons ──────────────────────────────────────────────────────────────────
+.lp-promos-skeletons {
+  display: flex;
+  gap: 24px;
+  padding: 0 max(20px, calc((100% - 1320px) / 2));
+  overflow: hidden;
+}
+
+.lp-promo-skeleton {
+  flex-shrink: 0;
+  width: 320px;
+  height: 420px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #f0f4f8 25%, #e2eaf2 50%, #f0f4f8 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+// ── Track ──────────────────────────────────────────────────────────────────────
+.lp-promos-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 8px max(20px, calc((100% - 1320px) / 2)) 20px;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+// ── Card ───────────────────────────────────────────────────────────────────────
+.lp-promo-card {
+  flex-shrink: 0;
+  width: 300px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(16, 42, 67, 0.08);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s ease,
+    border-color 0.32s ease;
+  animation: lpFadeUp 0.5s ease both;
+  animation-delay: var(--delay, 0ms);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.1),
+      0 8px 24px rgba(0, 166, 178, 0.08);
+    border-color: rgba(0, 166, 178, 0.22);
+  }
+
+  @media (max-width: 480px) {
+    width: 270px;
+  }
+}
+
+@keyframes lpFadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// Image
+.lp-promo-card-img {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.42s ease;
+
+    .lp-promo-card:hover & {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.lp-promo-card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Badge flottant
+.lp-promo-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+// Corps
+.lp-promo-card-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+// Prestataire info
+.lp-promo-presta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-promo-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0, 166, 178, 0.2);
+  flex-shrink: 0;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00a6b2, #145c45);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+}
+
+.lp-promo-presta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.lp-promo-presta-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #102a43;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-promo-presta-metier {
+  font-size: 11px;
+  color: #5b7083;
+  font-weight: 500;
+}
+
+// Titre
+.lp-promo-titre {
+  font-size: 16px;
+  font-weight: 800;
+  color: #102a43;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Description
+.lp-promo-desc {
+  font-size: 13px;
+  color: #5b7083;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Date fin
+.lp-promo-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5b7083;
+
+  svg { color: #00a6b2; }
+}
+
+// CTA
+.lp-promo-cta {
+  margin-top: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00a6b2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s;
+
+  .lp-promo-card:hover & {
+    gap: 8px;
+  }
+}
+
+// ── Arrows (reprend les classes existantes du carousel catégories) ─────────────
+// .lp-carousel-arrows et .lp-arrow sont déjà définis dans CategoriesCarousel.scss
+// On les réutilise directement
+
+@media (max-width: 768px) {
+  .lp-promos-section {
+    padding: 60px 0;
+  }
+
+  .lp-promos-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .lp-carousel-arrows {
+    align-self: flex-end;
+  }
+}
