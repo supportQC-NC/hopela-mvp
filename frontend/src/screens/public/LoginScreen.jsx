@@ -129,13 +129,12 @@ const LoginScreen = () => {
             Hopela <span>booster</span> d'opportunités
           </span>
           <h1 className="login-visual-title">
-            Connectez-vous à
+            Rejoignez 
             <br />
-            votre espace <em>Hopela</em>.
+             <em>Hopela</em>.
           </h1>
           <p className="login-visual-sub">
-            Retrouvez vos demandes, gérez votre profil et accédez rapidement aux
-            prestataires disponibles autour de vous.
+          Signalez. Trouvez. En temps réel
           </p>
 
           <div className="login-visual-benefits" aria-label="Avantages Hopela">
