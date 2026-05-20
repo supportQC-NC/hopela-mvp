@@ -1,259 +1,478 @@
-// src/components/public/PricingSection.scss
-// Mobile-first
-
-$brand:  #00a6b2;
-$dark:   #102a43;
-$muted:  #5b7083;
-$white:  #ffffff;
+@use "../../styles/variables" as v;
+@use "./landingTokens" as t;
 
 .lp-pricing-section {
   position: relative;
   overflow: hidden;
-  padding: 60px 0;
+  padding: v.$space-20 0;
+
   background:
-    radial-gradient(circle at 12% 12%, rgba($brand,.07), transparent 36%),
-    radial-gradient(circle at 88% 18%, rgba(255,70,90,.045), transparent 34%);
+    radial-gradient(
+      circle at 12% 12%,
+      rgba(0, 166, 178, 0.07),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      rgba(255, 70, 90, 0.045),
+      transparent 34%
+    );
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba($dark,.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba($dark,.018) 1px, transparent 1px);
+      linear-gradient(rgba(3, 18, 29, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(3, 18, 29, 0.018) 1px, transparent 1px);
     background-size: 72px 72px;
     pointer-events: none;
   }
-
-  @media (min-width: 768px)  { padding: 80px 0; }
-  @media (min-width: 1024px) { padding: 100px 0; }
 }
 
 .lp-pricing-head,
 .lp-pricing-grid {
   position: relative;
   z-index: 1;
-  width: min(100% - 28px, 1320px);
+  width: min(100% - 40px, v.$max-wide);
   margin-left: auto;
   margin-right: auto;
-
-  @media (min-width: 640px) { width: min(100% - 40px, 1320px); }
 }
 
 .lp-pricing-head {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: v.$space-10;
 
-  .lp-section-sub { margin-left: auto; margin-right: auto; }
-
-  @media (min-width: 768px) { margin-bottom: 48px; }
-}
-
-// ─── Grille cards ─────────────────────────────────────────────────────────
-.lp-pricing-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  align-items: start;
-
-  @media (min-width: 640px)  { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  @media (min-width: 900px)  {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    align-items: stretch;
+  .lp-section-sub {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
-// ─── Card ─────────────────────────────────────────────────────────────────
+.lp-eyebrow {
+  @include t.eyebrow;
+}
+
+.lp-section-title {
+  @include t.title;
+
+  em {
+    color: t.$lp-primary;
+    font-style: italic;
+  }
+}
+
+.lp-section-sub {
+  @include t.subtitle;
+}
+
+.lp-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: v.$space-6;
+  align-items: stretch;
+
+  @media (min-width: v.$bp-md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .lp-price-card {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  padding: 28px 26px;
+
+  min-height: 560px;
+  padding: 36px;
+
   display: flex;
   flex-direction: column;
-  border-radius: 28px;
-  border: 1px solid rgba($white, .72);
-  background: linear-gradient(145deg, rgba($white,.68), rgba($white,.54) 52%, rgba(235,249,251,.42));
-  box-shadow: 0 20px 60px rgba($dark,.1), 0 8px 22px rgba($brand,.045), inset 0 1px 0 rgba($white,.9);
-  transition: transform .38s cubic-bezier(.22,1,.36,1), border-color .38s ease, box-shadow .38s ease;
+
+  border-radius: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.68),
+    rgba(255, 255, 255, 0.54) 52%,
+    rgba(235, 249, 251, 0.42)
+  );
+
+  box-shadow:
+    0 30px 80px rgba(3, 18, 29, 0.12),
+    0 12px 30px rgba(0, 166, 178, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.38s ease,
+    box-shadow 0.38s ease,
+    background 0.38s ease;
 
   &::before {
     content: "";
     position: absolute;
     inset: -1px;
     z-index: -1;
+
     background:
-      radial-gradient(circle at 18% 16%, rgba($brand,.16), transparent 34%),
-      radial-gradient(circle at 92% 90%, rgba(255,70,90,.09), transparent 34%);
-    opacity: .55;
-    transition: opacity .38s ease, transform .38s ease;
+      radial-gradient(
+        circle at 18% 16%,
+        rgba(0, 166, 178, 0.16),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 92% 90%,
+        rgba(255, 70, 90, 0.09),
+        transparent 34%
+      );
+
+    opacity: 0.55;
+
+    transition:
+      opacity 0.38s ease,
+      transform 0.38s ease;
   }
 
   &::after {
     content: "";
     position: absolute;
     top: 0;
-    left: 26px;
-    right: 26px;
-    height: 3px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, $brand, rgba(255,70,90,.6));
-    transform: scaleX(.22);
+    left: 34px;
+    right: 34px;
+
+    height: 4px;
+    border-radius: v.$radius-full;
+
+    background: linear-gradient(90deg, t.$lp-primary, rgba(255, 70, 90, 0.6));
+
+    transform: scaleX(0.22);
     transform-origin: left;
-    opacity: .55;
-    transition: transform .38s cubic-bezier(.22,1,.36,1), opacity .38s ease;
+    opacity: 0.55;
+
+    transition:
+      transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.38s ease;
   }
 
   &:hover {
-    transform: translateY(-8px);
-    border-color: rgba($brand,.32);
-    background: linear-gradient(145deg, rgba($white,.9), rgba($white,.74) 52%, rgba(235,249,251,.66));
-    box-shadow: 0 40px 96px rgba($dark,.16), 0 18px 44px rgba($brand,.12), inset 0 1px 0 $white;
-    &::before { opacity: 1; transform: scale(1.04); }
-    &::after  { transform: scaleX(1); opacity: 1; }
+    transform: translateY(-12px);
+    border-color: rgba(0, 166, 178, 0.32);
+
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.74) 52%,
+      rgba(235, 249, 251, 0.66)
+    );
+
+    box-shadow:
+      0 48px 110px rgba(3, 18, 29, 0.18),
+      0 22px 52px rgba(0, 166, 178, 0.13),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+
+    &::before {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+
+    &::after {
+      transform: scaleX(1);
+      opacity: 1;
+    }
   }
 
-  @media (min-width: 768px) { padding: 32px 30px; border-radius: 32px; }
-  @media (min-width: 1024px) { padding: 36px; border-radius: 38px; }
-
-  // ── Featured ──
   &--featured {
-    border-color: rgba($brand,.45);
-    background: linear-gradient(145deg, rgb(3,18,29), rgb(4,34,48) 58%, rgba($brand,.22));
-    box-shadow: 0 40px 96px rgba($dark,.22), 0 20px 52px rgba($brand,.18);
+    transform: translateY(-14px);
+    border-color: rgba(0, 166, 178, 0.45);
 
-    &::before { opacity: .82; background: radial-gradient(circle at 18% 16%, rgba($brand,.24), transparent 34%), radial-gradient(circle at 92% 90%, rgba(255,70,90,.16), transparent 34%); }
-    &::after  { transform: scaleX(1); opacity: 1; }
+    background: linear-gradient(
+      145deg,
+      rgba(3, 18, 29, 1),
+      rgba(4, 34, 48, 1) 58%,
+      rgba(0, 166, 178, 0.22)
+    );
 
-    .lp-plan-name   { color: rgba($white,.62); }
+    box-shadow:
+      0 48px 110px rgba(3, 18, 29, 0.24),
+      0 24px 60px rgba(0, 166, 178, 0.18);
+
+    &::before {
+      opacity: 0.82;
+      background:
+        radial-gradient(
+          circle at 18% 16%,
+          rgba(0, 166, 178, 0.24),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 92% 90%,
+          rgba(255, 70, 90, 0.16),
+          transparent 34%
+        );
+    }
+
+    &::after {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+
+    .lp-plan-name {
+      color: rgba(255, 255, 255, 0.62);
+    }
+
     .lp-price-currency,
     .lp-price-amount,
-    .lp-price-period { color: $white; }
-    .lp-price-desc  { color: rgba($white,.74); }
-    .lp-features-list li { color: rgba($white,.82); }
-    .lp-features-list svg { color: $brand; }
-    .lp-price-btn   { border: none; background: $brand; color: $white; box-shadow: 0 14px 30px rgba($brand,.28); }
+    .lp-price-period {
+      color: #ffffff;
+    }
 
-    @media (min-width: 900px) { transform: translateY(-12px); }
+    .lp-price-desc {
+      color: rgba(255, 255, 255, 0.74);
+    }
+
+    .lp-features-list li {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .lp-features-list svg {
+      color: t.$lp-primary;
+    }
+
+    .lp-price-btn {
+      border: none;
+      background: t.$lp-primary;
+      color: #ffffff;
+      box-shadow: 0 16px 34px rgba(0, 166, 178, 0.28);
+    }
 
     &:hover {
-      @media (min-width: 900px) { transform: translateY(-20px); }
-      .lp-price-btn { background: $white; color: $dark; }
+      transform: translateY(-20px);
+      border-color: rgba(0, 166, 178, 0.55);
+
+      background: linear-gradient(
+        145deg,
+        rgba(3, 18, 29, 1),
+        rgba(5, 38, 54, 1) 58%,
+        rgba(0, 166, 178, 0.28)
+      );
+
+      box-shadow:
+        0 60px 130px rgba(3, 18, 29, 0.32),
+        0 30px 70px rgba(0, 166, 178, 0.22);
+
+      .lp-plan-name {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .lp-price-currency,
+      .lp-price-amount,
+      .lp-price-period {
+        color: #ffffff;
+      }
+
+      .lp-price-desc {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .lp-features-list li {
+        color: rgba(255, 255, 255, 0.88);
+      }
+
+      .lp-price-btn {
+        background: #ffffff;
+        color: t.$lp-text;
+        box-shadow: 0 18px 40px rgba(255, 255, 255, 0.16);
+      }
     }
   }
 }
 
-// ─── Badge ────────────────────────────────────────────────────────────────
 .lp-badge {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 22px;
+  right: 22px;
   z-index: 2;
-  padding: 5px 13px;
-  border-radius: 9999px;
-  background: $brand;
-  color: $white;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .09em;
+
+  padding: 7px v.$space-4;
+  border-radius: v.$radius-full;
+
+  background: t.$lp-primary;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: v.$font-bold;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 10px 22px rgba($brand,.32);
+
+  box-shadow: 0 12px 26px rgba(0, 166, 178, 0.32);
 }
 
 .lp-plan-name {
   position: relative;
   z-index: 1;
-  margin-bottom: 20px;
-  color: $muted;
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: .16em;
+
+  margin-bottom: v.$space-6;
+
+  color: t.$lp-text-sub;
+
+  font-size: v.$text-sm;
+  font-weight: v.$font-bold;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .lp-price-wrapper {
   position: relative;
   z-index: 1;
+
   display: flex;
   align-items: baseline;
-  margin-bottom: 10px;
+
+  margin-bottom: v.$space-3;
 }
 
 .lp-price-currency {
-  margin-right: 4px;
-  color: $dark;
-  font-size: 1.125rem;
-  font-weight: 600;
+  margin-right: v.$space-1;
+
+  color: t.$lp-text;
+
+  font-size: v.$text-xl;
+  font-weight: v.$font-semibold;
 }
 
 .lp-price-amount {
-  color: $dark;
-  font-size: clamp(44px, 5vw, 64px);
-  line-height: .95;
-  font-weight: 900;
-  letter-spacing: -.07em;
+  color: t.$lp-text;
+
+  font-size: clamp(52px, 5vw, 72px);
+  line-height: 0.95;
+  font-weight: v.$font-black;
+  letter-spacing: -0.07em;
 }
 
 .lp-price-period {
   margin-left: 8px;
-  color: $muted;
-  font-size: .9375rem;
-  font-weight: 600;
+
+  color: t.$lp-text-sub;
+
+  font-size: v.$text-md;
+  font-weight: v.$font-semibold;
 }
 
 .lp-price-desc {
   position: relative;
   z-index: 1;
-  margin-bottom: 24px;
-  color: $brand;
-  font-size: .8rem;
-  font-weight: 700;
+
+  margin-bottom: v.$space-8;
+
+  color: t.$lp-primary;
+
+  font-size: v.$text-sm;
+  font-weight: v.$font-bold;
 }
 
 .lp-features-list {
   position: relative;
   z-index: 1;
+
   flex: 1;
+
   list-style: none;
   padding: 0;
-  margin: 0 0 28px;
+  margin: 0 0 v.$space-8;
 
   li {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 12px;
-    color: $muted;
-    font-size: .9rem;
-    line-height: 1.55;
-    font-weight: 500;
+    gap: v.$space-3;
 
-    svg { flex-shrink: 0; margin-top: 2px; color: $brand; }
+    margin-bottom: 15px;
+
+    color: t.$lp-text-sub;
+
+    font-size: v.$text-base;
+    line-height: 1.55;
+    font-weight: v.$font-medium;
+
+    svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: t.$lp-primary;
+    }
   }
 }
 
 .lp-price-btn {
   position: relative;
   z-index: 1;
+
   width: 100%;
-  min-height: 46px;
-  padding: 0 20px;
-  border-radius: 9999px;
-  border: 1px solid rgba($brand,.22);
-  background: rgba($white,.38);
-  color: $dark;
-  font-size: .8125rem;
-  font-weight: 700;
+  min-height: 48px;
+
+  padding: 0 v.$space-5;
+
+  border-radius: v.$radius-full;
+  border: 1px solid rgba(0, 166, 178, 0.22);
+
+  background: rgba(255, 255, 255, 0.38);
+  color: t.$lp-text;
+
+  font-family: v.$font-sans;
+  font-size: v.$text-sm;
+  font-weight: v.$font-bold;
+
   cursor: pointer;
-  transition: transform .25s ease, background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 
   &:hover {
     transform: translateY(-2px);
-    border-color: $brand;
-    background: rgba($brand,.08);
-    color: $brand;
-    box-shadow: 0 12px 28px rgba($brand,.12);
+    border-color: t.$lp-primary;
+    background: rgba(0, 166, 178, 0.08);
+    color: t.$lp-primary;
+    box-shadow: 0 16px 34px rgba(0, 166, 178, 0.12);
+  }
+}
+
+@media (max-width: v.$bp-md) {
+  .lp-pricing-section {
+    padding-top: v.$space-10;
+    padding-bottom: v.$space-10;
+  }
+
+  .lp-pricing-head {
+    margin-bottom: v.$space-8;
+  }
+
+  .lp-price-card {
+    min-height: auto;
+    padding: 30px;
+    border-radius: 32px;
+
+    &--featured {
+      transform: none;
+
+      &:hover {
+        transform: translateY(-10px);
+      }
+    }
+  }
+}
+
+@media (max-width: v.$bp-sm) {
+  .lp-pricing-head,
+  .lp-pricing-grid {
+    width: min(100% - 28px, v.$max-wide);
+  }
+
+  .lp-pricing-grid {
+    grid-template-columns: 1fr;
+    gap: v.$space-4;
   }
 }

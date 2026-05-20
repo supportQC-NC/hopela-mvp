@@ -1,31 +1,56 @@
+// PrestataireDashboard.scss
 @charset "UTF-8";
+
+// ── Variables ──────────────────────────────────────────────────────────────────
+$primary : #00a6b2;
+$dark    : #102a43;
+$sub     : #5b7083;
+$white   : #ffffff;
+$green   : #108f52;
+$red     : #d64255;
+
+// ── Animations ─────────────────────────────────────────────────────────────────
 @keyframes lpFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes lpFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
 }
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 16px rgba(16,143,82,0.16); }
+  50%       { box-shadow: 0 0 32px rgba(16,143,82,0.34); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pdSwitchSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pdGpsPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.5); }
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Root ───────────────────────────────────────────────────────────────────────
 .pd-root {
   min-height: 100vh;
   min-height: 100dvh;
   padding-bottom: 84px;
   overflow-x: hidden;
-  color: #102a43;
-  background: radial-gradient(circle at 12% 10%, rgba(0, 166, 178, 0.07), transparent 36%), radial-gradient(circle at 88% 12%, rgba(255, 70, 90, 0.045), transparent 34%), #ffffff;
+  color: $dark;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(0,166,178,0.07), transparent 36%),
+    radial-gradient(circle at 88% 12%, rgba(255,70,90,0.045), transparent 34%),
+    $white;
 }
 
+// ── Header ─────────────────────────────────────────────────────────────────────
 .pd-header {
   position: sticky;
   top: 0;
@@ -36,10 +61,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255,255,255,0.94);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(16, 42, 67, 0.08);
-  box-shadow: 0 14px 34px rgba(3, 18, 29, 0.08);
+  border-bottom: 1px solid rgba($dark, 0.08);
+  box-shadow: 0 14px 34px rgba(3,18,29,0.08);
 }
 
 .pd-brand {
@@ -56,13 +81,12 @@
 .pd-logo-img {
   width: 42px;
   height: 42px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
 .pd-logo-name {
-  color: #102a43;
+  color: $dark;
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -74,40 +98,100 @@
   align-items: center;
   border-radius: 9999px;
   padding: 5px 10px;
-  background: rgba(0, 166, 178, 0.08);
-  border: 1px solid rgba(0, 166, 178, 0.18);
-  color: #00a6b2;
+  background: rgba($primary, 0.08);
+  border: 1px solid rgba($primary, 0.18);
+  color: $primary;
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
+// ── Header right ───────────────────────────────────────────────────────────────
+.pd-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-favori-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #f87171;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pd-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: rgba($primary, 0.1);
+  border: 1px solid rgba($primary, 0.25);
+  color: $primary;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($primary, 0.18);
+    border-color: rgba($primary, 0.45);
+  }
+}
+
 .pd-logout-btn {
   height: 40px;
-  border: 1px solid rgba(255, 70, 90, 0.18);
-  background: rgba(255, 70, 90, 0.06);
-  color: #d64255;
+  border: 1px solid rgba(255,70,90,0.18);
+  background: rgba(255,70,90,0.06);
+  color: $red;
   border-radius: 9999px;
   padding: 0 16px;
   cursor: pointer;
   font-size: 0.8125rem;
   font-weight: 700;
   transition: all 0.3s ease;
-}
-.pd-logout-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 70, 90, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    background: rgba(255,70,90,0.1);
+  }
 }
 
-.pd-logout-short {
-  display: none;
+.pd-logout-full { display: inline; }
+.pd-logout-short { display: none; }
+
+// ── Desktop tabs ───────────────────────────────────────────────────────────────
+.pd-desktop-tabs { display: none; }
+
+.pd-desktop-tab {
+  padding: 16px 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: $sub;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+
+  &.active {
+    color: $primary;
+    border-bottom-color: $primary;
+  }
 }
 
-.pd-desktop-tabs {
-  display: none;
-}
-
+// ── Body ───────────────────────────────────────────────────────────────────────
 .pd-body {
   width: min(100% - 40px, 1320px);
   margin: 0 auto;
@@ -116,25 +200,27 @@
 
 .pd-welcome {
   margin: 0 0 12px;
-  color: #102a43;
+  color: $dark;
   font-size: clamp(34px, 5vw, 56px);
   line-height: 0.96;
   font-weight: 900;
   letter-spacing: -0.065em;
-}
-.pd-welcome em {
-  color: #00a6b2;
-  font-style: italic;
+
+  em {
+    color: $primary;
+    font-style: italic;
+  }
 }
 
 .pd-welcome-sub {
   max-width: 620px;
   margin: 0 0 32px;
-  color: #5b7083;
+  color: $sub;
   font-size: 0.9375rem;
   line-height: 1.7;
 }
 
+// ── Cards de base ──────────────────────────────────────────────────────────────
 .pd-status-card,
 .pd-info-card,
 .pd-form-section,
@@ -142,15 +228,27 @@
   position: relative;
   overflow: hidden;
   border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.56) 52%, rgba(235, 249, 251, 0.42));
-  box-shadow: 0 22px 54px rgba(3, 18, 29, 0.09), 0 8px 22px rgba(0, 166, 178, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255,255,255,0.72);
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.72),
+    rgba(255,255,255,0.56) 52%,
+    rgba(235,249,251,0.42)
+  );
+  box-shadow:
+    0 22px 54px rgba(3,18,29,0.09),
+    0 8px 22px rgba(0,166,178,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.8);
 }
 
+// ── Status card ────────────────────────────────────────────────────────────────
 .pd-status-card {
-  padding: 32px 24px;
+  padding: 40px 28px 36px;
   margin-bottom: 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .pd-status-indicator {
@@ -162,19 +260,21 @@
   place-items: center;
   font-size: 30px;
   transition: all 0.3s ease;
-}
-.pd-status-indicator.online {
-  background: rgba(16, 143, 82, 0.1);
-  border: 2px solid rgba(16, 143, 82, 0.22);
-  animation: pulseGreen 2.5s ease-in-out infinite;
-}
-.pd-status-indicator.offline {
-  background: rgba(16, 42, 67, 0.05);
-  border: 2px solid rgba(16, 42, 67, 0.08);
+
+  &.online {
+    background: rgba(16,143,82,0.1);
+    border: 2px solid rgba(16,143,82,0.22);
+    animation: pulseGreen 2.5s ease-in-out infinite;
+  }
+
+  &.offline {
+    background: rgba($dark, 0.05);
+    border: 2px solid rgba($dark, 0.08);
+  }
 }
 
 .pd-status-label {
-  color: #102a43;
+  color: $dark;
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 8px;
@@ -182,35 +282,213 @@
 
 .pd-status-sub {
   max-width: 340px;
-  margin: 0 auto 24px;
-  color: #5b7083;
+  margin: 0 auto 32px;
+  color: $sub;
   font-size: 0.9375rem;
   line-height: 1.7;
 }
 
+// ── GPS Toggle Switch ── VERSION GRANDE ────────────────────────────────────────
+.pd-gps-toggle-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+// Rangée switch + texte côte à côte
+.pd-gps-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 340px;
+  gap: 20px;
+  padding: 20px 26px;
+  border-radius: 24px;
+  background: rgba($white, 0.75);
+  border: 1px solid rgba($dark, 0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  transition: all 0.35s ease;
+
+  &--on {
+    background: rgba($primary, 0.06);
+    border-color: rgba($primary, 0.22);
+    box-shadow: 0 6px 28px rgba($primary, 0.14);
+  }
+}
+
+.pd-gps-toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  strong {
+    font-size: 16px;
+    font-weight: 800;
+    color: $dark;
+    letter-spacing: -0.025em;
+    transition: color 0.3s ease;
+  }
+
+  span {
+    font-size: 12px;
+    color: $sub;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  &--on {
+    strong { color: $primary; }
+    span   { color: rgba($primary, 0.75); }
+  }
+}
+
+// Le switch lui-même — GRAND
+.pd-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 80px;
+  height: 44px;
+  cursor: pointer;
+
+  &:focus-within .pd-switch-track {
+    box-shadow: 0 0 0 5px rgba($primary, 0.18);
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.pd-switch-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba($dark, 0.13);
+  border: 2px solid rgba($dark, 0.1);
+  transition: all 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .pd-switch--on & {
+    background: linear-gradient(135deg, $primary 0%, darken($primary, 10%) 100%);
+    border-color: $primary;
+    box-shadow:
+      0 5px 18px rgba($primary, 0.42),
+      0 2px 6px rgba($primary, 0.22);
+  }
+
+  .pd-switch--loading & { opacity: 0.55; }
+}
+
+.pd-switch-thumb {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $white;
+  box-shadow:
+    0 3px 10px rgba(0,0,0,0.18),
+    0 1px 3px rgba(0,0,0,0.12);
+  transition:
+    transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // 80px wide - 5px left - 32px thumb - 5px right margin = 38px travel
+  .pd-switch--on & {
+    transform: translateX(36px);
+    box-shadow:
+      0 4px 14px rgba(0,0,0,0.2),
+      0 1px 4px rgba(0,0,0,0.14);
+  }
+
+  .pd-switch--loading &::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2.5px solid rgba($primary, 0.22);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: pdSwitchSpin 0.7s linear infinite;
+  }
+}
+
+.pd-switch-icon {
+  font-size: 16px;
+  line-height: 1;
+  transition: opacity 0.2s;
+  user-select: none;
+
+  .pd-switch--loading & { display: none; }
+}
+
+// Pill statut sous le switch-row
+.pd-gps-status-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $sub;
+  padding: 7px 18px;
+  border-radius: 9999px;
+  background: rgba($dark, 0.05);
+  border: 1px solid rgba($dark, 0.09);
+  transition: all 0.35s ease;
+  letter-spacing: 0.01em;
+
+  &--on {
+    color: $primary;
+    background: rgba($primary, 0.08);
+    border-color: rgba($primary, 0.2);
+  }
+}
+
+.pd-gps-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $sub;
+  flex-shrink: 0;
+  transition: background 0.3s;
+
+  &--on {
+    background: $primary;
+    animation: pdGpsPulse 1.8s ease-in-out infinite;
+  }
+}
+
+// ── Boutons principaux ─────────────────────────────────────────────────────────
 .pd-toggle-btn,
 .pd-save-btn,
 .pd-geo-btn-primary {
   border: none;
   border-radius: 9999px;
-  background: #00a6b2;
-  color: #ffffff;
+  background: $primary;
+  color: $white;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 16px 34px rgba(0, 166, 178, 0.24);
+  box-shadow: 0 16px 34px rgba(0,166,178,0.24);
   transition: all 0.3s ease;
-}
-.pd-toggle-btn:hover:not(:disabled),
-.pd-save-btn:hover:not(:disabled),
-.pd-geo-btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: #5fd9df;
-}
-.pd-toggle-btn:disabled,
-.pd-save-btn:disabled,
-.pd-geo-btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: darken($primary, 6%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .pd-toggle-btn {
@@ -220,14 +498,83 @@
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-}
-.pd-toggle-btn.stop {
-  background: rgba(255, 70, 90, 0.08);
-  color: #d64255;
-  border: 1px solid rgba(255, 70, 90, 0.18);
-  box-shadow: none;
+
+  &.stop {
+    background: rgba(255,70,90,0.08);
+    color: $red;
+    border: 1px solid rgba(255,70,90,0.18);
+    box-shadow: none;
+  }
 }
 
+// ── Boutons génériques ─────────────────────────────────────────────────────────
+.pd-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  border: none;
+  background: $primary;
+  color: $white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: darken($primary, 8%);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pd-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  border: 1px solid rgba($dark, 0.2);
+  background: transparent;
+  color: $sub;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($dark, 0.05);
+    color: $dark;
+  }
+}
+
+.pd-btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: rgba($dark, 0.06);
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  &:hover { background: rgba($dark, 0.12); }
+
+  &--danger {
+    background: rgba(239,68,68,0.08);
+    &:hover { background: rgba(239,68,68,0.16); }
+  }
+}
+
+// ── Info grid ──────────────────────────────────────────────────────────────────
 .pd-info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -248,19 +595,17 @@
   border-radius: 18px;
   display: grid;
   place-items: center;
-  background: rgba(0, 166, 178, 0.1);
-  border: 1px solid rgba(0, 166, 178, 0.14);
-  color: #00a6b2;
+  background: rgba($primary, 0.1);
+  border: 1px solid rgba($primary, 0.14);
+  color: $primary;
   font-size: 20px;
 }
 
-.pd-info-content {
-  min-width: 0;
-}
+.pd-info-content { min-width: 0; }
 
 .pd-info-label,
 .pd-label {
-  color: #5b7083;
+  color: $sub;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -269,24 +614,24 @@
 
 .pd-info-value {
   margin-top: 4px;
-  color: #102a43;
+  color: $dark;
   font-size: 0.9375rem;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.pd-info-value.primary {
-  color: #00a6b2;
+
+  &.primary { color: $primary; }
 }
 
+// ── Form section ───────────────────────────────────────────────────────────────
 .pd-form-section {
   padding: 24px;
   margin-bottom: 20px;
 }
 
 .pd-form-section-title {
-  color: #102a43;
+  color: $dark;
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 8px;
@@ -294,457 +639,12 @@
 
 .pd-form-section-sub {
   margin-bottom: 24px;
-  color: #5b7083;
+  color: $sub;
   font-size: 0.8125rem;
   line-height: 1.6;
 }
 
-.pd-field {
-  margin-bottom: 16px;
-}
-.pd-field:last-child {
-  margin-bottom: 0;
-}
-
-.pd-label {
-  display: block;
-  margin-bottom: 8px;
-}
-
-.pd-input-wrap {
-  position: relative;
-}
-
-.pd-input-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.pd-input {
-  width: 100%;
-  border: 1px solid rgba(16, 42, 67, 0.1);
-  border-radius: 16px;
-  padding: 14px 14px 14px 42px;
-  color: #102a43;
-  background: rgba(0, 166, 178, 0.035);
-  outline: none;
-  font-size: 16px;
-}
-.pd-input:focus {
-  border-color: rgba(0, 166, 178, 0.4);
-  box-shadow: 0 0 0 4px rgba(0, 166, 178, 0.08);
-}
-
-.pd-social-list {
-  display: grid;
-  gap: 16px;
-}
-
-.pd-save-btn {
-  min-height: 52px;
-  padding: 0 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.pd-alert {
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 20px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-.pd-alert.success {
-  color: #108f52;
-  background: rgba(16, 143, 82, 0.08);
-  border: 1px solid rgba(16, 143, 82, 0.16);
-}
-.pd-alert.error {
-  color: #d64255;
-  background: rgba(255, 70, 90, 0.08);
-  border: 1px solid rgba(255, 70, 90, 0.18);
-}
-
-.pd-spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #ffffff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-.pd-bottom-nav {
-  position: fixed;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  z-index: 100;
-  height: 66px;
-  display: flex;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(16, 42, 67, 0.08);
-  border-radius: 9999px;
-  box-shadow: 0 22px 52px rgba(3, 18, 29, 0.14);
-  overflow: hidden;
-}
-
-.pd-nav-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: #5b7083;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  transition: all 0.3s ease;
-}
-.pd-nav-btn.active {
-  color: #00a6b2;
-  background: rgba(0, 166, 178, 0.08);
-}
-
-.pd-nav-icon {
-  font-size: 20px;
-}
-
-.pd-geo-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: flex-end;
-  background: rgba(3, 18, 29, 0.55);
-  backdrop-filter: blur(8px);
-}
-
-.pd-geo-popup {
-  width: 100%;
-  padding: 32px 20px 40px;
-  border-radius: 34px 34px 0 0;
-  text-align: center;
-}
-
-.pd-geo-icon {
-  font-size: 42px;
-  margin-bottom: 16px;
-}
-
-.pd-geo-title {
-  color: #102a43;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.pd-geo-text {
-  color: #5b7083;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.pd-geo-steps {
-  padding: 16px;
-  margin-bottom: 20px;
-  border-radius: 16px;
-  background: rgba(0, 166, 178, 0.05);
-  border: 1px solid rgba(0, 166, 178, 0.12);
-  text-align: left;
-}
-
-.pd-geo-step {
-  display: flex;
-  gap: 12px;
-  padding: 6px 0;
-  color: #5b7083;
-  line-height: 1.5;
-}
-
-.pd-geo-step-num {
-  color: #00a6b2;
-  font-weight: 700;
-}
-
-.pd-geo-btn-primary,
-.pd-geo-btn-secondary {
-  width: 100%;
-  min-height: 48px;
-}
-
-.pd-geo-btn-secondary {
-  margin-top: 12px;
-  border: 1px solid rgba(16, 42, 67, 0.1);
-  border-radius: 9999px;
-  background: transparent;
-  color: #5b7083;
-  font-weight: 700;
-}
-
-@keyframes pulseGreen {
-  0%, 100% {
-    box-shadow: 0 0 16px rgba(16, 143, 82, 0.16);
-  }
-  50% {
-    box-shadow: 0 0 32px rgba(16, 143, 82, 0.34);
-  }
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@media (min-width: 640px) {
-  .pd-root {
-    padding-bottom: 0;
-  }
-  .pd-header {
-    height: 72px;
-    padding: 0 32px;
-  }
-  .pd-bottom-nav {
-    display: none;
-  }
-  .pd-desktop-tabs {
-    display: flex;
-    gap: 12px;
-    padding: 0 32px;
-    background: rgba(255, 255, 255, 0.72);
-    border-bottom: 1px solid rgba(16, 42, 67, 0.06);
-  }
-  .pd-desktop-tab {
-    padding: 16px 0;
-    border: none;
-    border-bottom: 2px solid transparent;
-    background: transparent;
-    cursor: pointer;
-    color: #5b7083;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .pd-desktop-tab.active {
-    color: #00a6b2;
-    border-bottom-color: #00a6b2;
-  }
-  .pd-body {
-    padding-top: 40px;
-  }
-  .pd-social-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .pd-toggle-btn {
-    width: auto;
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-  .pd-geo-overlay {
-    align-items: center;
-    justify-content: center;
-  }
-  .pd-geo-popup {
-    max-width: 500px;
-    border-radius: 34px;
-  }
-}
-@media (max-width: 640px) {
-  .pd-header {
-    height: 62px;
-    padding: 0 12px;
-  }
-  .pd-logo-img {
-    width: 36px;
-    height: 36px;
-  }
-  .pd-logo-name {
-    font-size: 1.125rem;
-  }
-  .pd-badge-role {
-    display: none;
-  }
-  .pd-logout-btn {
-    width: 38px;
-    height: 38px;
-    padding: 0;
-  }
-  .pd-logout-full {
-    display: none;
-  }
-  .pd-logout-short {
-    display: inline;
-    font-size: 18px;
-    line-height: 1;
-  }
-  .pd-body {
-    width: calc(100% - 28px);
-    padding-top: 24px;
-  }
-  .pd-info-grid {
-    grid-template-columns: 1fr;
-  }
-  .pd-status-card,
-  .pd-form-section {
-    border-radius: 26px;
-  }
-  .pd-bottom-nav {
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    height: 62px;
-  }
-}
-.pd-metier-preview {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 20px;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  background: rgba(0, 166, 178, 0.1);
-  border: 1px solid rgba(0, 166, 178, 0.18);
-  color: #00a6b2;
-  font-size: 14px;
-}
-
-/* ============================= */
-/* SELECT PREMIUM LIGHT */
-/* ============================= */
-.pd-input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.pd-input-icon {
-  position: absolute;
-  left: 18px;
-  z-index: 2;
-  font-size: 18px;
-  color: #6b7280;
-  pointer-events: none;
-}
-
-/* SELECT */
-.pd-select {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding: 16px 52px 16px 52px;
-  border-radius: 22px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.92);
-  color: #0f172a;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.2;
-  outline: none;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
-}
-
-/* TEXTE PLACEHOLDER */
-.pd-select:invalid {
-  color: #94a3b8;
-}
-
-/* HOVER */
-.pd-select:hover {
-  border-color: rgba(0, 166, 178, 0.25);
-  box-shadow: 0 10px 30px rgba(0, 166, 178, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
-}
-
-/* FOCUS */
-.pd-select:focus {
-  border-color: rgba(0, 166, 178, 0.45);
-  background: white;
-  box-shadow: 0 0 0 5px rgba(0, 166, 178, 0.12), 0 10px 35px rgba(0, 166, 178, 0.12);
-}
-
-/* OPTIONS DU MENU */
-.pd-select option {
-  background: #ffffff;
-  color: #0f172a;
-  padding: 14px;
-  font-weight: 500;
-}
-
-/* OPTION ACTIVE */
-.pd-select option:checked {
-  background: rgba(0, 166, 178, 0.12);
-  color: #00a6b2;
-}
-
-/* FLECHE */
-.pd-input-wrap::after {
-  content: "⌄";
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #64748b;
-  font-size: 20px;
-  font-weight: bold;
-  pointer-events: none;
-  transition: transform 0.2s ease;
-}
-
-/* ROTATION FLECHE */
-.pd-input-wrap:focus-within::after {
-  transform: translateY(-50%) rotate(180deg);
-}/*# sourceMappingURL=PrestataireDashboard.css.map */
-/* ── Header right (profil public + favoris) ──────────────────────────── */
-.pd-header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.pd-favori-count {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  font-size: 13px;
-}
-
-.pd-profile-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 16px;
-  border-radius: 9999px;
-  background: rgba(0, 166, 178, 0.1);
-  border: 1px solid rgba(0, 166, 178, 0.25);
-  color: #00a6b2;
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.pd-profile-btn:hover {
-  background: rgba(0, 166, 178, 0.18);
-  border-color: rgba(0, 166, 178, 0.45);
-}
-
-/* ── Section head générique ──────────────────────────────────────────── */
+// ── Section head générique ─────────────────────────────────────────────────────
 .pd-section-head {
   display: flex;
   align-items: flex-start;
@@ -757,84 +657,331 @@
 .pd-section-title {
   font-size: 18px;
   font-weight: 800;
-  color: #102a43;
+  color: $dark;
   letter-spacing: -0.025em;
 }
 
 .pd-section-sub {
   font-size: 13px;
-  color: #5b7083;
+  color: $sub;
   margin-top: 2px;
 }
 
-/* ── Boutons génériques dashboard presta ─────────────────────────────── */
-.pd-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 20px;
-  border-radius: 9999px;
-  border: none;
-  background: #00a6b2;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.pd-btn-primary:hover:not(:disabled) {
-  background: #008f9a;
-  transform: translateY(-1px);
-}
-.pd-btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+// ── Fields & inputs ────────────────────────────────────────────────────────────
+.pd-field {
+  margin-bottom: 16px;
+
+  &:last-child { margin-bottom: 0; }
 }
 
-.pd-btn-ghost {
-  display: inline-flex;
+.pd-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.pd-input-wrap {
+  position: relative;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 20px;
-  border-radius: 9999px;
-  border: 1px solid rgba(16, 42, 67, 0.2);
-  background: transparent;
-  color: #5b7083;
-  font-size: 13px;
+
+  &::after {
+    content: "⌄";
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 20px;
+    font-weight: bold;
+    pointer-events: none;
+    transition: transform 0.2s ease;
+  }
+
+  &:focus-within::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  &:has(input)::after { display: none; }
+}
+
+.pd-input-icon {
+  position: absolute;
+  left: 18px;
+  z-index: 2;
+  font-size: 18px;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.pd-input {
+  width: 100%;
+  border: 1px solid rgba($dark, 0.1);
+  border-radius: 16px;
+  padding: 14px 14px 14px 42px;
+  color: $dark;
+  background: rgba($primary, 0.035);
+  outline: none;
+  font-size: 16px;
+  transition: all 0.25s ease;
+
+  &:focus {
+    border-color: rgba($primary, 0.4);
+    box-shadow: 0 0 0 4px rgba($primary, 0.08);
+    background: $white;
+  }
+}
+
+.pd-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.pd-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 16px 52px 16px 52px;
+  border-radius: 22px;
+  border: 1px solid rgba(15,23,42,0.08);
+  background: rgba(255,255,255,0.92);
+  color: #0f172a;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1.2;
+  outline: none;
   cursor: pointer;
-  transition: all 0.2s;
-}
-.pd-btn-ghost:hover {
-  background: rgba(16, 42, 67, 0.05);
-  color: #102a43;
+  transition: all 0.25s ease;
+  box-shadow:
+    0 4px 14px rgba(15,23,42,0.05),
+    0 1px 2px rgba(15,23,42,0.04);
+
+  &:invalid { color: #94a3b8; }
+
+  &:hover {
+    border-color: rgba($primary, 0.25);
+    box-shadow:
+      0 10px 30px rgba($primary, 0.08),
+      0 2px 8px rgba(15,23,42,0.04);
+  }
+
+  &:focus {
+    border-color: rgba($primary, 0.45);
+    background: $white;
+    box-shadow:
+      0 0 0 5px rgba($primary, 0.12),
+      0 10px 35px rgba($primary, 0.12);
+  }
+
+  option {
+    background: $white;
+    color: #0f172a;
+    padding: 14px;
+    font-weight: 500;
+  }
+
+  option:checked {
+    background: rgba($primary, 0.12);
+    color: $primary;
+  }
 }
 
-.pd-btn-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(16, 42, 67, 0.06);
-  cursor: pointer;
+.pd-select-skeleton {
+  height: 52px;
+  border-radius: 22px;
+  background: linear-gradient(90deg, #f0f4f8 25%, #e2eaf2 50%, #f0f4f8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+// ── Métier preview ─────────────────────────────────────────────────────────────
+.pd-metier-preview {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba($primary, 0.1);
+  border: 1px solid rgba($primary, 0.18);
+  color: $primary;
   font-size: 14px;
+}
+
+.pd-metier-preview-icon { font-size: 16px; }
+.pd-metier-preview-nom  { font-weight: 700; }
+.pd-metier-preview-desc { font-size: 12px; color: $sub; margin: 0; }
+
+.pd-no-metier {
+  padding: 14px 18px;
+  font-size: 13px;
+  color: $sub;
+  font-style: italic;
+}
+
+// ── Social list ────────────────────────────────────────────────────────────────
+.pd-social-list {
+  display: grid;
+  gap: 16px;
+}
+
+// ── Save btn ───────────────────────────────────────────────────────────────────
+.pd-save-btn {
+  min-height: 52px;
+  padding: 0 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  gap: 8px;
 }
-.pd-btn-icon:hover { background: rgba(16, 42, 67, 0.12); }
-.pd-btn-icon--danger { background: rgba(239, 68, 68, 0.08); }
-.pd-btn-icon--danger:hover { background: rgba(239, 68, 68, 0.16); }
 
-/* ── Section Promotions ──────────────────────────────────────────────── */
-.pd-promo-section {
-  padding: 8px 0;
+// ── Alerts ─────────────────────────────────────────────────────────────────────
+.pd-alert {
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  &.success {
+    color: $green;
+    background: rgba($green, 0.08);
+    border: 1px solid rgba($green, 0.16);
+  }
+
+  &.error {
+    color: $red;
+    background: rgba(255,70,90,0.08);
+    border: 1px solid rgba(255,70,90,0.18);
+  }
 }
+
+// ── Spinner ────────────────────────────────────────────────────────────────────
+.pd-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+// ── Bottom nav ─────────────────────────────────────────────────────────────────
+.pd-bottom-nav {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 100;
+  height: 66px;
+  display: flex;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba($dark, 0.08);
+  border-radius: 9999px;
+  box-shadow: 0 22px 52px rgba(3,18,29,0.14);
+  overflow: hidden;
+}
+
+.pd-nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: $sub;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+
+  &.active {
+    color: $primary;
+    background: rgba($primary, 0.08);
+  }
+}
+
+.pd-nav-icon { font-size: 20px; }
+
+// ── Geo overlay ────────────────────────────────────────────────────────────────
+.pd-geo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(3,18,29,0.55);
+  backdrop-filter: blur(8px);
+}
+
+.pd-geo-popup {
+  width: 100%;
+  padding: 32px 20px 40px;
+  border-radius: 34px 34px 0 0;
+  text-align: center;
+}
+
+.pd-geo-icon  { font-size: 42px; margin-bottom: 16px; }
+
+.pd-geo-title {
+  color: $dark;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.pd-geo-text {
+  color: $sub;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.pd-geo-steps {
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: rgba($primary, 0.05);
+  border: 1px solid rgba($primary, 0.12);
+  text-align: left;
+}
+
+.pd-geo-step {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+  color: $sub;
+  line-height: 1.5;
+}
+
+.pd-geo-step-num {
+  color: $primary;
+  font-weight: 700;
+}
+
+.pd-geo-btn-primary,
+.pd-geo-btn-secondary {
+  width: 100%;
+  min-height: 48px;
+}
+
+.pd-geo-btn-secondary {
+  margin-top: 12px;
+  border: 1px solid rgba($dark, 0.1);
+  border-radius: 9999px;
+  background: transparent;
+  color: $sub;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+// ── Promotions ─────────────────────────────────────────────────────────────────
+.pd-promo-section { padding: 8px 0; }
 
 .pd-promo-form-card {
   background: #f7faf9;
-  border: 1px solid rgba(0, 166, 178, 0.18);
+  border: 1px solid rgba($primary, 0.18);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
@@ -843,7 +990,7 @@
 .pd-promo-form-title {
   font-size: 16px;
   font-weight: 700;
-  color: #102a43;
+  color: $dark;
   margin-bottom: 20px;
 }
 
@@ -859,7 +1006,7 @@
   gap: 10px;
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid rgba(16, 42, 67, 0.07);
+  border-top: 1px solid rgba($dark, 0.07);
 }
 
 .pd-badge-grid {
@@ -875,36 +1022,33 @@
   gap: 5px;
   padding: 6px 12px;
   border-radius: 9999px;
-  border: 1px solid rgba(16, 42, 67, 0.12);
-  background: #ffffff;
+  border: 1px solid rgba($dark, 0.12);
+  background: $white;
   font-size: 12px;
   font-weight: 600;
-  color: #5b7083;
+  color: $sub;
   cursor: pointer;
   transition: all 0.2s;
-}
-.pd-badge-opt:hover {
-  border-color: rgba(0, 166, 178, 0.3);
-  color: #00a6b2;
-}
-.pd-badge-opt.active {
-  background: rgba(0, 166, 178, 0.1);
-  border-color: rgba(0, 166, 178, 0.35);
-  color: #00a6b2;
-}
 
-.pd-textarea {
-  resize: vertical;
-  min-height: 80px;
+  &:hover {
+    border-color: rgba($primary, 0.3);
+    color: $primary;
+  }
+
+  &.active {
+    background: rgba($primary, 0.1);
+    border-color: rgba($primary, 0.35);
+    color: $primary;
+  }
 }
 
 .pd-promo-empty {
   text-align: center;
   padding: 60px 20px;
-  color: #5b7083;
+  color: $sub;
 }
 .pd-promo-empty-icon { font-size: 48px; margin-bottom: 12px; }
-.pd-promo-empty p { margin-bottom: 4px; font-size: 14px; }
+.pd-promo-empty p    { margin-bottom: 4px; font-size: 14px; }
 
 .pd-promo-list {
   display: flex;
@@ -913,13 +1057,14 @@
 }
 
 .pd-promo-card {
-  background: #ffffff;
-  border: 1px solid rgba(16, 42, 67, 0.08);
+  background: $white;
+  border: 1px solid rgba($dark, 0.08);
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+
+  &.expired { opacity: 0.6; }
 }
-.pd-promo-card.expired { opacity: 0.6; }
 
 .pd-promo-card-head {
   display: flex;
@@ -936,9 +1081,9 @@
   gap: 5px;
   padding: 4px 10px;
   border-radius: 9999px;
-  background: rgba(0, 166, 178, 0.08);
-  border: 1px solid rgba(0, 166, 178, 0.18);
-  color: #00a6b2;
+  background: rgba($primary, 0.08);
+  border: 1px solid rgba($primary, 0.18);
+  color: $primary;
   font-size: 11px;
   font-weight: 700;
 }
@@ -948,8 +1093,8 @@
   align-items: center;
   padding: 4px 10px;
   border-radius: 9999px;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.18);
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.18);
   color: #ef4444;
   font-size: 11px;
   font-weight: 700;
@@ -964,20 +1109,20 @@
 .pd-promo-titre {
   font-size: 16px;
   font-weight: 700;
-  color: #102a43;
+  color: $dark;
   margin-bottom: 6px;
 }
 
 .pd-promo-desc {
   font-size: 13px;
-  color: #5b7083;
+  color: $sub;
   line-height: 1.6;
   margin-bottom: 8px;
 }
 
 .pd-promo-dates-display {
   font-size: 12px;
-  color: #5b7083;
+  color: $sub;
   margin-bottom: 12px;
 }
 
@@ -994,12 +1139,14 @@
   height: 68px;
   border-radius: 8px;
   overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
-.pd-promo-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+
 .pd-promo-img-del {
   position: absolute;
   top: 3px;
@@ -1007,8 +1154,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  background: rgba(0,0,0,0.6);
+  color: $white;
   border: none;
   font-size: 10px;
   cursor: pointer;
@@ -1024,33 +1171,99 @@
   width: 90px;
   height: 68px;
   border-radius: 8px;
-  border: 2px dashed rgba(0, 166, 178, 0.3);
-  background: rgba(0, 166, 178, 0.04);
-  color: #00a6b2;
+  border: 2px dashed rgba($primary, 0.3);
+  background: rgba($primary, 0.04);
+  color: $primary;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-}
-.pd-promo-img-add:hover {
-  background: rgba(0, 166, 178, 0.08);
-  border-color: rgba(0, 166, 178, 0.5);
+
+  &:hover {
+    background: rgba($primary, 0.08);
+    border-color: rgba($primary, 0.5);
+  }
 }
 
-.pd-alert {
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 16px;
+// ── Responsive ─────────────────────────────────────────────────────────────────
+@media (min-width: 640px) {
+  .pd-root       { padding-bottom: 0; }
+
+  .pd-header     { height: 72px; padding: 0 32px; }
+
+  .pd-bottom-nav { display: none; }
+
+  .pd-desktop-tabs {
+    display: flex;
+    gap: 12px;
+    padding: 0 32px;
+    background: rgba(255,255,255,0.72);
+    border-bottom: 1px solid rgba($dark, 0.06);
+  }
+
+  .pd-body       { padding-top: 40px; }
+
+  .pd-social-list { grid-template-columns: repeat(2, 1fr); }
+
+  .pd-toggle-btn { width: auto; padding-left: 40px; padding-right: 40px; }
+
+  .pd-geo-overlay { align-items: center; justify-content: center; }
+
+  .pd-geo-popup   { max-width: 500px; border-radius: 34px; }
+
+  .pd-promo-dates { grid-template-columns: 1fr 1fr; }
+
+  .pd-gps-toggle-row { max-width: 380px; }
 }
-.pd-alert.success {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.25);
-  color: #22c55e;
-}
-.pd-alert.error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  color: #ef4444;
+
+@media (max-width: 639px) {
+  .pd-header     { height: 62px; padding: 0 12px; }
+
+  .pd-logo-img   { width: 36px; height: 36px; }
+
+  .pd-logo-name  { font-size: 1.125rem; }
+
+  .pd-badge-role { display: none; }
+
+  .pd-logout-btn { width: 38px; height: 38px; padding: 0; }
+
+  .pd-logout-full  { display: none; }
+  .pd-logout-short {
+    display: inline;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .pd-body {
+    width: calc(100% - 28px);
+    padding-top: 24px;
+  }
+
+  .pd-info-grid { grid-template-columns: 1fr; }
+
+  .pd-status-card,
+  .pd-form-section { border-radius: 26px; }
+
+  .pd-bottom-nav { left: 10px; right: 10px; bottom: 10px; height: 62px; }
+
+  .pd-promo-dates { grid-template-columns: 1fr; }
+
+  .pd-gps-toggle-row { max-width: 100%; }
+
+  .pd-profile-btn span:last-child { display: none; }
+
+  .pd-favori-count { padding: 6px 10px; font-size: 12px; }
+
+  .pd-switch { width: 72px; height: 40px; }
+
+  .pd-switch-thumb {
+    width: 28px;
+    height: 28px;
+    top: 5px;
+    left: 5px;
+
+    .pd-switch--on & { transform: translateX(30px); }
+  }
+
+  .pd-switch-icon { font-size: 14px; }
 }
