@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./CookieBanner.scss";
+import cookies from '../../../src/cookies.jpg'
 
 const STORAGE_KEY = "hopela_cookie_consent";
 
@@ -48,7 +49,7 @@ const CookieBanner = () => {
         {/* Image cookie */}
         <div className="cb-image-wrap">
           <img
-            src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=160&h=160&fit=crop&crop=center&q=80"
+            src={cookies}
             alt="Un vrai cookie — délicieux"
             className="cb-cookie-img"
           />
