@@ -12,11 +12,11 @@ const LandingMapSection = () => {
         <div>
           <div className="lp-eyebrow">Carte interactive</div>
           <h2 className="lp-map-title">
-            Ils sont <em>près de chez vous</em>
+            Ils sont <em>sont déja là </em>
           </h2>
         </div>
         <p className="lp-map-subtitle">
-          Visualisez les disponibilités en temps réel
+          Visualisez leurs présences en temps réel. 
         </p>
       </div>
 
